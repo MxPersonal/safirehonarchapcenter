@@ -71,5 +71,7 @@ export function tomans(value:number){return new Intl.NumberFormat('fa-IR').forma
 export async function storeGalleryProducts():Promise<StoreProduct[]|null>{
  const db=await serverDb();if(!db)return null;
  const {data,error}=await db.from('products').select('id,slug,name,description,category_id,image_url,mode,price_toman,active').eq('active',true).order('created_at',{ascending:false}).limit(200);
- return error?null:data as StoreProduct[];
+ if(error)return null;
+ if(data?.length===0){const {count}=await db.from('products').select('id',{count:'exact',head:true});if(count===0)return null;}
+ return data as StoreProduct[];
 }

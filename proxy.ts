@@ -10,4 +10,4 @@ export async function proxy(request:NextRequest){
  }});
  await client.auth.getClaims();return response;
 }
-export const config={matcher:['/account/:path*','/admin/:path*','/api/:path*','/shop/:path*']};
+export const config={matcher:['/account/:path*','/admin/:path*','/api/:path*','/shop/:path*','/order','/login','/register','/auth/:path*']};

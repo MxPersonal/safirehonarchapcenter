@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import {ArrowDown,ArrowLeft,ArrowUpLeft,Check,ClipboardCheck,Headset,MoveUpLeft,Paintbrush2,Printer,ScanLine,ShoppingCart,Sparkles,UploadCloud} from 'lucide-react';
-import {storeCategories} from '@/lib/store';
+import {storeCategories,mainCategories} from '@/lib/store';
 import {CategorySpotlight,CollectionRail} from '@/components/showcase';
 import {designs} from '@/lib/catalog';
 import Artwork from '@/components/art';
 export const dynamic='force-dynamic';
-export default async function Home(){const categories=await storeCategories();return <>
+export default async function Home(){const categories=mainCategories(await storeCategories());return <>
 <section className="v2-hero"><div className="v2-hero-shape"/><div className="container v2-hero-inner"><div className="v2-hero-copy">
  <span className="v2-kicker"><span className="kicker-dot"/> STUDIO / PRINT / CREATIVE</span>
  <h1>ایده‌های بزرگ،<br/><span>چاپ‌های</span> <em>ماندگار.</em></h1>
@@ -15,8 +15,8 @@ export default async function Home(){const categories=await storeCategories();re
  </div><div className="v2-hero-visual"><div className="hero-grid-paper"/><div className="hero-paper paper-a"><span className="paper-top">SAFIRE HONAR  /  NO.001</span><span className="paper-main">یک ایده<br/><strong>بی‌انتها</strong></span><span className="paper-bottom">DESIGN WITH PURPOSE.</span></div><div className="hero-paper paper-b"><span>ART DIRECTION</span><strong>MAKE<br/>IT<br/>VISIBLE.</strong><span>PRINTING STUDIO</span></div><div className="hero-paper paper-c"><span>SH / PRINT</span><b>✳</b><span>EVERY DETAIL MATTERS</span></div><div className="hero-seal"><span>MADE TO BE SEEN</span><Printer size={30}/><span>SAFIRE HONAR</span></div></div></div>
  <a href="#collections" className="hero-scroll-hint"><span>SCROLL TO EXPLORE</span><ArrowDown size={19}/></a>
 </section>
-<section className="v2-ticker" aria-label="محصولات و خدمات چاپ"><div>چاپ بنر ✳ چاپ فلکس ✳ استیکر و لیبل ✳ مناسبت‌های خاص ✳ خدمات سفارشی ✳ طراحی و چاپ ✳ SAFIRE HONAR ✳</div></section>
-<section id="collections" className="v2-collections"><div className="container"><div className="v2-section-heading"><div><span className="tiny-label">01 / FIND YOUR COLLECTION</span><h2>هر مناسبت،<br/><em>یک دنیای تازه.</em></h2></div><p>یک نمونه از هر دسته ببین. هر بخش گالری مستقل خودش را دارد و می‌توانی طرح موردعلاقه‌ات را برای سفارش انتخاب کنی.</p></div>
+<section className="v2-ticker" aria-label="محصولات و خدمات چاپ"><div>بنر ✳ بروشور ✳ کارت ویزیت ✳ تابلو و حروف برجسته ✳ استیکر و لیبل ✳ تراکت و پوستر ✳ چاپ نمایشگاهی ✳ SAFIRE HONAR ✳</div></section>
+<section id="collections" className="v2-collections"><div className="container"><div className="v2-section-heading"><div><span className="tiny-label">01 / FIND YOUR COLLECTION</span><h2>هر محصول،<br/><em>یک دنیای تازه.</em></h2></div><p>از بنر و بروشور تا کارت ویزیت و تابلوهای برجسته؛ اول نوع محصول چاپی را انتخاب کن، بعد به زیرمجموعه‌ها و نمونه‌های آن برو.</p></div>
 <CollectionRail categories={categories}/><div className="spotlight-stack">{categories.map((category,index)=><CategorySpotlight key={category.id} category={category} index={index}/>)}</div>
 <div className="collection-bottom"><Link href="/catalog" className="v2-outline">مشاهده تمام دسته‌بندی‌ها <ArrowUpLeft size={20}/></Link></div></div></section>
 <section className="v2-commerce"><div className="container"><div className="v2-section-heading"><div><span className="tiny-label">02 / TWO WAYS TO ORDER</span><h2>هر سفارش،<br/><em>راه خودش.</em></h2></div><p>مجبور نیستی برای یک محصول قیمت‌دار تماس بگیری یا برای یک کار سفارشی قیمت ساختگی ببینی.</p></div><div className="order-models"><article className="order-model order-model-fixed"><div className="order-model-icon"><ShoppingCart size={29}/></div><span className="model-number">01 / FIXED PRICE</span><h3>قیمت مشخص؟<br/>مستقیم سفارش بده.</h3><p>محصولاتی که قیمت قطعی آن‌ها توسط مجموعه ثبت شده، در فروشگاه با مبلغ روشن نمایش داده می‌شوند و قابل اضافه‌شدن به سبد هستند.</p><Link href="/catalog" className="model-cta">ورود به فروشگاه <ArrowUpLeft size={19}/></Link><span className="model-glyph">+</span></article><article className="order-model order-model-quote"><div className="order-model-icon"><Headset size={29}/></div><span className="model-number">02 / CUSTOM QUOTE</span><h3>سفارشی و خاص؟<br/>اول استعلام بگیر.</h3><p>مشخصات و تیراژ را ثبت کن تا درخواست در حساب کاربری ذخیره شود و مسئول سفارش برای هماهنگی و اعلام قیمت پیگیری کند.</p><Link href="/order" className="model-cta">درخواست استعلام <ArrowUpLeft size={19}/></Link><span className="model-glyph">✳</span></article></div></div></section>

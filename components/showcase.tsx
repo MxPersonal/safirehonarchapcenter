@@ -3,6 +3,8 @@ import {ArrowUpLeft,ArrowLeft,Plus} from 'lucide-react';
 import type {StoreCategory,StoreProduct} from '@/lib/store';
 import {tomans} from '@/lib/store';
 import PrintMockup from '@/components/print-mockups';
+import Artwork from '@/components/art';
+import {getDesign} from '@/lib/catalog';
 import {Reveal,PosterParallax} from '@/components/scroll-experience';
 
 export function CategoryArtwork({slug,name,imageUrl,small=false}:{slug:string;name:string;imageUrl?:string|null;small?:boolean}){
@@ -18,5 +20,5 @@ export function CategorySpotlight({category,index}:{category:StoreCategory;index
   </article>
  </Reveal>
 }
-export function ProductTile({product}:{product:StoreProduct}){return <Link className="shop-tile" href={`/shop/${product.slug}`}><div className="shop-thumb">{product.image_url?<img src={product.image_url} alt={product.name}/>:<div className="shop-placeholder"><span>SAFIRE HONAR</span><b>{product.name}</b><span>PRINT DESIGN</span></div>}<span className="shop-mode">{product.mode==='fixed'?'قیمت مشخص':'نیازمند استعلام'}</span></div><div className="shop-meta"><div><h3>{product.name}</h3><span>{product.mode==='fixed'&&product.price_toman!==null?tomans(product.price_toman):'استعلام قیمت'}</span></div><Plus size={21}/></div></Link>}
+export function ProductTile({product}:{product:StoreProduct}){const originalDesign=getDesign(product.slug);return <Link className="shop-tile" href={`/shop/${product.slug}`}><div className="shop-thumb">{product.image_url?<img src={product.image_url} alt={product.name}/>:originalDesign?<Artwork design={{...originalDesign,name:product.name}}/>:<div className="shop-placeholder"><span>SAFIRE HONAR</span><b>{product.name}</b><span>PRINT DESIGN</span></div>}<span className="shop-mode">{product.mode==='fixed'?'قیمت مشخص':'نیازمند استعلام'}</span></div><div className="shop-meta"><div><h3>{product.name}</h3><span>{product.mode==='fixed'&&product.price_toman!==null?tomans(product.price_toman):'استعلام قیمت'}</span></div><Plus size={21}/></div></Link>}
 export function CollectionRail({categories}:{categories:StoreCategory[]}){return <Reveal className="collection-rail"><>{categories.map((c,i)=><Link key={c.slug} href={`/catalog/${c.slug}`} className="collection-pill"><span>{String(i+1).padStart(2,'0')}</span>{c.name}<ArrowLeft size={15}/></Link>)}</></Reveal>}

@@ -1,1 +1,4 @@
-import type {Metadata} from 'next';import CartView from '@/components/cart-view';export const metadata:Metadata={title:'سبد استعلام'};export default function Cart(){return <><section className="page-banner simple-banner"><div className="container"><span className="section-label">YOUR CART</span><h1>سبد <em>استعلام</em></h1><p>طرح‌های انتخاب‌شده را بازبینی و مشخصات را برای دریافت قیمت آماده کن.</p></div></section><section className="section container"><CartView/></section></>}
+import {redirect} from 'next/navigation';
+import {currentCustomer} from '@/lib/supabase/server';
+export const dynamic='force-dynamic';
+export default async function Cart(){const {db,user}=await currentCustomer();if(db&&!user)redirect('/login?next=/account');redirect('/account')}

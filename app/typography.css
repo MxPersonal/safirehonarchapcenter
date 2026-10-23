@@ -1,0 +1,70 @@
+/* Safire Honar Persian typography | SIL OFL 1.1 display and UI fonts */
+:root {
+  --font-body: 'Estedad Variable', Tahoma, sans-serif;
+  --font-display: 'Lalezar', 'Estedad Variable', Tahoma, sans-serif;
+}
+html { font-synthesis: none; }
+body, button, input, select, textarea, summary { font-family: var(--font-body); letter-spacing: normal; }
+body { font-weight: 450; line-height: 1.93; }
+/* Expressive headings. Lalezar is deliberately not used for forms, numbers or long reading. */
+.hero h1, .v2-hero h1,
+.section-heading h2, .v2-section-heading h2,
+.v2-inner-head h1, .v2-feature-copy h2, .v2-outro h2,
+.statement-inner h2, .final-cta h2, .feature-text h2,
+.spotlight-details h3, .category-bottom h3,
+.v2-catalog-card h2, .v2-catalog-card h3,
+.order-model h3, .paper-main, .paper-a .paper-main,
+.v2-product-page h1, .v2-order-layout .order-info h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: 0;
+  font-synthesis: none;
+}
+.hero h1, .v2-hero h1 { line-height: 1.37; letter-spacing: 0; }
+.v2-section-heading h2, .section-heading h2 { line-height: 1.38; letter-spacing: 0; }
+.spotlight-details h3, .category-bottom h3 { line-height: 1.48; letter-spacing: 0; }
+.v2-hero h1 { font-size: clamp(57px, 6.4vw, 102px); }
+.v2-section-heading h2 { font-size: clamp(46px, 5vw, 78px); }
+.v2-inner-head h1 { line-height: 1.5; }
+.v2-hero-copy > p, .v2-section-heading > p,
+.spotlight-details p, .v2-feature-copy p, .v2-cms-body p {
+  font-family: var(--font-body);
+  letter-spacing: normal;
+  line-height: 2.08;
+}
+/* Crisp and legible UI including customer account and administrator console. */
+.nav-desktop a, .mobile-menu a, .header-order-button, .header-actions,
+.v2-primary, .v2-secondary, .v2-outline, .button,
+.spotlight-link, .footer-column, .v2-admin, .v2-account,
+.v2-quote-form, .admin-tabs, .request-form, .shop-meta,
+.v2-product-page form, .v2-order-layout input,
+.v2-order-layout select, .v2-order-layout textarea {
+  font-family: var(--font-body); letter-spacing: normal;
+}
+.brand-copy strong { font-family: var(--font-body); font-weight: 900; letter-spacing: 0; }
+.v2-brand .brand-copy strong { font-family: var(--font-display); font-weight: 400; font-size: 27px; line-height: 1.2; }
+.nav-desktop a { font-weight: 750; font-size: 13px; }
+.v2-primary, .v2-secondary, .v2-outline, .button { font-weight: 800; }
+.dashboard-head h1, .admin-heading h1,
+.dashboard-box h2, .admin-editor h2, .admin-list h2,
+.contact-card h2, .guide-item h2, .tracking-placeholder h2,
+.form-heading h2, .request-summary h2 {
+  font-family: var(--font-body); font-weight: 850; letter-spacing: 0;
+}
+input, textarea, select, output, .summary-price, .dashboard-stats strong,
+.admin-entry, .admin-cart, .shop-price, .config-total {
+  font-family: var(--font-body); font-variant-numeric: tabular-nums;
+}
+@media (max-width: 950px) {
+  .v2-hero h1 { font-size: clamp(52px, 7.1vw, 82px); }
+  .v2-section-heading h2 { font-size: clamp(43px, 6vw, 65px); }
+}
+@media (max-width: 700px) {
+  .v2-hero h1 { font-size: clamp(46px, 9.4vw, 66px); line-height: 1.42; }
+  .v2-section-heading h2 { font-size: clamp(39px, 8vw, 59px); }
+  .v2-brand .brand-copy strong { font-size: 24px; }
+}
+@media (max-width: 420px) {
+  .v2-hero h1 { font-size: clamp(41px, 10.2vw, 48px); }
+  .spotlight-details h3 { font-size: 31px; }
+}

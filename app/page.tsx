@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import {ArrowUpLeft,CheckCircle2,ChevronLeft,ClipboardCheck,Headset,Layers3,Paintbrush2,ScanLine,ShoppingBag,Stars,UploadCloud} from 'lucide-react';
-import {storeCategories,mainCategories} from '@/lib/store';
+import {storeCategories,mainCategories,cmsPage} from '@/lib/store';
 import {CategorySpotlight,CollectionRail} from '@/components/showcase';
 import HeroExperience from '@/components/hero-experience';
 import {Reveal,WordReveal,PosterParallax} from '@/components/scroll-experience';
@@ -11,8 +11,8 @@ const journey=[
  {step:'۰۲',title:'سفارشی کن',sub:'ابعاد، جنس، متن و جزئیات چاپ رو به سلیقه خودت مشخص کن.',icon:Paintbrush2},
  {step:'۰۳',title:'تأیید کن',sub:'مشخصات رو بازبینی کن و سفارش یا درخواست استعلام رو ثبت کن.',icon:ClipboardCheck}
 ];
-export default async function Home(){const categories=mainCategories(await storeCategories());return <div className="expressive-home">
- <HeroExperience/>
+export default async function Home(){const [allCategories,hero]=await Promise.all([storeCategories(),cmsPage('home')]);const categories=mainCategories(allCategories);return <div className="expressive-home">
+ <HeroExperience headline={hero?.title} description={hero?.body}/>
  <div className="expressive-ribbon" aria-label="گروه محصولات چاپی"><div className="expressive-ribbon-track" aria-hidden="true">CREATIVE PRINT ✳ LARGE FORMAT ✳ BRAND MATERIALS ✳ SIGNAGE ✳ BESPOKE PRINT ✳ چاپ با شخصیت ✳ CREATIVE PRINT ✳ LARGE FORMAT ✳ BRAND MATERIALS ✳ SIGNAGE ✳ BESPOKE PRINT ✳ چاپ با شخصیت ✳</div></div>
  <section className="expressive-intro" aria-labelledby="expressive-intro-title"><div className="container expressive-intro-inner">
    <Reveal className="expressive-intro-header"><span className="atelier-label">01 / WHAT WE PRINT</span><h2 id="expressive-intro-title">ما فقط محصول چاپ نمی‌کنیم.<br/><em>ما به ایده‌ها شکل می‌دیم.</em></h2></Reveal>

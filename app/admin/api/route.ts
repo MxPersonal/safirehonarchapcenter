@@ -3,6 +3,7 @@ import {randomUUID} from 'node:crypto';
 import {revalidatePath} from 'next/cache';
 import {validAdminSession} from '@/lib/admin/credentials';
 import {adminDatabase} from '@/lib/admin/server-db';
+import {starterCategories,starterProducts,starterPages} from '@/lib/starter-content';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -24,7 +25,8 @@ function safeError(err:{code?:string;message?:string}|null|undefined){
 }
 async function allowed(){return validAdminSession()}
 async function queryAll(){
- const db=adminDatabase();if(!db)return {error:'اتصال سرور مدیریت به Supabase کامل نیست. متغیر SUPABASE_SECRET_KEY یا SUPABASE_SERVICE_ROLE_KEY و SUPABASE_URL لازم است.'};
+ const starter={categories:starterCategories,products:starterProducts,pages:starterPages};
+ const db=adminDatabase();if(!db)return {categories:[],products:[],pages:[],customers:[],carts:[],orders:[],quotes:[],starter,warnings:['اتصال مدیریتی دیتابیس آماده نیست؛ محتواهای فعلی سایت را می‌بینید، ولی برای ذخیره باید اتصال خصوصی Supabase کامل شود.']};
  const jobs = [
   db.from('categories').select('*').order('sort_order').limit(500),
   db.from('products').select('*').order('created_at',{ascending:false}).limit(500),
@@ -38,11 +40,11 @@ async function queryAll(){
  const keys=['categories','products','pages','customers','carts','orders','quotes'] as const;
  const out:Record<string,unknown>={};const warnings:string[]=[];
  keys.forEach((key,i)=>{out[key]=data[i].data||[];if(data[i].error)warnings.push(`${key}: ${safeError(data[i].error)}`)});
- return {...out,warnings};
+ return {...out,warnings,starter};
 }
 export async function GET(){
  if(!await allowed())return json({error:'ورود مدیریت معتبر نیست'},401);
- try {const data=await queryAll();return json(data,'error' in data?503:200)} catch {return json({error:'ارتباط دیتابیس برقرار نشد. اتصال Supabase را بررسی کنید.'},503)}
+ try {const data=await queryAll();return json(data)} catch {return json({error:'ارتباط دیتابیس برقرار نشد. اتصال Supabase را بررسی کنید.'},503)}
 }
 
 async function upload(req:NextRequest){
@@ -63,6 +65,48 @@ async function upload(req:NextRequest){
  return json({url:db.storage.from('public-catalog').getPublicUrl(path).data.publicUrl});
 }
 
+/** Explicit, idempotent import: no content in the database is overwritten.
+ * Existing slug records, admin edits, prices, and customer records are preserved. */
+async function importCurrentSite(){
+ const db=adminDatabase();if(!db)return json({error:'اتصال مدیریتی Supabase در Vercel کامل نیست.'},503);
+ // Preflight BEFORE writing anything: prevents half-imports on an absent migration.
+ const checks=await Promise.all([
+  db.from('categories').select('id,slug,parent_id').limit(1),
+  db.from('products').select('id,slug,category_id').limit(1),
+  db.from('site_pages').select('slug,title').limit(1),
+ ]);
+ const failure=checks.find(check=>check.error);
+ if(failure)return json({error:`ابتدا Migrationهای فروشگاه و دسته‌بندی را اجرا کنید: ${safeError(failure.error)}`},409);
+ const primary=starterCategories.filter(x=>!x.parent_slug);
+ const first=await db.from('categories').upsert(primary.map(({parent_slug,...row})=>({...row,parent_id:null})),{onConflict:'slug',ignoreDuplicates:true});
+ if(first.error)return json({error:`ثبت دسته‌های اصلی: ${safeError(first.error)}`},409);
+ const loaded=await db.from('categories').select('id,slug');
+ if(loaded.error||!loaded.data)return json({error:`خواندن شناسه‌های دسته‌ها: ${safeError(loaded.error)}`},409);
+ const bySlug=new Map(loaded.data.map(x=>[x.slug,x.id]));
+ const child=starterCategories.filter(x=>x.parent_slug).map(({parent_slug,...row})=>({
+   ...row,parent_id:bySlug.get(parent_slug!)||null,
+ }));
+ if(child.some(x=>!x.parent_id))return json({error:'شناسه والد بعضی زیرمجموعه‌ها موجود نیست.'},409);
+ const second=await db.from('categories').upsert(child,{onConflict:'slug',ignoreDuplicates:true});
+ if(second.error)return json({error:`ثبت زیرمجموعه‌ها: ${safeError(second.error)}`},409);
+ const loadedChildren=await db.from('categories').select('id,slug');
+ if(loadedChildren.error||!loadedChildren.data)return json({error:`خواندن زیرمجموعه‌ها: ${safeError(loadedChildren.error)}`},409);
+ const allSlugs=new Map(loadedChildren.data.map(x=>[x.slug,x.id]));
+ const items=starterProducts.map(({category_slug,showcase_code,sort_order,...product})=>({
+   ...product,description:`${showcase_code} | ${product.description}`,category_id:allSlugs.get(category_slug)||null,
+ }));
+ if(items.some(x=>!x.category_id))return json({error:'برخی دسته‌های طرح‌ها در دیتابیس پیدا نشدند.'},409);
+ const imported=await db.from('products').upsert(items,{onConflict:'slug',ignoreDuplicates:true});
+ if(imported.error)return json({error:`ثبت نمونه‌طرح‌ها: ${safeError(imported.error)}`},409);
+ // Do not overwrite CMS pages that the owner has already customized.
+ // The untouched multi-line hero remains as designed until the owner edits it.
+ const info=await db.from('site_pages').upsert(starterPages.filter(p=>p.slug!=='home'),{onConflict:'slug',ignoreDuplicates:true});
+ if(info.error)return json({error:`ثبت صفحات اطلاعاتی: ${safeError(info.error)}`},409);
+ revalidatePath('/');revalidatePath('/catalog');revalidatePath('/designs');
+ for(const p of starterPages){revalidatePath('/'+p.slug)}
+ return json({ok:true,summary:`دسته‌ها (${starterCategories.length})، نمونه‌طرح‌ها (${starterProducts.length}) و محتوای صفحات با دیتابیس همگام شدند. موارد موجود و تنظیمات قبلی بازنویسی نشدند.`});
+}
+
 export async function POST(req:NextRequest){
  if(!await allowed())return json({error:'ابتدا با حساب مدیریت وارد شوید.'},401);
  const origin=req.headers.get('origin');if(!origin||origin!==new URL(req.url).origin)return json({error:'درخواست خارج از سایت مجاز نیست.'},403);
@@ -74,6 +118,7 @@ export async function POST(req:NextRequest){
  try {payload=await req.json();} catch {return json({error:'فرمت درخواست معتبر نیست.'},400)}
  const db=adminDatabase();if(!db)return json({error:'کلید اتصال اختصاصی Supabase در سرور تنظیم نشده است.'},503);
  const action=s(payload.action,40);
+ if(action==='importCurrentSite')return importCurrentSite();
  const value=payload.value && typeof payload.value==='object'&&!Array.isArray(payload.value)?payload.value as Record<string,unknown>:{};
  const id=s(payload.id,40);
  let error: {message:string;code?:string}|null=null;

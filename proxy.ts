@@ -6,7 +6,7 @@ export async function proxy(request:NextRequest){
  if(!url||!key)return response;
  const client=createServerClient(url,key,{cookies:{
    getAll(){return request.cookies.getAll()},
-   setAll(items){items.forEach(({name,value})=>request.cookies.set(name,value));response=NextResponse.next({request});items.forEach(({name,value,options})=>response.cookies.set(name,value,options))}
+   setAll(items:Array<{name:string;value:string;options?:any}>){items.forEach(({name,value})=>request.cookies.set(name,value));response=NextResponse.next({request});items.forEach(({name,value,options})=>response.cookies.set(name,value,options))}
  }});
  await client.auth.getClaims();return response;
 }

@@ -1,9 +1,9 @@
 import 'server-only';
 import {createHash, createHmac, scrypt as scryptCallback, timingSafeEqual} from 'node:crypto';
-import {promisify} from 'node:util';
 import {cookies} from 'next/headers';
 
-const scrypt = promisify(scryptCallback);
+const derive = (password: string, salt: Buffer, keyLength: number): Promise<Buffer> =>
+  new Promise((resolve, reject) => scryptCallback(password, salt, keyLength, PARAMS, (error, result) => error ? reject(error) : resolve(result)));
 const COOKIE = 'safir_admin_session';
 const SESSION_SECONDS = 60 * 60 * 8;
 const PARAMS = {N: 32768, r: 8, p: 1, maxmem: 64 * 1024 * 1024};
@@ -35,7 +35,7 @@ export async function matchesAdminPassword(password: string): Promise<boolean> {
       saltHex.length !== 32 || !/^[a-f\d]+$/i.test(saltHex) || expectedHex.length !== 128 ||
       !/^[a-f\d]+$/i.test(expectedHex) || password.length > 1024) return false;
   const expected = Buffer.from(expectedHex, 'hex');
-  const actual = (await scrypt(password, Buffer.from(saltHex, 'hex'), expected.length, PARAMS)) as Buffer;
+  const actual = await derive(password, Buffer.from(saltHex, 'hex'), expected.length);
   return timingSafeEqual(actual, expected);
 }
 

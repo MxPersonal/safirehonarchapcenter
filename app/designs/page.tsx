@@ -1,0 +1,3 @@
+import type {Metadata} from 'next';import DesignCatalog from '@/components/design-catalog';
+export const metadata:Metadata={title:'گالری طرح‌ها',description:'نمونه‌طرح‌های چاپ سفیر هنر برای تسلیت، تولد، زیارت، افتتاحیه و مناسبت‌ها.'};
+export default function Designs(){return <><section className="page-banner"><div className="container"><span className="section-label">DISCOVER / PRINT CONCEPTS</span><h1>گالری <em>طرح‌ها</em></h1><p>طرحی برای حال‌وهوای شما. نمونه‌ها برای نمایش سبک‌ها هستند و امکان اجرای نهایی پس از بررسی مشخص می‌شود.</p></div></section><div className="container page-content"><DesignCatalog/></div></>}

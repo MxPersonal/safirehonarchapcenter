@@ -8,7 +8,7 @@ export async function serverDb(){
  const store=await cookies();
  return createServerClient(url,key,{cookies:{
   getAll(){return store.getAll()},
-  setAll(items){try{items.forEach(({name,value,options})=>store.set(name,value,options))}catch{/* Server Component read-only cookie store: handled by proxy. */}}
+  setAll(items:Array<{name:string;value:string;options?:any}>){try{items.forEach(({name,value,options})=>store.set(name,value,options))}catch{/* Server Component read-only cookie store: handled by proxy. */}}
  }});
 }
 export async function currentCustomer(){const db=await serverDb();if(!db)return {db:null,user:null,profile:null};

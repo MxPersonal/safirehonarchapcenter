@@ -33,7 +33,7 @@ async function queryAll(){
   db.from('site_pages').select('slug,title,body').limit(20),
   db.from('profiles').select('id,display_name,email,role').limit(500),
   db.from('carts').select('id,user_id,cart_items(id,product_id,quantity,notes)').limit(500),
-  db.from('orders').select('id,user_id,status,total_toman,created_at').order('created_at',{ascending:false}).limit(500),
+  db.from('orders').select('id,user_id,status,total_toman,admin_note,created_at,order_items(id,title,quantity,unit_price_toman,notes)').order('created_at',{ascending:false}).limit(500),
   db.from('quotes').select('id,user_id,title,details,status,response').order('created_at',{ascending:false}).limit(500),
  ];
  const data=await Promise.all(jobs);
@@ -65,46 +65,61 @@ async function upload(req:NextRequest){
  return json({url:db.storage.from('public-catalog').getPublicUrl(path).data.publicUrl});
 }
 
-/** Explicit, idempotent import: no content in the database is overwritten.
- * Existing slug records, admin edits, prices, and customer records are preserved. */
+
+/** Import originals without ever overwriting user-created categories, products, images, prices or pages.
+ * Failures are reported per record. Phases are dependency-ordered and batched to limit latency. */
 async function importCurrentSite(){
- const db=adminDatabase();if(!db)return json({error:'اتصال مدیریتی Supabase در Vercel کامل نیست.'},503);
- // Preflight BEFORE writing anything: prevents half-imports on an absent migration.
+ const db=adminDatabase();if(!db)return json({error:'کلید مدیریت Supabase تنظیم نشده است.'},503);
  const checks=await Promise.all([
   db.from('categories').select('id,slug,parent_id').limit(1),
   db.from('products').select('id,slug,category_id').limit(1),
-  db.from('site_pages').select('slug,title').limit(1),
+  db.from('site_pages').select('slug,title,body').limit(1)
  ]);
- const failure=checks.find(check=>check.error);
- if(failure)return json({error:`ابتدا Migrationهای فروشگاه و دسته‌بندی را اجرا کنید: ${safeError(failure.error)}`},409);
- const primary=starterCategories.filter(x=>!x.parent_slug);
- const first=await db.from('categories').upsert(primary.map(({parent_slug,...row})=>({...row,parent_id:null})),{onConflict:'slug',ignoreDuplicates:true});
- if(first.error)return json({error:`ثبت دسته‌های اصلی: ${safeError(first.error)}`},409);
- const loaded=await db.from('categories').select('id,slug');
- if(loaded.error||!loaded.data)return json({error:`خواندن شناسه‌های دسته‌ها: ${safeError(loaded.error)}`},409);
- const bySlug=new Map(loaded.data.map(x=>[x.slug,x.id]));
- const child=starterCategories.filter(x=>x.parent_slug).map(({parent_slug,...row})=>({
-   ...row,parent_id:bySlug.get(parent_slug!)||null,
- }));
- if(child.some(x=>!x.parent_id))return json({error:'شناسه والد بعضی زیرمجموعه‌ها موجود نیست.'},409);
- const second=await db.from('categories').upsert(child,{onConflict:'slug',ignoreDuplicates:true});
- if(second.error)return json({error:`ثبت زیرمجموعه‌ها: ${safeError(second.error)}`},409);
- const loadedChildren=await db.from('categories').select('id,slug');
- if(loadedChildren.error||!loadedChildren.data)return json({error:`خواندن زیرمجموعه‌ها: ${safeError(loadedChildren.error)}`},409);
- const allSlugs=new Map(loadedChildren.data.map(x=>[x.slug,x.id]));
- const items=starterProducts.map(({category_slug,showcase_code,sort_order,...product})=>({
-   ...product,description:`${showcase_code} | ${product.description}`,category_id:allSlugs.get(category_slug)||null,
- }));
- if(items.some(x=>!x.category_id))return json({error:'برخی دسته‌های طرح‌ها در دیتابیس پیدا نشدند.'},409);
- const imported=await db.from('products').upsert(items,{onConflict:'slug',ignoreDuplicates:true});
- if(imported.error)return json({error:`ثبت نمونه‌طرح‌ها: ${safeError(imported.error)}`},409);
- // Do not overwrite CMS pages that the owner has already customized.
- // The untouched multi-line hero remains as designed until the owner edits it.
- const info=await db.from('site_pages').upsert(starterPages.filter(p=>p.slug!=='home'),{onConflict:'slug',ignoreDuplicates:true});
- if(info.error)return json({error:`ثبت صفحات اطلاعاتی: ${safeError(info.error)}`},409);
- revalidatePath('/');revalidatePath('/catalog');revalidatePath('/designs');
- for(const p of starterPages){revalidatePath('/'+p.slug)}
- return json({ok:true,summary:`دسته‌ها (${starterCategories.length})، نمونه‌طرح‌ها (${starterProducts.length}) و محتوای صفحات با دیتابیس همگام شدند. موارد موجود و تنظیمات قبلی بازنویسی نشدند.`});
+ const names=['دسته‌بندی‌ها','محصولات','صفحات'];
+ const broken=checks.findIndex(c=>c.error);
+ if(broken>=0)return json({error:'ساختار '+names[broken]+' ناقص است: '+safeError(checks[broken].error)+'. ابتدا Migration را در پایگاه داده همین سایت اجرا کنید.'},409);
+ const existing=await Promise.all([db.from('categories').select('id,slug'),db.from('products').select('slug'),db.from('site_pages').select('slug')]);
+ if(existing.some(x=>x.error))return json({error:'خواندن فهرست محتوای فعلی دیتابیس با خطا روبه‌رو شد.'},409);
+ const bySlug=new Map((existing[0].data||[]).map(c=>[c.slug,c.id]));
+ const productSlugs=new Set((existing[1].data||[]).map(p=>p.slug));
+ const pageSlugs=new Set((existing[2].data||[]).map(p=>p.slug));
+ const progress={categories:{added:0,existing:0,failed:0},products:{added:0,existing:0,failed:0},pages:{added:0,existing:0,failed:0}};
+ const failed:Array<{kind:string;slug:string;reason:string}>=[];
+ const batch=async <T,>(items:T[],fn:(item:T)=>Promise<void>)=>{for(let i=0;i<items.length;i+=5)await Promise.all(items.slice(i,i+5).map(fn))};
+ const roots=starterCategories.filter(c=>!c.parent_slug),children=starterCategories.filter(c=>c.parent_slug);
+ for(const phase of [roots,children]) await batch(phase,async c=>{
+   if(bySlug.has(c.slug)){progress.categories.existing++;return;}
+   const parent_id=c.parent_slug?bySlug.get(c.parent_slug):null;
+   if(c.parent_slug&&!parent_id){progress.categories.failed++;failed.push({kind:'دسته',slug:c.slug,reason:'دسته والد یافت نشد: '+c.parent_slug});return;}
+   const {parent_slug,...row}=c;
+   const out=await db.from('categories').upsert({...row,parent_id},{onConflict:'slug',ignoreDuplicates:true}).select('id,slug').maybeSingle();
+   if(out.error){progress.categories.failed++;failed.push({kind:'دسته',slug:c.slug,reason:safeError(out.error)||'خطای نامشخص'});return;}
+   if(out.data){bySlug.set(c.slug,out.data.id);progress.categories.added++;}
+   else{const check=await db.from('categories').select('id').eq('slug',c.slug).maybeSingle();
+    if(check.data){bySlug.set(c.slug,check.data.id);progress.categories.existing++;}
+    else{progress.categories.failed++;failed.push({kind:'دسته',slug:c.slug,reason:safeError(check.error)||'بعد از ذخیره پیدا نشد'});}
+   }
+ });
+ await batch(starterProducts,async p=>{
+  if(productSlugs.has(p.slug)){progress.products.existing++;return;}
+  const category_id=bySlug.get(p.category_slug);
+  if(!category_id){progress.products.failed++;failed.push({kind:'محصول',slug:p.slug,reason:'دسته محصول هنوز ثبت نشده است: '+p.category_slug});return;}
+  const {category_slug,showcase_code,sort_order,...row}=p;
+  const out=await db.from('products').upsert({...row,category_id,description:showcase_code+' | '+row.description},{onConflict:'slug',ignoreDuplicates:true}).select('slug').maybeSingle();
+  if(out.error){progress.products.failed++;failed.push({kind:'محصول',slug:p.slug,reason:safeError(out.error)||'خطای نامشخص'});return;}
+  progress.products[out.data?'added':'existing']++;
+ });
+ await batch(starterPages.filter(p=>p.slug!=='home'),async p=>{
+  if(pageSlugs.has(p.slug)){progress.pages.existing++;return;}
+  const out=await db.from('site_pages').upsert(p,{onConflict:'slug',ignoreDuplicates:true}).select('slug').maybeSingle();
+  if(out.error){progress.pages.failed++;failed.push({kind:'صفحه',slug:p.slug,reason:safeError(out.error)||'خطای نامشخص'});return;}
+  progress.pages[out.data?'added':'existing']++;
+ });
+ revalidatePath('/');revalidatePath('/catalog');revalidatePath('/designs');revalidatePath('/services');
+ for(const p of starterPages)revalidatePath('/'+p.slug);
+ return json({ok:failed.length===0,partial:failed.length>0,progress,failed,summary:failed.length?
+   'همگام‌سازی ناقص است؛ علت خطای هر مورد در گزارش زیر مشخص شده و تغییرات قبلی حفظ شده‌اند.':
+   'محتوای باقی‌مانده همگام شد؛ محتوای قبلی، عکس‌ها و قیمت‌ها تغییر نکردند.'});
 }
 
 export async function POST(req:NextRequest){
@@ -176,6 +191,11 @@ export async function POST(req:NextRequest){
    if(!uuid(id)||!orderStates.includes(s(value.status,40)))return json({error:'شناسه یا وضعیت سفارش صحیح نیست.'},400);
    const r=await db.from('orders').update({status:value.status}).eq('id',id).select('user_id').single();error=r.error;changed=r.data;
    if(!error&&r.data)await db.from('audit_logs').insert({target_user_id:r.data.user_id,entity:'order',entity_id:id,action:'ADMIN_STATUS',after_data:{status:value.status}});
+  }else if(action==='orderNote'){
+   if(!uuid(id))return json({error:'شناسه سفارش نامعتبر است.'},400);
+   const note=s(value.note,2000);
+   const out=await db.from('orders').update({admin_note:note}).eq('id',id).select('user_id').single();error=out.error;changed=out.data;
+   if(!error&&out.data)await db.from('audit_logs').insert({target_user_id:out.data.user_id,entity:'order',entity_id:id,action:'ADMIN_NOTE',after_data:{note}});
   }else if(action==='quote'){
    if(!uuid(id))return json({error:'شناسه درخواست نامعتبر است.'},400);
    const field=s(value.field,20);if(!['status','response'].includes(field))return json({error:'نوع ویرایش صحیح نیست.'},400);

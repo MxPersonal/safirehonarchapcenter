@@ -69,3 +69,25 @@ The provided artworks are **concept examples**, not real printed product photos.
 - Verify quote and fixed price mode boundaries / server-side price snapshots
 - Verify keyboard, 390px/768px/1440px layouts, large type, form errors, reduced motion
 - Verify domains, phone, pricing, opening hours and business policies prior to launch
+
+## Product-type categories and customer registration (October 2026 update)
+
+The public homepage and `/catalog` show **top-level product families** (banner, brochure, business card, signboards/raised letters, stickers/labels, flyers, packaging and exhibitions), not banner occasions. `/catalog/banner` shows the child categories (condolence, birthday, pilgrimage, occasions, advertising), which open under their own URLs. The same parent/child structure is editable in the Admin > Categories form. Admins may attach products to a parent or subcategory. Sample designs on disconnected deployments are illustrative only.
+
+Registration and login now have distinct public routes:
+
+- `/register`: create a customer account using email and password, accept legal terms.
+- `/login`: sign in after registration (and email confirmation if required).
+- `/account`: protected customer dashboard for saved cart, orders and quotes.
+- `/admin`: protected staff access requiring the **admin** role in the Supabase `profiles` table.
+- `/order`: authenticated quotation request; fixed-price products post to `/api/cart` only for signed-in customers.
+
+Before the customer forms can perform real signups or orders, you **must** configure the Supabase environment variables shown in `.env.example` in Vercel and run both SQL migrations in `supabase/migrations` in order. The second migration adds `parent_id` to `categories` and seeds only missing product families. Existing customer and order IDs remain unchanged.
+
+In Supabase Dashboard > Authentication, enable Email/Password and configure confirmation emails. For an SSR-compatible confirmation link set the **Confirm signup** email template link to:
+
+`{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
+
+Set Site URL to the actual deployed site, and configure allowed redirects for the canonical domain. Enable email verification before accepting live customers. `/auth/confirm` verifies the token and redirects to `/login` for a deliberate login step.
+
+With missing backend settings, the pages render safely but signup and persisted ordering cannot work. There is no public admin test account, sample password, fabricated order, or live payment service. Payment integration requires separate work.

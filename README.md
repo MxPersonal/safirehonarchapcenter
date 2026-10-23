@@ -18,7 +18,7 @@ npm run typecheck
 npm run build
 ```
 
-Without Supabase settings, the public **visual portfolio/gallery remains available** with clearly labeled fictional showcase examples. Auth, admin, saved carts/orders/quotes require a configured Supabase project and migration.
+Without Supabase settings, the public **visual portfolio/gallery remains available** with clearly labeled fictional showcase examples. Customer auth and persisted carts/orders/quotes need Supabase. Admin login requires only `ADMIN_EMAIL` and `ADMIN_PASSWORD`; live CMS operations also require a server-only Supabase key and the storefront schema.
 
 ## Database configuration
 
@@ -27,8 +27,8 @@ Without Supabase settings, the public **visual portfolio/gallery remains availab
 3. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` using Supabase > Connect > API Keys. These values are public by design. **Never deploy a service-role or secret key to the browser.**
 4. Configure the Auth Site URL and Redirect URL matching your real HTTPS domain.
 5. Register an account through `/account/login` and **verify ownership** of the email.
-6. In the private SQL Editor, promote only your verified account to admin using the carefully scoped example at the bottom of the migration. Never expose an admin-registration endpoint.
-7. Visit `/admin` to create categories, upload category images to the RLS-restricted `public-catalog` storage bucket, add products (either `fixed` or `quote`), and edit pages.
+6. For **admin login**, configure the two Vercel variables `ADMIN_EMAIL` and `ADMIN_PASSWORD`. You do not need to promote a Supabase customer to admin for this independent login.
+7. For **admin CMS data access**, configure server-only `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (or legacy `SUPABASE_SERVICE_ROLE_KEY`) in Vercel. The API at `/admin/api` checks the signed administrator session before privileged reads/writes. Visit `/admin` to edit categories, products, images, homepage Hero and content pages. See `ADMIN-CMS.md`.
 8. Update official business information, approved policies and pricing. Do not publish placeholder operational claims as facts.
 9. Put environment values into Vercel > Project Settings > Environment Variables, then redeploy.
 
@@ -46,7 +46,7 @@ Without Supabase settings, the public **visual portfolio/gallery remains availab
 
 **This is not yet a live paid checkout.** Fixed-price carts create `pending_review` orders via a database RPC using prices re-read server-side. The app does not collect payments, issue payment links, promise delivery times, allocate inventory, or sync shipping logistics. Before enabling payment, add a regulated gateway integration, order/payment verification, idempotent callbacks, robust refund policy, consent/privacy content, storage/media validation, and E2E tests.
 
-Admin cart edits and manually added orders run under server-enforced Supabase RLS and emit audit logs. The customer dashboard can see when an admin modified their cart. For a production rollout, add customer notification and a reason code for every material change to a confirmed order, and consider immutable accounting ledgers.
+Admin cart edits and manually added orders use the protected server API with a privileged key and attempt to create audit log records. The customer dashboard can see when an admin modified their cart. For a production rollout, add customer notification and a reason code for every material change to a confirmed order, and consider immutable accounting ledgers.
 
 The provided artworks are **concept examples**, not real printed product photos. Real product/price/delivery information must be entered by an authorized business operator. Upload only assets you own or are licensed to use.
 
@@ -54,7 +54,7 @@ The provided artworks are **concept examples**, not real printed product photos.
 
 ## Security design
 - Supabase browser clients use only the publishable key, RLS on every application table.
-- Admin role is server-verified; SQL RLS checks admin authorization on every admin write.
+- Admin access uses a signed server session derived from `ADMIN_EMAIL` / `ADMIN_PASSWORD`. Admin CMS data mutations use a server-only privileged Supabase client after authorization, not a browser client. Customer access remains RLS restricted.
 - Customer records and carts are private to their owner and admins; no public user enumeration.
 - No payment amounts accepted from browsers at checkout; `checkout_fixed_cart` prices items from product records within a DB transaction.
 - `/admin` renders no public admin dashboard or seeded passwords when the backend is absent.
@@ -79,7 +79,7 @@ Registration and login now have distinct public routes:
 - `/register`: create a customer account using email and password, accept legal terms.
 - `/login`: sign in after registration (and email confirmation if required).
 - `/account`: protected customer dashboard for saved cart, orders and quotes.
-- `/admin`: protected staff access requiring the **admin** role in the Supabase `profiles` table.
+- `/admin`: protected staff access requiring a valid signed admin session; **not** a Supabase Auth admin user.
 - `/order`: authenticated quotation request; fixed-price products post to `/api/cart` only for signed-in customers.
 
 Before the customer forms can perform real signups or orders, you **must** configure the Supabase environment variables shown in `.env.example` in Vercel and run both SQL migrations in `supabase/migrations` in order. The second migration adds `parent_id` to `categories` and seeds only missing product families. Existing customer and order IDs remain unchanged.
@@ -108,6 +108,6 @@ The dedicated login is at `/admin/login`, while customer login and signup remain
 4. Open `/admin/login`, enter the same email and password, and you will be redirected to `/admin` on successful sign-in. No Supabase administrator account, role assignment, password-hash generator, or third admin environment variable is needed.
 5. Use **خروج از مدیریت** to sign out. The server checks a signed 8-hour `HttpOnly`, `SameSite=Strict` admin session. Changing the password and redeploying invalidates old sessions.
 
-**Important separation:** This change fully enables *admin login* with only two values. It does **not** turn Supabase's client-side RLS-protected CRUD operations into a new authorized database integration. Managing real products, customers, carts and orders still requires a secure server-side bridge with independently configured database permissions. Until then, an authenticated administrator sees an explanatory dashboard rather than an unsafe or misleading editable CMS. Customer authentication continues to use Supabase separately.
+**Important separation:** Admin login still needs only `ADMIN_EMAIL` and `ADMIN_PASSWORD`. The CMS bridge is now implemented at `/admin/api`, but real database operations also require server-only `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (or the legacy service-role key) and the two database migrations. The admin dashboard reports missing tables or credentials. Customer authentication continues to use Supabase independently. See `ADMIN-CMS.md`.
 
 **Security note:** Since Vercel stores the password value as configured, choose a long unique password, use Vercel's Sensitive setting, and apply an appropriate WAF/rate limit to `/admin/login` before commercial use. Invalid credentials and missing configuration fail closed. There is no in-process rate limiter reliable across Vercel instances.

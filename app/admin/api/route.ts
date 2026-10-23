@@ -130,14 +130,14 @@ export async function POST(req:NextRequest){
   }else if(action==='orderStatus'){
    if(!uuid(id)||!orderStates.includes(s(value.status,40)))return json({error:'شناسه یا وضعیت سفارش صحیح نیست.'},400);
    const r=await db.from('orders').update({status:value.status}).eq('id',id).select('user_id').single();error=r.error;changed=r.data;
-   if(!error)await db.from('audit_logs').insert({target_user_id:r.data.user_id,entity:'order',entity_id:id,action:'ADMIN_STATUS',after_data:{status:value.status}});
+   if(!error&&r.data)await db.from('audit_logs').insert({target_user_id:r.data.user_id,entity:'order',entity_id:id,action:'ADMIN_STATUS',after_data:{status:value.status}});
   }else if(action==='quote'){
    if(!uuid(id))return json({error:'شناسه درخواست نامعتبر است.'},400);
    const field=s(value.field,20);if(!['status','response'].includes(field))return json({error:'نوع ویرایش صحیح نیست.'},400);
    const update=field==='status'?{status:s(value.text,30)}:{response:s(value.text,5000)};
    if(field==='status'&&!quoteStates.includes(update.status||''))return json({error:'وضعیت درخواست نامعتبر است.'},400);
    const r=await db.from('quotes').update(update).eq('id',id).select('user_id').single();error=r.error;changed=r.data;
-   if(!error)await db.from('audit_logs').insert({target_user_id:r.data.user_id,entity:'quote',entity_id:id,action:'ADMIN_EDIT',after_data:update});
+   if(!error&&r.data)await db.from('audit_logs').insert({target_user_id:r.data.user_id,entity:'quote',entity_id:id,action:'ADMIN_EDIT',after_data:update});
   } else return json({error:'عملیات مدیریت ناشناخته است.'},400);
   if(error)return json({error:safeError(error)},400);
   revalidatePath('/');revalidatePath('/catalog');revalidatePath('/about');revalidatePath('/contact');revalidatePath('/terms');revalidatePath('/privacy');

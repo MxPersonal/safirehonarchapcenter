@@ -38,6 +38,11 @@ export async function storeCategories():Promise<StoreCategory[]>{
  const db=await serverDb();
  if(db){const {data,error}=await db.from('categories').select('id,slug,name,description,theme,image_url,parent_id,sort_order').eq('active',true).order('sort_order');
   if(!error&&data&&data.length)return data as StoreCategory[];
+  // Do not resurrect hidden/disabled demo categories after the first database import.
+  if(!error&&!data?.length){
+    const {count}=await db.from('categories').select('id',{count:'exact',head:true});
+    if(count && count>0)return [];
+  }
  }
  return demoCategories;
 }
@@ -60,3 +65,11 @@ export async function storeProduct(slug:string):Promise<StoreProduct|null>{
 export async function cmsPage(slug:string){const db=await serverDb();if(!db)return null;const {data}=await db.from('site_pages').select('title,body').eq('slug',slug).maybeSingle();return data as {title:string;body:string}|null;}
 export function exampleDesigns(category:string){return designs.filter(d=>d.category===category)}
 export function tomans(value:number){return new Intl.NumberFormat('fa-IR').format(value)+' تومان'}
+
+/** Returns null only when Supabase is unconfigured or the products table is unavailable.
+ * An empty array means the database exists, but no active product is published. */
+export async function storeGalleryProducts():Promise<StoreProduct[]|null>{
+ const db=await serverDb();if(!db)return null;
+ const {data,error}=await db.from('products').select('id,slug,name,description,category_id,image_url,mode,price_toman,active').eq('active',true).order('created_at',{ascending:false}).limit(200);
+ return error?null:data as StoreProduct[];
+}

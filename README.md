@@ -92,16 +92,22 @@ Set Site URL to the actual deployed site, and configure allowed redirects for th
 
 With missing backend settings, the pages render safely but signup and persisted ordering cannot work. There is no public admin test account, sample password, fabricated order, or live payment service. Payment integration requires separate work.
 
-## Dedicated admin login controlled by Vercel Environment Variables
+## Simple administrator login (two Vercel environment variables)
 
-The administrator has a **separate** login page at `/admin/login`. The customer login at `/login` and registration at `/register` remain unchanged.
+The dedicated login is at `/admin/login`, while customer login and signup remain at `/login` and `/register`.
 
-1. Set up Supabase Auth and run the migrations as described above. Create the **one intended administrator account** with a confirmed email and a unique, strong password. In the private Supabase SQL Editor, set `profiles.role='admin'` **only** for that verified `auth.users.id` (never rely on user-supplied metadata or make public admin signup possible).
-2. Run `node scripts/generate-admin-secrets.mjs` locally in an interactive terminal. Enter **the same password** as the Supabase administrator account. The script does not print the password. It outputs `ADMIN_PASSWORD_HASH` (a salted scrypt hash) and a random `ADMIN_SESSION_SECRET`.
-3. In **Vercel > Project > Settings > Environment Variables**, set `ADMIN_EMAIL` to the confirmed admin email and paste the two generated values into `ADMIN_PASSWORD_HASH` and `ADMIN_SESSION_SECRET`. Use server-only variable names **without `NEXT_PUBLIC_`**. Do not commit any actual secret to GitHub. Set for intended environments only, preferably production and a separately secured preview environment.
-4. Redeploy after changing environment variables. Sign in at `/admin/login`, not `/login`. On success you can use `/admin`. The login requires matching configured email, Supabase password authentication, email confirmation, `profiles.role='admin'`, the server-side scrypt password check, and an 8-hour signed HttpOnly SameSite=Strict admin cookie.
-5. The “خروج امن از مدیریت” action signs out of Supabase and removes the admin session cookie. Changing `ADMIN_PASSWORD_HASH` or `ADMIN_SESSION_SECRET` invalidates previously issued admin cookies. Change the Supabase admin user's password at the same time when rotating a password. Apply changes to all environments, then redeploy.
+1. Open **Vercel → Project → Settings → Environment Variables** and set **only these credentials** for your administrator login:
 
-**Fail-closed:** Missing settings, an unconfirmed email, mismatched passwords, or a non-admin Supabase role mean the admin console remains unavailable. This configuration does **not** create a Supabase user or elevate their role automatically. Never paste the admin password, auth tokens, database credentials, or generated session secret into chat.
+   ```dotenv
+   ADMIN_EMAIL=you@example.com
+   ADMIN_PASSWORD=choose-a-strong-unique-password
+   ```
 
-**Additional operational protection:** Enable MFA for the admin account when available, apply platform-managed rate limiting/WAF to `/admin/login`, and protect Preview deployments. Supabase Auth offers some throttling, but this flow does not implement a separate distributed application-wide attempt limiter. Protect the database independently with RLS. Test a registered customer, signed-out user, expired/tampered admin cookie and wrong administrator password to confirm all are denied. **No admin access is live until Supabase and the required variables are configured.**
+2. Mark `ADMIN_PASSWORD` as **Sensitive** if available, and **do not** prefix the names with `NEXT_PUBLIC_`. Do not commit actual values to GitHub.
+3. **Redeploy** the project so Vercel's server runtime receives the new variables.
+4. Open `/admin/login`, enter the same email and password, and you will be redirected to `/admin` on successful sign-in. No Supabase administrator account, role assignment, password-hash generator, or third admin environment variable is needed.
+5. Use **خروج از مدیریت** to sign out. The server checks a signed 8-hour `HttpOnly`, `SameSite=Strict` admin session. Changing the password and redeploying invalidates old sessions.
+
+**Important separation:** This change fully enables *admin login* with only two values. It does **not** turn Supabase's client-side RLS-protected CRUD operations into a new authorized database integration. Managing real products, customers, carts and orders still requires a secure server-side bridge with independently configured database permissions. Until then, an authenticated administrator sees an explanatory dashboard rather than an unsafe or misleading editable CMS. Customer authentication continues to use Supabase separately.
+
+**Security note:** Since Vercel stores the password value as configured, choose a long unique password, use Vercel's Sensitive setting, and apply an appropriate WAF/rate limit to `/admin/login` before commercial use. Invalid credentials and missing configuration fail closed. There is no in-process rate limiter reliable across Vercel instances.

@@ -91,3 +91,17 @@ In Supabase Dashboard > Authentication, enable Email/Password and configure conf
 Set Site URL to the actual deployed site, and configure allowed redirects for the canonical domain. Enable email verification before accepting live customers. `/auth/confirm` verifies the token and redirects to `/login` for a deliberate login step.
 
 With missing backend settings, the pages render safely but signup and persisted ordering cannot work. There is no public admin test account, sample password, fabricated order, or live payment service. Payment integration requires separate work.
+
+## Dedicated admin login controlled by Vercel Environment Variables
+
+The administrator has a **separate** login page at `/admin/login`. The customer login at `/login` and registration at `/register` remain unchanged.
+
+1. Set up Supabase Auth and run the migrations as described above. Create the **one intended administrator account** with a confirmed email and a unique, strong password. In the private Supabase SQL Editor, set `profiles.role='admin'` **only** for that verified `auth.users.id` (never rely on user-supplied metadata or make public admin signup possible).
+2. Run `node scripts/generate-admin-secrets.mjs` locally in an interactive terminal. Enter **the same password** as the Supabase administrator account. The script does not print the password. It outputs `ADMIN_PASSWORD_HASH` (a salted scrypt hash) and a random `ADMIN_SESSION_SECRET`.
+3. In **Vercel > Project > Settings > Environment Variables**, set `ADMIN_EMAIL` to the confirmed admin email and paste the two generated values into `ADMIN_PASSWORD_HASH` and `ADMIN_SESSION_SECRET`. Use server-only variable names **without `NEXT_PUBLIC_`**. Do not commit any actual secret to GitHub. Set for intended environments only, preferably production and a separately secured preview environment.
+4. Redeploy after changing environment variables. Sign in at `/admin/login`, not `/login`. On success you can use `/admin`. The login requires matching configured email, Supabase password authentication, email confirmation, `profiles.role='admin'`, the server-side scrypt password check, and an 8-hour signed HttpOnly SameSite=Strict admin cookie.
+5. The “خروج امن از مدیریت” action signs out of Supabase and removes the admin session cookie. Changing `ADMIN_PASSWORD_HASH` or `ADMIN_SESSION_SECRET` invalidates previously issued admin cookies. Change the Supabase admin user's password at the same time when rotating a password. Apply changes to all environments, then redeploy.
+
+**Fail-closed:** Missing settings, an unconfirmed email, mismatched passwords, or a non-admin Supabase role mean the admin console remains unavailable. This configuration does **not** create a Supabase user or elevate their role automatically. Never paste the admin password, auth tokens, database credentials, or generated session secret into chat.
+
+**Additional operational protection:** Enable MFA for the admin account when available, apply platform-managed rate limiting/WAF to `/admin/login`, and protect Preview deployments. Supabase Auth offers some throttling, but this flow does not implement a separate distributed application-wide attempt limiter. Protect the database independently with RLS. Test a registered customer, signed-out user, expired/tampered admin cookie and wrong administrator password to confirm all are denied. **No admin access is live until Supabase and the required variables are configured.**

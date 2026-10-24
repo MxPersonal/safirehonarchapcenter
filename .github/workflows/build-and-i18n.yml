@@ -17,6 +17,8 @@ jobs:
           node-version: '22'
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+      - name: Verify native locale navigation and admin direction
+        run: node scripts/check-language-navigation.mjs
       - name: Static typecheck
         run: npm run typecheck
       - name: Production build

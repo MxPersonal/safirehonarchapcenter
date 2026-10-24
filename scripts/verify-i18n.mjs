@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 const origin=process.env.I18N_TEST_ORIGIN||'http://127.0.0.1:3100';
-const routes=['/','/catalog','/catalog/banner','/designs','/services','/guide','/order','/login','/register','/about','/contact','/terms','/privacy','/pricing','/track'];
+const routes=['/','/catalog','/catalog/banner','/designs','/services','/guide','/order','/login','/register','/about','/contact','/terms','/privacy','/pricing','/track','/admin/login'];
 function visibleText(html){const body=html.match(/<body[^>]*>([\s\S]*?)<\/body>/i)?.[1]||html;return body.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi,'').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi,'').replace(/<svg\b[^>]*>[\s\S]*?<\/svg>/gi,'').replace(/<[^>]*>/g,' ').replace(/&#\d+;|&#x[0-9a-f]+;|&[a-z]+;/gi,' ').replace(/\s+/g,' ').trim();}
 let checks=0;
 for(const suffix of routes){for(const locale of ['fa','en']){

@@ -12,7 +12,8 @@ export default async function Home(){
  const path=(s:string)=>localePath(s,locale);
  const [all,hero,products]=await Promise.all([storeCategories(locale),cmsPage('home',locale),storeGalleryProducts(locale)]);
  const categories=mainCategories(all);
- const cover=products.find(product=>product.image_url);
+ const productList=products??[];
+ const cover=productList.find(product=>product.image_url);
  const categoriesToShow=categories.slice(0,8);
  const highlights=[
   {n:'01',title:pick('انتخاب محصول','Choose a format'),body:pick('محصول و دسته‌بندی مناسب را پیدا کن.','Browse the right print category and product.'),icon:Layers3},
@@ -43,7 +44,7 @@ export default async function Home(){
    <div className="pw-categories-footer"><span>{pick('تنوع چاپ برای هر اندازه و هر نوع پروژه','Print options for projects of every size.')}</span><Link href={path('/catalog')} className="pw-underlined-link">{pick('مشاهده تمام محصولات','Browse every format')} <ArrowUpLeft size={18}/></Link></div>
   </section>
 
-  {products.length>0&&<section className="pw-featured"><div className="container pw-section"><div className="pw-section-heading"><div><span className="pw-eyebrow">02 / {pick('محصولات و نمونه‌کارها','PRODUCT SHOWCASE')}</span><h2>{pick('نگاهی نزدیک‌تر','Details make')} <em>{pick('به جزئیات.','the difference.')}</em></h2><p>{pick('همان محصولات و تصاویر منتشرشده در فروشگاه، بدون تغییر با جابه‌جایی زبان.','Real published products and their original artwork, unchanged by language selection.')}</p></div><Link href={path('/designs')} className="pw-underlined-link">{pick('مشاهده گالری','View the gallery')} <ArrowUpLeft size={19}/></Link></div><div className="pw-featured-grid">{products.slice(0,4).map(p=><ProductTile product={p} locale={locale} key={p.id}/>)}</div></div></section>}
+  {productList.length>0&&<section className="pw-featured"><div className="container pw-section"><div className="pw-section-heading"><div><span className="pw-eyebrow">02 / {pick('محصولات و نمونه‌کارها','PRODUCT SHOWCASE')}</span><h2>{pick('نگاهی نزدیک‌تر','Details make')} <em>{pick('به جزئیات.','the difference.')}</em></h2><p>{pick('همان محصولات و تصاویر منتشرشده در فروشگاه، بدون تغییر با جابه‌جایی زبان.','Real published products and their original artwork, unchanged by language selection.')}</p></div><Link href={path('/designs')} className="pw-underlined-link">{pick('مشاهده گالری','View the gallery')} <ArrowUpLeft size={19}/></Link></div><div className="pw-featured-grid">{productList.slice(0,4).map(p=><ProductTile product={p} locale={locale} key={p.id}/>)}</div></div></section>}
 
   <section className="pw-process"><div className="container pw-process-grid"><div className="pw-process-intro"><span className="pw-eyebrow">03 / {pick('ثبت سفارش بدون پیچیدگی','A SIMPLE PROCESS')}</span><h2>{pick('از ایده تا چاپ،','From idea')} <em>{pick('شفاف و دقیق.','to the final print.')}</em></h2><p>{pick('انتخاب و ثبت سفارش قرار نیست دشوار باشد. جزئیات را قدم‌به‌قدم مشخص کن و برای بررسی بفرست.','A clear order journey, from selecting your format to reviewing the details before production.')}</p><Link className="pw-button pw-button-dark" href={path('/guide')}>{pick('راهنمای فایل چاپ','Print file guide')} <ArrowUpLeft size={18}/></Link></div><div className="pw-process-steps">{highlights.map(x=><article key={x.n} className="pw-process-step"><span>{x.n}</span><div><h3>{x.title}</h3><p>{x.body}</p></div><x.icon size={27} strokeWidth={1.55}/></article>)}</div></div></section>
 

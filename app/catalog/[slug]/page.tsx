@@ -19,15 +19,15 @@ export default async function CategoryPage({params}:{params:Promise<{slug:string
  return <>
  <section className="v2-inner-head"><div className="container">
   <div className="breadcrumbs"><Link href={path('/')}>{t.home}</Link> / <Link href={path('/catalog')}>{t.categories}</Link> {parent&&<> / <Link href={path('/catalog/'+parent.slug)}>{parent.name}</Link></>} / {cat.name}</div>
-  <span className="tiny-label">{parent?'PRINT SUBCATEGORY':'PRINT PRODUCT CATEGORY'}</span>
+  <span className="tiny-label">{parent?pick('زیرگروه چاپ','PRINT SUBCATEGORY'):pick('دسته محصولات چاپی','PRINT PRODUCT CATEGORY')}</span>
   <h1>{cat.name}</h1><p>{cat.description}</p>
  </div></section>
  <div className="container category-intro"><CategoryArtwork slug={cat.slug} name={cat.name} imageUrl={cat.image_url} locale={locale}/>
-  <div><span className="tiny-label">PRODUCT TYPES / SAFIRE HONAR</span><h2>{children.length?pick('نوع محصولت رو انتخاب کن.','Choose your print format.'):pick('نمونه‌ها و محصولات','Designs and products')}</h2>
+  <div><span className="tiny-label">{pick('انواع محصولات / سفیر هنر','PRODUCT TYPES / SAFIRE HONAR')}</span><h2>{children.length?pick('نوع محصولت رو انتخاب کن.','Choose your print format.'):pick('نمونه‌ها و محصولات','Designs and products')}</h2>
   <p>{children.length?pick('در هر زیرمجموعه، طرح‌ها و انواع سفارش را به‌صورت مستقل ببین.','Explore every format, finish and print type within this collection.'):pick('نوع چاپ را انتخاب کن و اطلاعات لازم برای خرید یا درخواست استعلام را ببین.','Browse available designs and request pricing or place an order.')}</p>
   <Link href={path('/order')} className="v2-outline">{pick('فایل خودم رو دارم','I have my own artwork')} <ArrowUpLeft size={18}/></Link></div>
  </div>
- {children.length>0&&<section className="container v3-subcategories"><div className="v3-collection-heading"><div><span className="tiny-label">SUBCATEGORIES</span><h2>{pick('زیرمجموعه‌های','Explore')} {cat.name}</h2></div><span>{intlNumber(children.length,locale)} {pick('زیرمجموعه','subcategories')}</span></div>
+ {children.length>0&&<section className="container v3-subcategories"><div className="v3-collection-heading"><div><span className="tiny-label">{pick('زیرمجموعه‌ها','SUBCATEGORIES')}</span><h2>{pick('زیرمجموعه‌های','Explore')} {cat.name}</h2></div><span>{intlNumber(children.length,locale)} {pick('زیرمجموعه','subcategories')}</span></div>
  <div className="v3-subcategory-grid">{children.map(child=><Link className="v3-subcategory-card" href={path('/catalog/'+child.slug)} key={child.id}>
   <div className="v3-subcategory-preview"><CategoryArtwork slug={child.slug} name={child.name} imageUrl={child.image_url} small locale={locale}/></div>
   <div><strong>{child.name}</strong><p>{child.description}</p><span>{pick('مشاهده نمونه‌ها و سفارش','View designs and order')} <ChevronLeft size={17}/></span></div>

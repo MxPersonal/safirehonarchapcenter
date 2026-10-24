@@ -11,7 +11,7 @@ import {Reveal,PosterParallax} from '@/components/scroll-experience';
 
 export function CategoryArtwork({slug,name,imageUrl,small=false,locale='fa'}:{slug:string;name:string;imageUrl?:string|null;small?:boolean;locale?:Locale}){
  return <div className={`showcase-art expressive-art showcase-${slug} ${small?'showcase-small':''}`}>
-  {imageUrl?<img className="category-uploaded-image" src={imageUrl} alt={locale==='en'?'Sample: '+name:`نمونه ${name}`}/>:<PrintMockup slug={slug} name={name}/>}
+  {imageUrl?<img className="category-uploaded-image" src={imageUrl} alt={locale==='en'?'Sample: '+name:`نمونه ${name}`}/>:<PrintMockup slug={slug} name={name} locale={locale}/>}
  </div>
 }
 export function CategorySpotlight({category,index,locale='fa'}:{category:StoreCategory;index:number;locale?:Locale}){

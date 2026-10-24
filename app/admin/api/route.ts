@@ -172,18 +172,18 @@ export async function POST(req:NextRequest){
    const slug=s(value.slug,80),name=s(value.name,160),parent_id=value.parent_id;
    if(!SLUG.test(slug)||!name||s(value.description,5000).length>5000||parent_id && !uuid(parent_id)||id && !uuid(id))return json({error:'اطلاعات دسته‌بندی نامعتبر است.'},400);
    const theme=s(value.theme,20);
-   const row={slug,name,description:s(value.description,3000),theme:themes.includes(theme)?theme:'coral',image_url:s(value.image_url,2000)||null,parent_id:parent_id||null,sort_order:int(value.sort_order,-10000,10000)??0,active:bool(value.active)};
+   const row={slug,name,description:s(value.description,3000),theme:themes.includes(theme)?theme:'coral',name_en:s(value.name_en,160)||null,description_en:s(value.description_en,3000)||null,image_url:s(value.image_url,2000)||null,parent_id:parent_id||null,sort_order:int(value.sort_order,-10000,10000)??0,active:bool(value.active)};
    const r=id?await db.from('categories').update(row).eq('id',id).select('id').single():await db.from('categories').insert(row).select('id').single();error=r.error;changed=r.data;
   }else if(action==='saveProduct'){
    const slug=s(value.slug,80),name=s(value.name,160),mode=s(value.mode,20),category_id=value.category_id;
    const price=mode==='fixed'?int(value.price_toman,0,1_000_000_000_000):null;
    if(!SLUG.test(slug)||!name||!uuid(category_id)||!['fixed','quote'].includes(mode)||mode==='fixed'&&price===null||id&&!uuid(id))return json({error:'نام، دسته‌بندی یا قیمت محصول صحیح نیست.'},400);
-   const row={slug,name,description:s(value.description,6000),category_id,mode,price_toman:price,image_url:s(value.image_url,2000)||null,active:bool(value.active)};
+   const row={slug,name,description:s(value.description,6000),category_id,mode,price_toman:price,name_en:s(value.name_en,160)||null,description_en:s(value.description_en,5000)||null,image_url:s(value.image_url,2000)||null,active:bool(value.active)};
    const r=id?await db.from('products').update(row).eq('id',id).select('id').single():await db.from('products').insert(row).select('id').single();error=r.error;changed=r.data;
   }else if(action==='savePage'){
    const slug=s(value.slug,30),title=s(value.title,160),body=s(value.body,20000);
    if(!pages.includes(slug)||!title||!body)return json({error:'عنوان یا محتوای صفحه معتبر نیست.'},400);
-   const r=await db.from('site_pages').upsert({slug,title,body,updated_at:new Date().toISOString()},{onConflict:'slug'}).select('slug').single();error=r.error;changed=r.data;
+   const r=await db.from('site_pages').upsert({slug,title,body,title_en:s(value.title_en,160)||null,body_en:s(value.body_en,20000)||null,updated_at:new Date().toISOString()},{onConflict:'slug'}).select('slug').single();error=r.error;changed=r.data;
   }else if(action==='cartItem'){
    if(!uuid(id))return json({error:'شناسه آیتم سبد نامعتبر است.'},400);
    const quantity=int(value.quantity,0,100);if(quantity===null)return json({error:'تعداد باید بین صفر تا صد باشد.'},400);

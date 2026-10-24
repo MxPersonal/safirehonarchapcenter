@@ -2,31 +2,32 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read=(file)=>readFileSync(new URL('../'+file,import.meta.url),'utf8');
 const home=read('app/page.tsx');
-const css=read('app/studio-redesign.css');
+const css=read('app/printworks.css');
 const layout=read('app/layout.tsx');
 const admin=read('components/admin-console.tsx');
 const store=read('lib/store.ts');
 const header=read('components/header.tsx');
-
 const checks=[
- ['new hero and localized CMS title', home.includes('className="studio-hero"')&&home.includes("cmsPage('home',locale)")],
- ['purple marquee is removed, not hidden',!home.includes('CreativeMarquee')&&!home.includes('expressive-marquee-block')&&!home.includes('expressive-ribbon')],
- ['no legacy kinetic hero component',!home.includes('HeroExperience')],
- ['site product categories remain database-backed',home.includes('storeCategories(locale)')&&home.includes('mainCategories(allCategories)')],
- ['published products remain database-backed',home.includes('storeGalleryProducts(locale)')],
- ['product links stay locale-aware',home.includes("url('/catalog/'+category.slug)")],
- ['core commerce workflow preserved',home.includes("url('/order')")&&home.includes("url('/catalog')")],
- ['new theme is loaded as last layer',layout.includes("import './studio-redesign.css';")],
- ['previous purple design assets excluded',!layout.includes("import './prism-ink.css'")&&!layout.includes("import './marquee-motion.css'")],
- ['preserve original product names across languages',!store.includes("translatedFields(p,locale,'product')")],
- ['keep translated site categories',store.includes("translatedFields(c,locale,'category')")],
- ['admin includes real data overview',admin.includes('studio-admin-overview')&&admin.includes('setHasLoaded(true)')],
- ['admin quick links do not fake counts',admin.includes('products.filter(p=>p.active).length')&&admin.includes('customers.length')],
- ['bilingual switch retained',header.includes('<LanguageSwitcher compact/>')],
- ['dashboard, finance and other route styling exists',css.includes('.finance-console')&&css.includes('.admin-area-switcher')&&css.includes('.v2-catalog-card')],
- ['mobile and reduced motion supported',css.includes('@media(max-width:680px)')&&css.includes('prefers-reduced-motion:reduce')],
- ['new palette is not purple',css.includes('--studio-deep:#113d36')&&css.includes('--studio-paper:#f7f7f2')]
+ ['printworks hero with CMS-managed copy',home.includes('className="pw-hero"')&&home.includes("cmsPage('home',locale)")],
+ ['purple ticker entirely removed',!home.includes('CreativeMarquee')&&!home.includes('expressive-marquee-block')&&!home.includes('expressive-ribbon')],
+ ['legacy collage hero removed',!home.includes('HeroExperience')&&!home.includes('studio-sheet')],
+ ['site categories still Supabase-backed',home.includes('storeCategories(locale)')&&home.includes('mainCategories(all)')],
+ ['featured products still database-backed',home.includes('storeGalleryProducts(locale)')],
+ ['product/category links preserve selected locale',home.includes("path('/catalog/'+c.slug)")],
+ ['commerce/quotes preserved',home.includes("path('/order')")&&home.includes("path('/catalog')")],
+ ['single new theme loaded last',layout.includes("import './printworks.css'")&&!layout.includes("import './studio-redesign.css'")],
+ ['purple stylesheets disabled',!layout.includes("import './prism-ink.css'")&&!layout.includes("import './marquee-motion.css'")],
+ ['product data remains language-invariant',!store.includes("translatedFields(p,locale,'product')")],
+ ['category names can still be translated',store.includes("translatedFields(c,locale,'category')")],
+ ['real operations sidebar present',admin.includes('className="pw-admin-sidebar"')&&admin.includes('pw-admin-navigation')],
+ ['site and commerce navigation both present',admin.includes('siteTabs.map(')&&admin.includes('commerceTabs.map(')],
+ ['existing CRUD branches untouched',admin.includes("tab==='categories'")&&admin.includes("tab==='products'")&&admin.includes("tab==='orders'")],
+ ['real data metrics (no fake values)',admin.includes('studio-admin-overview')&&admin.includes('setHasLoaded(true)')],
+ ['full UI family styling',css.includes('.finance-console')&&css.includes('.v2-catalog-card')&&css.includes('.pw-admin-workspace')&&css.includes('.v3-auth-shell')],
+ ['mobile layout and accessibility',css.includes('@media(max-width:700px)')&&css.includes('prefers-reduced-motion:reduce')],
+ ['distinct typography and palette',css.includes('--pw-dark:#141820')&&css.includes('--pw-accent:#ef6546')],
+ ['language toggle remains',header.includes('<LanguageSwitcher compact/>')]
 ];
-for(const [label,ok] of checks){if(!ok)console.error('FAIL',label);else console.log('PASS',label);}
-assert.ok(checks.every(([,ok])=>ok),'Redesign regression detected');
-console.log('Studio 26: '+checks.length+' source-level regressions passed.');
+for(const [name,ok] of checks)console.log((ok?'PASS ':'FAIL ')+name);
+assert.ok(checks.every(([,ok])=>ok),'Printworks regression detected');
+console.log('Printworks redesign checks: '+checks.length+' passed.');

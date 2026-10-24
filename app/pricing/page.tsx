@@ -1,3 +1,5 @@
+import {siteLocale} from '@/lib/i18n-server';
 import RequestBuilder from '@/components/request-builder';
 import {siteText} from '@/lib/i18n-server';
+export async function generateMetadata(){return {title:(await siteLocale())==='en'?'Print Quote':'استعلام قیمت'}}
 export default async function Pricing(){const {pick}=await siteText();return <><section className="page-banner"><div className="container"><span className="section-label">PRINT QUOTE / TRANSPARENT PROCESS</span><h1>{pick('قیمت درست،','THE RIGHT PRICE,')} <em>{pick('با جزئیات درست','STARTS WITH THE DETAILS')}</em></h1><p>{pick('ابعاد و مشخصات را وارد کن تا درخواست استعلامی کامل و دقیق آماده شود. قیمت نهایی نیازمند تأیید مجموعه است.','Enter dimensions and materials to prepare a detailed quote request. Final pricing requires studio confirmation.')}</p></div></section><section className="section container"><RequestBuilder mode="price"/></section></>}

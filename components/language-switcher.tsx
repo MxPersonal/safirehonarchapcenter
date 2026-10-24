@@ -12,7 +12,7 @@ import {useSiteLocale} from '@/components/locale-provider';
  * middleware rewrites them to the same route: html[lang], html[dir] and the
  * root locale context can stay stale. Native anchors always reload them.
  *
- * No useSearchParams: this control renders immediately during SSR and is
+ * URL state is deliberately omitted so the control renders at first paint
  * usable before JavaScript hydration, including on the homepage and admin.
  */
 export default function LanguageSwitcher({compact=false}:{compact?:boolean}){

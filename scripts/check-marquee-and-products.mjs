@@ -8,7 +8,7 @@ const cards=read('components/showcase.tsx');
 const gallery=read('components/design-card.tsx');
 const sample=read('app/designs/[slug]/page.tsx');
 const admin=read('components/admin-artwork-preview.tsx');
-assert.ok(home.includes('className="studio-home"'),'New Studio homepage required.');
+assert.ok(home.includes('className="pw-home"'),'New Printworks homepage required.');
 assert.ok(!home.includes('<CreativeMarquee'),'The duplicated marquee must no longer render.');
 assert.ok(!home.includes('expressive-ribbon'),'The purple ribbon must no longer render.');
 assert.ok(!home.includes('HeroExperience'),'Legacy animated hero must no longer render.');

@@ -1,3 +1,4 @@
+import {siteLocale} from '@/lib/i18n-server';
 import QuoteRequest from '@/components/quote-request';
 import {redirect} from 'next/navigation';
 import {currentCustomer} from '@/lib/supabase/server';
@@ -5,6 +6,7 @@ import {Headset,Printer,CheckCheck} from 'lucide-react';
 import {siteText} from '@/lib/i18n-server';
 import {localePath} from '@/lib/i18n';
 export const dynamic='force-dynamic';
+export async function generateMetadata(){return {title:(await siteLocale())==='en'?'Custom Print Request':'سفارش چاپ اختصاصی'};}
 export default async function Order(){
  const {locale,pick}=await siteText();
  const {db,user}=await currentCustomer();

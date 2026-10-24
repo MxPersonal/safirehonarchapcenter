@@ -1,3 +1,4 @@
+import {siteLocale} from '@/lib/i18n-server';
 import Link from 'next/link';
 import {ArrowUpLeft} from 'lucide-react';
 import {storeCategories,mainCategories,childCategories} from '@/lib/store';
@@ -5,6 +6,7 @@ import {CategoryArtwork} from '@/components/showcase';
 import {siteText} from '@/lib/i18n-server';
 import {localePath,intlNumber} from '@/lib/i18n';
 export const dynamic='force-dynamic';
+export async function generateMetadata(){return {title:(await siteLocale())==='en'?'Print Products':'محصولات چاپی'};}
 export default async function Catalog(){
  const {locale,pick}=await siteText();
  const all=await storeCategories(locale),categories=mainCategories(all);

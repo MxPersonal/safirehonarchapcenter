@@ -1,8 +1,10 @@
+import type {Locale} from '@/lib/i18n';
+import {translatedFields,translatedPage} from '@/lib/translated-content';
 import {serverDb} from '@/lib/supabase/server';
 import {designs} from '@/lib/catalog';
 
-export type StoreCategory={id:string;slug:string;name:string;description:string;theme:string;image_url:string|null;parent_id:string|null;sort_order?:number;isSample?:boolean};
-export type StoreProduct={id:string;slug:string;name:string;description:string;category_id:string|null;image_url:string|null;mode:'fixed'|'quote';price_toman:number|null;active:boolean};
+export type StoreCategory={id:string;slug:string;name:string;description:string;theme:string;image_url:string|null;parent_id:string|null;sort_order?:number;isSample?:boolean;name_en?:string|null;description_en?:string|null};
+export type StoreProduct={id:string;slug:string;name:string;description:string;category_id:string|null;image_url:string|null;mode:'fixed'|'quote';price_toman:number|null;active:boolean;name_en?:string|null;description_en?:string|null};
 
 // Product types are primary categories. Occasions, dimensions and finishes are subcategories.
 // These are clearly marked DEMO categories until a Supabase catalog is configured.
@@ -34,17 +36,17 @@ const subCategories:{parent:string;slug:string;name:string;description:string;th
 ];
 export const demoCategories:StoreCategory[]=[...baseCategories.map((c,i)=>({...c,id:`demo-main-${i}`,sort_order:i,isSample:true})),...subCategories.map((c,i)=>({id:`demo-child-${i}`,slug:c.slug,name:c.name,description:c.description,theme:c.theme,image_url:null,parent_id:`demo-main-${baseCategories.findIndex(p=>p.slug===c.parent)}`,sort_order:i,isSample:true}))];
 
-export async function storeCategories():Promise<StoreCategory[]>{
+export async function storeCategories(locale:Locale='fa'):Promise<StoreCategory[]>{
  const db=await serverDb();
- if(db){const {data,error}=await db.from('categories').select('id,slug,name,description,theme,image_url,parent_id,sort_order').eq('active',true).order('sort_order');
-  if(!error&&data&&data.length)return data as StoreCategory[];
+ if(db){const {data,error}=await db.from('categories').select('*').eq('active',true).order('sort_order');
+  if(!error&&data&&data.length)return (data as StoreCategory[]).map(c=>translatedFields(c,locale,'category'));
   // Do not resurrect hidden/disabled demo categories after the first database import.
   if(!error&&!data?.length){
     const {count}=await db.from('categories').select('id',{count:'exact',head:true});
     if(count && count>0)return [];
   }
  }
- return demoCategories;
+ return demoCategories.map(c=>translatedFields(c,locale,'category'));
 }
 export function mainCategories(categories:StoreCategory[]){return categories.filter(c=>!c.parent_id)}
 export function childCategories(categories:StoreCategory[],parent:StoreCategory){return categories.filter(c=>c.parent_id===parent.id)}
@@ -52,26 +54,26 @@ export function categoryDescendants(categories:StoreCategory[],parent:StoreCateg
  const visited=new Set([parent.id]),queue=[parent],found:StoreCategory[]=[];
  while(queue.length){const p=queue.shift()!;for(const c of childCategories(categories,p)){if(!visited.has(c.id)){visited.add(c.id);found.push(c);queue.push(c)}}}return found;
 }
-export async function storeProducts(category?:StoreCategory,all?:StoreCategory[]):Promise<StoreProduct[]>{
+export async function storeProducts(category?:StoreCategory,all?:StoreCategory[],locale:Locale='fa'):Promise<StoreProduct[]>{
  if(!category||category.isSample)return [];
  const db=await serverDb();if(!db)return [];
  const ids=[category.id,...(all?categoryDescendants(all,category).map(c=>c.id):[])];
- const {data}=await db.from('products').select('id,slug,name,description,category_id,image_url,mode,price_toman,active').eq('active',true).in('category_id',ids).order('created_at',{ascending:false});return data as StoreProduct[]||[];
+ const {data}=await db.from('products').select('*').eq('active',true).in('category_id',ids).order('created_at',{ascending:false});return ((data as StoreProduct[])||[]).map(p=>translatedFields(p,locale,'product'));
 }
-export async function storeProduct(slug:string):Promise<StoreProduct|null>{
+export async function storeProduct(slug:string,locale:Locale='fa'):Promise<StoreProduct|null>{
  const db=await serverDb();if(!db)return null;
- const {data}=await db.from('products').select('id,slug,name,description,category_id,image_url,mode,price_toman,active').eq('slug',slug).eq('active',true).maybeSingle();return data as StoreProduct|null;
+ const {data}=await db.from('products').select('*').eq('slug',slug).eq('active',true).maybeSingle();return data?translatedFields(data as StoreProduct,locale,'product'):null;
 }
-export async function cmsPage(slug:string){const db=await serverDb();if(!db)return null;const {data}=await db.from('site_pages').select('title,body').eq('slug',slug).maybeSingle();return data as {title:string;body:string}|null;}
+export async function cmsPage(slug:string,locale:Locale='fa'){const db=await serverDb();if(!db)return null;const {data}=await db.from('site_pages').select('*').eq('slug',slug).maybeSingle();return data?translatedPage({...data,slug},locale):null;}
 export function exampleDesigns(category:string){return designs.filter(d=>d.category===category)}
 export function tomans(value:number){return new Intl.NumberFormat('fa-IR').format(value)+' تومان'}
 
 /** Returns null only when Supabase is unconfigured or the products table is unavailable.
  * An empty array means the database exists, but no active product is published. */
-export async function storeGalleryProducts():Promise<StoreProduct[]|null>{
+export async function storeGalleryProducts(locale:Locale='fa'):Promise<StoreProduct[]|null>{
  const db=await serverDb();if(!db)return null;
- const {data,error}=await db.from('products').select('id,slug,name,description,category_id,image_url,mode,price_toman,active').eq('active',true).order('created_at',{ascending:false}).limit(200);
+ const {data,error}=await db.from('products').select('*').eq('active',true).order('created_at',{ascending:false}).limit(200);
  if(error)return null;
  if(data?.length===0){const {count}=await db.from('products').select('id',{count:'exact',head:true});if(count===0)return null;}
- return data as StoreProduct[];
+ return (data as StoreProduct[]).map(p=>translatedFields(p,locale,'product'));
 }

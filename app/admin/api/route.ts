@@ -26,7 +26,7 @@ function safeError(err:{code?:string;message?:string}|null|undefined){
 async function allowed(){return validAdminSession()}
 async function queryAll(){
  const starter={categories:starterCategories,products:starterProducts,pages:starterPages};
- const db=adminDatabase();if(!db)return {categories:[],products:[],pages:[],customers:[],carts:[],orders:[],quotes:[],starter,warnings:['اتصال مدیریتی دیتابیس آماده نیست؛ محتواهای فعلی سایت را می‌بینید، ولی برای ذخیره باید اتصال خصوصی Supabase کامل شود.']};
+ const db=adminDatabase();if(!db)return {categories:[],products:[],manualProducts:starterProducts.map(p=>({...p,id:'starter:'+p.slug,source:'starter' as const})),pages:[],customers:[],carts:[],orders:[],quotes:[],starter,warnings:['اتصال مدیریتی دیتابیس آماده نیست؛ محتواهای فعلی سایت را می‌بینید، ولی برای ذخیره باید اتصال خصوصی Supabase کامل شود.']};
  const jobs = [
   db.from('categories').select('*').order('sort_order').limit(500),
   db.from('products').select('*').order('created_at',{ascending:false}).limit(500),
@@ -40,7 +40,16 @@ async function queryAll(){
  const keys=['categories','products','pages','customers','carts','orders','quotes'] as const;
  const out:Record<string,unknown>={};const warnings:string[]=[];
  keys.forEach((key,i)=>{out[key]=data[i].data||[];if(data[i].error)warnings.push(`${key}: ${safeError(data[i].error)}`)});
- return {...out,warnings,starter};
+ // The public site initially renders eight built-in examples from source code.
+ // Present those examples in manual order forms until they have been imported.
+ // Database rows always win by slug, including inactive rows: never resurrect a hidden product.
+ const catalogRows=(out.products||[]) as Array<{id:string;slug:string;name:string;mode:'fixed'|'quote';price_toman:number|null;active:boolean;image_url:string|null}>;
+ const knownSlugs=new Set(catalogRows.map(p=>p.slug));
+ const manualProducts=[
+  ...catalogRows.filter(p=>p.active).map(p=>({...p,source:'database' as const})),
+  ...starterProducts.filter(p=>!knownSlugs.has(p.slug)).map(p=>({...p,id:'starter:'+p.slug,source:'starter' as const}))
+ ];
+ return {...out,manualProducts,warnings,starter};
 }
 export async function GET(){
  if(!await allowed())return json({error:'ورود مدیریت معتبر نیست'},401);
@@ -165,28 +174,44 @@ export async function POST(req:NextRequest){
    const r=quantity===0?await db.from('cart_items').delete().eq('id',id):await db.from('cart_items').update({quantity}).eq('id',id);error=r.error;
    if(!error){await db.from('audit_logs').insert({target_user_id:owner,entity:'cart_item',entity_id:id,action:quantity===0?'ADMIN_REMOVE':'ADMIN_UPDATE',before_data:before.data,after_data:{quantity,reason:s(value.reason,500)}});}
   }else if(action==='manual'){
-   const user_id=s(value.user_id,40),product_id=s(value.product_id,40),quantity=int(value.quantity,1,100),mode=s(value.mode,20),note=s(value.note,2000);
-   if(!uuid(user_id)||!uuid(product_id)||quantity===null||!['cart','order','quote'].includes(mode))return json({error:'اطلاعات اقدام برای مشتری صحیح نیست.'},400);
-   const product=await db.from('products').select('id,name,mode,price_toman,active').eq('id',product_id).single();
-   if(product.error||!product.data?.active)return json({error:'محصول فعال پیدا نشد.'},400);
-   if(mode==='cart'){
-    let cart=await db.from('carts').select('id').eq('user_id',user_id).maybeSingle();
-    if(cart.error)return json({error:safeError(cart.error)},400);
-    if(!cart.data){const c=await db.from('carts').insert({user_id}).select('id').single();if(c.error)return json({error:safeError(c.error)},400);cart=c;}
-    const r=await db.from('cart_items').upsert({cart_id:cart.data!.id,product_id,quantity,notes:note},{onConflict:'cart_id,product_id'}).select('id').single();error=r.error;changed=r.data;
-   }else if(mode==='quote'){
-    const r=await db.from('quotes').insert({user_id,product_id,title:product.data.name,details:note||'ثبت‌شده توسط مدیریت'}).select('id').single();error=r.error;changed=r.data;
-   }else {
-    if(product.data.mode!=='fixed'||product.data.price_toman===null)return json({error:'سفارش مستقیم فقط برای محصول قیمت‌دار مجاز است.'},400);
-    const total=product.data.price_toman*quantity;
-    if(!Number.isSafeInteger(total))return json({error:'مبلغ سفارش بیش از حد مجاز است.'},400);
-    const r=await db.from('orders').insert({user_id,total_toman:total,admin_note:note}).select('id').single();
-    if(r.error)return json({error:safeError(r.error)},400);
-    const detail=await db.from('order_items').insert({order_id:r.data.id,product_id,title:product.data.name,unit_price_toman:product.data.price_toman,quantity,notes:note});
-    if(detail.error)return json({error:'سفارش ساخته شد ولی ثبت اقلام شکست خورد. لطفاً وضعیت سفارش را بررسی کنید؛ دوباره ارسال نکنید.'},409);
-    changed=r.data;
+   const user_id=s(value.user_id,40),reference=s(value.product_id,120),quantity=int(value.quantity,1,100),mode=s(value.mode,20),note=s(value.note,2000);
+   const sample=reference.startsWith('starter:')?starterProducts.find(p=>p.slug===reference.slice(8)):undefined;
+   if(!uuid(user_id)||quantity===null||!['cart','order','quote'].includes(mode)||!(uuid(reference)||sample))
+    return json({error:'مشتری، محصول یا تعداد انتخاب‌شده معتبر نیست.'},400);
+   const customer=await db.from('profiles').select('id').eq('id',user_id).maybeSingle();
+   if(customer.error)return json({error:safeError(customer.error)},400);
+   if(!customer.data)return json({error:'این مشتری هنوز در جدول حساب‌های سایت ثبت نشده است.'},400);
+   if(sample){
+    // Built-in showcase artwork is not a priced product and has no database product ID.
+    // A quote can still be recorded under the customer without inventing a sale.
+    if(mode!=='quote')return json({error:'این نمونه‌طرح قیمت قطعی ندارد. «ثبت استعلام» را انتخاب کنید یا ابتدا در مدیریت محصولات برای آن قیمت ثابت تعیین کنید.'},400);
+    const result=await db.from('quotes').insert({user_id,product_id:null,title:sample.name,details:note||'درخواست نمونه‌طرح '+sample.slug+' توسط مدیریت ثبت شد.'}).select('id').single();
+    error=result.error;changed=result.data;
+   }else{
+    const product_id=reference;
+    const product=await db.from('products').select('id,name,mode,price_toman,active').eq('id',product_id).maybeSingle();
+    if(product.error)return json({error:safeError(product.error)},400);
+    if(!product.data?.active)return json({error:'محصول غیرفعال یا حذف شده است. فهرست محصولات را بازخوانی کنید.'},400);
+    if(mode!=='quote'&&(product.data.mode!=='fixed'||product.data.price_toman===null))
+     return json({error:'برای سبد خرید یا سفارش مستقیم فقط محصولات دارای قیمت قطعی مجازند. برای این محصول استعلام ثبت کنید.'},400);
+    if(mode==='cart'){
+     let cart=await db.from('carts').select('id').eq('user_id',user_id).maybeSingle();
+     if(cart.error)return json({error:safeError(cart.error)},400);
+     if(!cart.data){const c=await db.from('carts').insert({user_id}).select('id').single();if(c.error)return json({error:safeError(c.error)},400);cart=c;}
+     const r=await db.from('cart_items').upsert({cart_id:cart.data!.id,product_id,quantity,notes:note},{onConflict:'cart_id,product_id'}).select('id').single();error=r.error;changed=r.data;
+    }else if(mode==='quote'){
+     const r=await db.from('quotes').insert({user_id,product_id,title:product.data.name,details:note||'ثبت‌شده توسط مدیریت'}).select('id').single();error=r.error;changed=r.data;
+    }else{
+     const total=product.data.price_toman!*quantity;
+     if(!Number.isSafeInteger(total))return json({error:'مبلغ سفارش بیش از حد مجاز است.'},400);
+     const r=await db.from('orders').insert({user_id,total_toman:total,admin_note:note}).select('id').single();
+     if(r.error)return json({error:safeError(r.error)},400);
+     const detail=await db.from('order_items').insert({order_id:r.data.id,product_id,title:product.data.name,unit_price_toman:product.data.price_toman,quantity,notes:note});
+     if(detail.error)return json({error:'سفارش ساخته شد ولی ثبت اقلام شکست خورد؛ قبل از ارسال مجدد وضعیت سفارش را بررسی کنید.'},409);
+     changed=r.data;
+    }
    }
-   if(!error)await db.from('audit_logs').insert({target_user_id:user_id,entity:mode,entity_id:(changed as {id?:string})?.id||product_id,action:'ADMIN_CREATE',after_data:{product_id,quantity,reason:note}});
+   if(!error)await db.from('audit_logs').insert({target_user_id:user_id,entity:mode,entity_id:(changed as {id?:string})?.id||reference,action:'ADMIN_CREATE',after_data:{product_reference:reference,quantity,reason:note}});
   }else if(action==='orderStatus'){
    if(!uuid(id)||!orderStates.includes(s(value.status,40)))return json({error:'شناسه یا وضعیت سفارش صحیح نیست.'},400);
    const r=await db.from('orders').update({status:value.status}).eq('id',id).select('user_id').single();error=r.error;changed=r.data;

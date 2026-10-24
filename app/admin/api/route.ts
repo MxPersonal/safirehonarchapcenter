@@ -4,6 +4,7 @@ import {revalidatePath} from 'next/cache';
 import {validAdminSession} from '@/lib/admin/credentials';
 import {adminDatabase} from '@/lib/admin/server-db';
 import {starterCategories,starterProducts,starterPages} from '@/lib/starter-content';
+import {AVATAR_BUCKET,belongsToUser} from '@/lib/avatar';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -49,6 +50,25 @@ async function queryAll(){
   ...catalogRows.filter(p=>p.active).map(p=>({...p,source:'database' as const})),
   ...starterProducts.filter(p=>!knownSlugs.has(p.slug)).map(p=>({...p,id:'starter:'+p.slug,source:'starter' as const}))
  ];
+ // Only this authenticated admin endpoint may disclose time-limited customer-avatar previews.
+ // A separate optional query avoids losing the customer list if the avatar migration is not installed yet.
+ const avatarRows=await db.from('profiles').select('id,avatar_path').limit(500);
+ if(!avatarRows.error&&avatarRows.data){
+  const ownerPaths=avatarRows.data.filter(row=>typeof row.avatar_path==='string'&&belongsToUser(row.avatar_path,row.id));
+  const paths=ownerPaths.map(row=>row.avatar_path as string);
+  const avatarUrlById=new Map<string,string>();
+  if(paths.length){
+   const signed=await db.storage.from(AVATAR_BUCKET).createSignedUrls(paths,3600);
+   if(!signed.error&&signed.data)ownerPaths.forEach((row,index)=>{
+    const link=signed.data[index]?.signedUrl;
+    if(link)avatarUrlById.set(row.id,link);
+   });
+   else warnings.push('دسترسی به تصاویر پروفایل فعال نیست. فضای خصوصی customer-avatars را ایجاد کنید.');
+  }
+  out.customers=((out.customers||[]) as Array<{id:string}>).map(u=>({...u,avatar_url:avatarUrlById.get(u.id)||null}));
+ }else if(avatarRows.error){
+  warnings.push('برای نمایش تصاویر مشتری‌ها، Migration عکس پروفایل را در Supabase اجرا کنید.');
+ }
  return {...out,manualProducts,warnings,starter};
 }
 export async function GET(){

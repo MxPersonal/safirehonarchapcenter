@@ -9,7 +9,7 @@ export default function AdminArtworkPreview({kind,slug,name,url,large=false}:{ki
  const [broken,setBroken]=useState(false);
  const design=kind==='product'?getDesign(slug):undefined;
  return <div className={large?'admin-artwork-preview admin-artwork-preview-large':'admin-artwork-preview'} aria-label={pick('پیش‌نمایش ','Preview of ')+name}>
-  {url&&!broken?<img src={url} alt={pick('عکس ','Photo of ')+name} loading="lazy" onError={()=>setBroken(true)}/>:kind==='category'?<div className="showcase-art admin-preview-mockup"><PrintMockup slug={slug} name={name} locale={locale}/></div>:design?<Artwork design={{...design,name}} locale={locale}/>:<div className="admin-artwork-placeholder"><span>{pick('چاپ سفیر هنر','SAFIRE HONAR')}</span><strong>{name||pick('بدون نام','Unnamed')}</strong><small>{pick('عکس اختصاصی ندارد','No custom image')}</small></div>}
+  {url&&!broken?<img src={url} alt={pick('عکس ','Photo of ')+name} loading="lazy" onError={()=>setBroken(true)}/>:kind==='category'?<div className="showcase-art admin-preview-mockup"><PrintMockup slug={slug} name={name} locale={locale}/></div>:design?<Artwork design={{...design,name}} locale="fa"/>:<div className="admin-artwork-placeholder"><span>{pick('چاپ سفیر هنر','SAFIRE HONAR')}</span><strong>{name||pick('بدون نام','Unnamed')}</strong><small>{pick('عکس اختصاصی ندارد','No custom image')}</small></div>}
   <span className="admin-artwork-caption">{url&&!broken?pick('عکس ثبت‌شده','Uploaded photo'):pick('پیش‌نمایش گرافیکی اولیه','Illustrative mockup')}</span>
  </div>;
 }

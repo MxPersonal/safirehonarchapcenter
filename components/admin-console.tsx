@@ -1,4 +1,5 @@
 'use client';
+import {useI18n} from '@/components/locale-provider';
 import {categoryEnglish,designEnglish,pageEnglish} from '@/lib/translated-content';
 
 import {useEffect,useState} from 'react';
@@ -27,6 +28,7 @@ async function send(action:string,value:Record<string,unknown>,id=''):Promise<Re
  return data;
 }
 export default function AdminConsole(){
+ const {locale,pick}=useI18n();
  const [starter,setStarter]=useState<Starter|null>(null),[importing,setImporting]=useState(false);
  const [importReport,setImportReport]=useState<Result|null>(null);
  const [area,setArea]=useState<'site'|'commerce'>('site');
@@ -76,17 +78,17 @@ export default function AdminConsole(){
  const pickedProduct=manualProducts.find(p=>p.id===manual.product_id);
  const hasFixedProducts=manualProducts.some(p=>p.mode==='fixed'&&p.source==='database');
  const customerName=(id:string)=>{const u=customers.find(x=>x.id===id);return u?`${u.display_name||'مشتری'} (${u.email})`:id.slice(0,8)};
- return <><div className="admin-heading"><div><span className="tiny-label">SAFIRE HONAR / CONTENT & COMMERCE</span><h1>پنل مدیریت چاپ سفیر هنر</h1><p>مدیریت سایت و فروشگاه از دو فضای مستقل با کنترل کامل محتوا و گزارش‌های مالی انجام می‌شود.</p></div><button disabled={busy} className="v2-outline" onClick={load}>بازخوانی داده‌ها <RefreshCw size={17}/></button></div>
- <div className="admin-area-switcher" role="group" aria-label="بخش‌های اصلی پنل مدیریت">
-   <button type="button" className={area==='site'?'active':''} aria-pressed={area==='site'} onClick={()=>{setArea('site');setTab('categories');setMsg('')}}><PanelsTopLeft size={27}/><span><strong>مدیریت سایت</strong><small>دسته‌ها، محصولات، نمونه‌کارها و صفحات</small></span></button>
-   <button type="button" className={area==='commerce'?'active':''} aria-pressed={area==='commerce'} onClick={()=>{setArea('commerce');setTab('accounting');setMsg('')}}><Store size={27}/><span><strong>مدیریت فروشگاه</strong><small>حسابداری، سفارش‌ها، مشتری‌ها و استعلام‌ها</small></span></button>
+ return <><div className="admin-heading"><div><span className="tiny-label">SAFIRE HONAR / CONTENT & COMMERCE</span><h1>{pick('پنل مدیریت چاپ سفیر هنر','Safire Honar Administration')}</h1><p>{pick('مدیریت سایت و فروشگاه از دو فضای مستقل با کنترل کامل محتوا و گزارش‌های مالی انجام می‌شود.','Manage website content, store operations and financial reports from one dashboard.')}</p></div><button disabled={busy} className="v2-outline" onClick={load}>{pick('بازخوانی داده‌ها','Refresh data')} <RefreshCw size={17}/></button></div>
+ <div className="admin-area-switcher" role="group" aria-label={pick("بخش‌های اصلی پنل مدیریت","Main dashboard areas")}>
+   <button type="button" className={area==='site'?'active':''} aria-pressed={area==='site'} onClick={()=>{setArea('site');setTab('categories');setMsg('')}}><PanelsTopLeft size={27}/><span><strong>{pick('مدیریت سایت','Site management')}</strong><small>{pick('دسته‌ها، محصولات، نمونه‌کارها و صفحات','Categories, products, portfolio and pages')}</small></span></button>
+   <button type="button" className={area==='commerce'?'active':''} aria-pressed={area==='commerce'} onClick={()=>{setArea('commerce');setTab('accounting');setMsg('')}}><Store size={27}/><span><strong>{pick('مدیریت فروشگاه','Store management')}</strong><small>{pick('حسابداری، سفارش‌ها، مشتری‌ها و استعلام‌ها','Accounting, orders, customers and quotes')}</small></span></button>
  </div>
- <p className="admin-group-caption">{area==='site'?'ابزارهای مدیریت محتوای عمومی سایت':'عملیات فروش، خدمات مشتری و گزارش‌های مالی'}</p>
- <div className="admin-tabs" role="tablist" aria-label={area==='site'?'مدیریت سایت':'مدیریت فروشگاه'}>{(area==='site'?siteTabs:commerceTabs).map(([key,name,Icon])=><button key={key} role="tab" aria-selected={tab===key} className={tab===key?'active':''} onClick={()=>{setTab(key);setMsg('')}}><Icon size={18}/>{name}</button>)}</div>
+ <p className="admin-group-caption">{area==='site'?pick('ابزارهای مدیریت محتوای عمومی سایت','Website content management tools'):pick('عملیات فروش، خدمات مشتری و گزارش‌های مالی','Store operations, customers and financial reports')}</p>
+ <div className="admin-tabs" role="tablist" aria-label={area==='site'?pick('مدیریت سایت','Site management'):pick('مدیریت فروشگاه','Store management')}>{(area==='site'?siteTabs:commerceTabs).map(([key,name,Icon])=><button key={key} role="tab" aria-selected={tab===key} className={tab===key?'active':''} onClick={()=>{setTab(key);setMsg('')}}><Icon size={18}/>{locale==='en'?({categories:'Categories',products:'Products and portfolio',pages:'Site pages',accounting:'Accounting',orders:'Orders',quotes:'Quotes',carts:'Customer carts',customers:'Customers'} as Record<string,string>)[key]||name:name}</button>)}</div>
  {(missingCategories.length>0||missingProducts.length>0)&&<div className="v2-notice" style={{marginBottom:22,borderColor:'#b67b49',padding:22}}>
- <strong>محتوای فعلی سایت در کد وجود دارد، اما هنوز همه آن به Supabase منتقل نشده است.</strong>
+ <strong>{pick('محتوای فعلی سایت در کد وجود دارد، اما هنوز همه آن به Supabase منتقل نشده است.','Some starter content has not yet been imported into Supabase.')}</strong>
  <p>دسته‌های آماده: {starter?.categories.length.toLocaleString('fa-IR')} | موارد منتقل‌نشده: {missingCategories.length.toLocaleString('fa-IR')} | نمونه‌طرح‌های منتقل‌نشده: {missingProducts.length.toLocaleString('fa-IR')}</p>
- <p>تا قبل از انتقال، این موارد پایین فهرست‌ها با برچسب «نمونه سایت» نمایش داده می‌شوند. برای ویرایش، یک‌بار آن‌ها را وارد دیتابیس کن. اطلاعات موجود، قیمت‌ها و ویرایش‌های قبلی دست‌نخورده می‌مانند.</p>
+ <p>{pick('تا قبل از انتقال، این موارد پایین فهرست‌ها با برچسب «نمونه سایت» نمایش داده می‌شوند. برای ویرایش، یک‌بار آن‌ها را وارد دیتابیس کن. اطلاعات موجود، قیمت‌ها و ویرایش‌های قبلی دست‌نخورده می‌مانند.','Starter examples appear below the database items. Import them before editing; existing prices, images and records will not be overwritten.')}</p>
  <button type="button" className="v2-primary" onClick={importExisting} disabled={busy||importing}>{importing?'در حال همگام‌سازی...':'همگام‌سازی محتوای فعلی سایت با دیتابیس'} <RefreshCw size={17}/></button>
  </div>}
  {importReport&&<div className="v2-notice" role="status" style={{marginBottom:18}}><strong>گزارش مرحله‌ای همگام‌سازی</strong><div className="admin-import-report">{(['categories','products','pages'] as const).map(key=><span key={key}>{key==='categories'?'دسته‌ها':key==='products'?'محصولات':'صفحات'}: افزوده {importReport.progress?.[key].added??0} | قبلاً موجود {importReport.progress?.[key].existing??0} | خطا {importReport.progress?.[key].failed??0}</span>)}</div>{(importReport.failed||[]).length>0&&<details open><summary>مشاهده علت خطای هر مورد ({importReport.failed!.length})</summary><ul>{importReport.failed!.map((f,i)=><li key={i}><strong>{f.kind} {f.slug}:</strong> {f.reason}</li>)}</ul></details>}</div>}

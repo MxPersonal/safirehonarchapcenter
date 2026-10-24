@@ -21,7 +21,7 @@ export default function HeroExperience({headline,description}:{headline?:string;
   <div className="atelier-hero-sundial" aria-hidden="true"/>
   <div className="container atelier-hero-shell">
    <motion.div className="atelier-hero-copy" style={{opacity:reduced?1:fade}}>
-    <div className="atelier-sup"><span className="atelier-sup-dot"/> CREATIVE PRINTING STUDIO <span> / {pick("۱۴۰۵","2026")}</span></div>
+    <div className="atelier-sup"><span className="atelier-sup-dot"/> {pick('استودیوی خلاق چاپ','CREATIVE PRINTING STUDIO')} <span> / {pick("۱۴۰۵","2026")}</span></div>
     <div className="atelier-hero-headline">
       {headline?<motion.span initial={reduced?false:{y:40,opacity:0}} animate={{y:0,opacity:1}} transition={{duration:.74}} className="atelier-headline-first">{headline}</motion.span>:<>
       <motion.span initial={reduced?false:{y:40,opacity:0}} animate={{y:0,opacity:1}} transition={{duration:.74}} className="atelier-headline-first">{pick("چاپ، فقط","PRINT IS")}</motion.span>
@@ -38,19 +38,19 @@ export default function HeroExperience({headline,description}:{headline?:string;
    <div className="atelier-gallery" aria-label={pick("موکاپ گرافیکی محصولات چاپی","Graphic mockups of printed products")}>
       <div className="atelier-orbit-ring" aria-hidden="true"/>
       <motion.div className="atelier-print-sheet atelier-print-sheet-1" style={{y:reduced?0:leftY,rotate:reduced?-13:spin}}>
-        <span className="atelier-sheet-top">SH. / 001 &nbsp; | &nbsp; PRINT EXPERIMENT</span><strong className="atelier-sheet-a">MAKE<br/><b>ART</b><i>VISIBLE.</i></strong><span className="atelier-sheet-stroke"/><span className="atelier-sheet-foot">INK ON PAPER. IDEAS IN MOTION.</span>
+        <span className="atelier-sheet-top">{pick('سفیر هنر / ۰۰۱ | آزمایش چاپ','SH. / 001 | PRINT EXPERIMENT')}</span><strong className="atelier-sheet-a">{pick('هنر را','MAKE')}<br/><b>{pick('نمایان','ART')}</b><i>{pick('کن.','VISIBLE.')}</i></strong><span className="atelier-sheet-stroke"/><span className="atelier-sheet-foot">{pick('جوهر روی کاغذ؛ ایده در حرکت','INK ON PAPER. IDEAS IN MOTION.')}</span>
       </motion.div>
       <motion.div className="atelier-print-sheet atelier-print-sheet-2" style={{y:reduced?0:centerY}}>
-        <span className="atelier-sheet-top">{pick("چاپ سفیر هنر / ۰۰۲","SAFIRE HONAR / 002")}</span><span className="atelier-sheet-center">{pick("یک ","A ")}<i>{pick("اثر","BOLD")}</i><br/>{pick("متفاوت.","IMPRESSION.")}</span><span className="atelier-wave"/><span className="atelier-sheet-foot">THE ART OF PRINT / EST. IN IDEAS</span>
+        <span className="atelier-sheet-top">{pick("چاپ سفیر هنر / ۰۰۲","SAFIRE HONAR / 002")}</span><span className="atelier-sheet-center">{pick("یک ","A ")}<i>{pick("اثر","BOLD")}</i><br/>{pick("متفاوت.","IMPRESSION.")}</span><span className="atelier-wave"/><span className="atelier-sheet-foot">{pick('هنر چاپ / زاده ایده‌ها','THE ART OF PRINT / EST. IN IDEAS')}</span>
       </motion.div>
       <motion.div className="atelier-print-sheet atelier-print-sheet-3" style={{y:reduced?0:rightY}}>
-        <span>COLOR STUDY 003</span><div className="atelier-grid-flower" aria-hidden="true"><i/><i/><i/><i/></div><b>CMYK<br/>STUDIO</b><span>UNLIMITED POSSIBILITIES ↗</span>
+        <span>{pick('مطالعه رنگ / ۰۰۳','COLOR STUDY 003')}</span><div className="atelier-grid-flower" aria-hidden="true"><i/><i/><i/><i/></div><b>{pick('رنگ‌های','CMYK')}<br/>{pick('چاپ','STUDIO')}</b><span>{pick('امکان‌های بی‌پایان','UNLIMITED POSSIBILITIES')} ↗</span>
       </motion.div>
       <div className="atelier-color-bar" aria-hidden="true"><span/><span/><span/><span/></div>
       <div className="atelier-sticker" aria-hidden="true"><span>{pick("۱۰۰٪","100%")}</span><b>{pick("خلاقیت","CREATIVE")}</b><Layers3 size={24}/></div>
-      <div className="atelier-chapter-mark">NO. 01 / THE CREATIVE SIDE OF PRINT</div>
+      <div className="atelier-chapter-mark">{pick('شماره ۰۱ / چهره خلاق چاپ','NO. 01 / THE CREATIVE SIDE OF PRINT')}</div>
    </div>
   </div>
-  <div className="atelier-hero-bottom"><a href="#collections">{pick("اسکرول کن، الهام بگیر","Scroll to get inspired")} <ArrowDownLeft size={19}/></a><div className="atelier-bottom-line"/><span>SAFIRE HONAR <b>®</b> VISUAL LAB</span></div>
+  <div className="atelier-hero-bottom"><a href="#collections">{pick("اسکرول کن، الهام بگیر","Scroll to get inspired")} <ArrowDownLeft size={19}/></a><div className="atelier-bottom-line"/><span>{pick('چاپ سفیر هنر','SAFIRE HONAR')} <b>®</b> {pick('آزمایشگاه تصویر','VISUAL LAB')}</span></div>
  </section>
 }

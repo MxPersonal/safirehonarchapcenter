@@ -1,8 +1,10 @@
+import {siteLocale} from '@/lib/i18n-server';
 import {storeGalleryProducts} from '@/lib/store';
 import {ProductTile} from '@/components/showcase';
 import DesignCatalog from '@/components/design-catalog';
 import {siteText} from '@/lib/i18n-server';
 export const dynamic='force-dynamic';
+export async function generateMetadata(){return {title:(await siteLocale())==='en'?'Design Gallery':'گالری طرح‌ها'};}
 export default async function Designs(){
  const {locale,pick}=await siteText();
  const products=await storeGalleryProducts(locale);

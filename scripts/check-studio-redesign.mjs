@@ -22,7 +22,7 @@ const checks=[
  ['real operations sidebar present',admin.includes('className="pw-admin-sidebar"')&&admin.includes('pw-admin-navigation')],
  ['site and commerce navigation both present',admin.includes('siteTabs.map(')&&admin.includes('commerceTabs.map(')],
  ['existing CRUD branches untouched',admin.includes("tab==='categories'")&&admin.includes("tab==='products'")&&admin.includes("tab==='orders'")],
- ['real data metrics (no fake values)',admin.includes('studio-admin-overview')&&admin.includes('setHasLoaded(true)')],
+ ['real data metrics (no fake values)',admin.includes('pw-admin-overview')&&admin.includes('setHasLoaded(true)')],
  ['full UI family styling',css.includes('.finance-console')&&css.includes('.v2-catalog-card')&&css.includes('.pw-admin-workspace')&&css.includes('.v3-auth-shell')],
  ['mobile layout and accessibility',css.includes('@media(max-width:700px)')&&css.includes('prefers-reduced-motion:reduce')],
  ['distinct typography and palette',css.includes('--pw-dark:#141820')&&css.includes('--pw-accent:#ef6546')],

@@ -47,7 +47,7 @@ export async function startAdminSession(): Promise<void> {
   };
   const body = Buffer.from(JSON.stringify(session)).toString('base64url');
   (await cookies()).set(COOKIE, `${body}.${signature(body).toString('base64url')}`, {
-    path: '/admin',
+    path: '/',
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
@@ -76,5 +76,5 @@ export async function validAdminSession(): Promise<boolean> {
 }
 
 export async function clearAdminSession(): Promise<void> {
-  (await cookies()).delete({name: COOKIE, path: '/admin'});
+  (await cookies()).delete({name: COOKIE, path: '/'});
 }

@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import {useEffect,useState,Suspense} from 'react';
+import {useEffect,useState} from 'react';
 import {ArrowUpLeft,Menu,Search,ShoppingBag,UserRound,UserRoundPlus,X} from 'lucide-react';
 import Brand from './brand';
 import {browserDb} from '@/lib/supabase/client';
@@ -21,7 +21,7 @@ export default function Header(){
    <Link className="brand-anchor" href={path('/')} aria-label={t.home}><Brand/></Link>
    <nav className="nav-desktop" aria-label={pick('ناوبری اصلی','Main navigation')}>{links.map(([href,title])=><Link key={href} href={path(href)}>{title}</Link>)}</nav>
    <div className="header-actions">
-    <Suspense fallback={<span lang="en">FA / EN</span>}><LanguageSwitcher compact/></Suspense>
+    <LanguageSwitcher compact/>
     <Link className="icon-button only-desktop" href={path('/catalog')} aria-label={t.products}><Search size={20}/></Link>
     {authenticated?<><Link className="v3-auth-nav-link" href={path('/account')}><UserRound size={17}/>{t.myAccount}</Link><Link className="icon-button cart-button" href={path('/account')} aria-label={t.cart}><ShoppingBag size={20}/></Link></>:<><Link className="v3-auth-nav-link v3-signin-nav" href={path('/login')}><UserRound size={17}/>{t.login}</Link><Link className="v3-auth-nav-register" href={path('/register')}><UserRoundPlus size={17}/>{t.register}</Link></>}
     <Link className="header-order-button" href={path('/order')}>{pick('شروع سفارش','Start an order')} <ArrowUpLeft size={17}/></Link>

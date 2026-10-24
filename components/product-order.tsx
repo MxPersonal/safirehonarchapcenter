@@ -1,5 +1,6 @@
-import {useI18n} from '@/components/locale-provider';
 'use client';
+import {useI18n} from '@/components/locale-provider';
+
 import {useState} from 'react';import {useRouter} from 'next/navigation';import {ArrowUpLeft,CheckCircle2,ShoppingBag} from 'lucide-react';import type {StoreProduct} from '@/lib/store';
 export default function ProductOrder({product,signedIn}:{product:StoreProduct;signedIn:boolean}){
  const {path,pick}=useI18n();const router=useRouter();const [quantity,setQuantity]=useState(1),[details,setDetails]=useState(''),[consent,setConsent]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState(''),[success,setSuccess]=useState(false);

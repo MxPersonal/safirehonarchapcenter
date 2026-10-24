@@ -1,41 +1,78 @@
+import Link from 'next/link';
+import {ArrowUpLeft,ArrowLeft,ArrowRight,Check,FileText,Layers3,MoveUpRight,PenTool,Printer,ScanLine,ShieldCheck,Sparkles} from 'lucide-react';
 import {siteText} from '@/lib/i18n-server';
 import {localePath} from '@/lib/i18n';
-import Link from 'next/link';
-import {ArrowUpLeft,CheckCircle2,ChevronLeft,ClipboardCheck,Headset,Layers3,Paintbrush2,ScanLine,ShoppingBag,Stars,UploadCloud} from 'lucide-react';
-import {storeCategories,mainCategories,cmsPage} from '@/lib/store';
-import {CategorySpotlight,CollectionRail} from '@/components/showcase';
-import HeroExperience from '@/components/hero-experience';
-import CreativeMarquee from '@/components/creative-marquee';
-import {Reveal,WordReveal,PosterParallax} from '@/components/scroll-experience';
+import {storeCategories,mainCategories,cmsPage,storeGalleryProducts} from '@/lib/store';
+import {CategoryArtwork,ProductTile} from '@/components/showcase';
 
 export const dynamic='force-dynamic';
-const journey=[
- {step:'۰۱',title:'انتخاب کن',sub:'یک دسته یا نمونه‌طرح انتخاب کن، یا با فایل خودت شروع کن.',icon:ScanLine},
- {step:'۰۲',title:'سفارشی کن',sub:'ابعاد، جنس، متن و جزئیات چاپ رو به سلیقه خودت مشخص کن.',icon:Paintbrush2},
- {step:'۰۳',title:'تأیید کن',sub:'مشخصات رو بازبینی کن و سفارش یا درخواست استعلام رو ثبت کن.',icon:ClipboardCheck}
-];
-export default async function Home(){const {locale,pick}=await siteText();const path=(u:string)=>localePath(u,locale);const [allCategories,hero]=await Promise.all([storeCategories(locale),cmsPage('home',locale)]);const categories=mainCategories(allCategories);const steps=locale==='en'?[{step:'01',title:'Explore',sub:'Choose a collection, browse designs or bring your own artwork.',icon:ScanLine},{step:'02',title:'Customize',sub:'Tell us about the size, materials and print details.',icon:Paintbrush2},{step:'03',title:'Confirm',sub:'Review your specifications and submit an order or quote request.',icon:ClipboardCheck}]:journey;return <div className="expressive-home">
- <HeroExperience headline={hero?.title} description={hero?.body}/>
- <div className="expressive-ribbon" aria-label={pick("گروه محصولات چاپی","Printed product categories")}><div className="expressive-ribbon-track" aria-hidden="true">{pick('چاپ خلاق ✳ چاپ عریض ✳ هویت بصری ✳ تابلو و حروف ✳ چاپ اختصاصی ✳ چاپ با شخصیت ✳ چاپ خلاق ✳ چاپ عریض ✳ هویت بصری ✳ تابلو و حروف ✳ چاپ اختصاصی ✳ چاپ با شخصیت ✳','CREATIVE PRINT ✳ LARGE FORMAT ✳ BRAND MATERIALS ✳ SIGNAGE ✳ BESPOKE PRINT ✳ PRINT WITH PERSONALITY ✳ CREATIVE PRINT ✳ LARGE FORMAT ✳ BRAND MATERIALS ✳ SIGNAGE ✳ BESPOKE PRINT ✳ PRINT WITH PERSONALITY ✳')}</div></div>
- <section className="expressive-intro" aria-labelledby="expressive-intro-title"><div className="container expressive-intro-inner">
-   <Reveal className="expressive-intro-header"><span className="atelier-label">{pick('۰۱ / خدمات چاپ','01 / WHAT WE PRINT')}</span><h2 id="expressive-intro-title">{pick("ما فقط محصول چاپ نمی‌کنیم.","WE DO MORE THAN PRINT.")}<br/><em>{pick("ما به ایده‌ها شکل می‌دیم.","WE GIVE IDEAS SHAPE.")}</em></h2></Reveal>
-   <Reveal className="expressive-intro-side" delay={.1}><span className="intro-flower" aria-hidden="true">✳</span><p>{pick("از بنر و تابلو تا کارت ویزیت و بسته‌بندی. اینجا هر دسته یک جهان گرافیکی جداگانه دارد. اول نوع چاپ را انتخاب کن و بعد سراغ زیرمجموعه‌ها برو.","From banners and signage to business cards and packaging. Explore distinctive print collections, then discover their formats and finishes.")}</p><a href="#collections">{pick("دسته‌بندی‌ها رو کشف کن","Discover collections")} <ArrowUpLeft size={19}/></a></Reveal>
- </div></section>
- <section className="expressive-collections" id="collections" aria-labelledby="collections-heading"><div className="container">
-    <Reveal className="expressive-heading"><div><span className="atelier-label">{pick('۰۲ / دنیای چاپ','02 / THE PRINT UNIVERSE')}</span><h2 id="collections-heading"><WordReveal>{pick("انتخابت چیه؟","WHAT WILL YOU")}</WordReveal><br/><em><WordReveal>{pick("بزن بریم توش!","CREATE NEXT?")}</WordReveal></em></h2></div><div className="expressive-heading-end"><span className="expressive-heading-asterisk">✳</span><p>{pick("از هر دسته یک نمونه می‌بینی. برای مشاهده تمام زیرمجموعه‌ها و نمونه‌طرح‌های قابل سفارش وارد همان دسته شو.","Each collection is a new creative possibility. Choose one to see product types and design samples.")}</p></div></Reveal>
-    <CollectionRail categories={categories} locale={locale}/>
-    <div className="spotlight-stack">{categories.map((category,index)=><CategorySpotlight key={category.id} category={category} index={index} locale={locale}/>)}</div>
-    <Reveal className="expressive-collection-footer"><span>{String(categories.length).padStart(2,'0')} / {pick('دسته‌های چاپ','PRINT FAMILIES')}</span><Link href={path("/catalog")} className="atelier-action atelier-action-dark">{pick("تمام دسته‌های چاپ","See all print products")} <ArrowUpLeft size={19}/></Link></Reveal>
- </div></section>
- <CreativeMarquee locale={locale}/>
- <section className="expressive-order" aria-labelledby="order-way-heading"><div className="container">
-   <Reveal className="expressive-heading"><div><span className="atelier-label">{pick('۰۳ / مسیر سفارش شما','03 / YOUR ORDER, YOUR WAY')}</span><h2 id="order-way-heading">{pick("دو مسیر،","TWO WAYS.")}<br/><em>{pick("یک نتیجه عالی.","GREAT RESULTS.")}</em></h2></div><p>{pick("همه سفارش‌ها یک شکل نیستند. هر محصول، مسیر خرید مناسب خودش را دارد.","Choose the right way to order for every print project.")}</p></Reveal>
-   <div className="expressive-order-grid"><Reveal className="expressive-order-card order-fixed"><div className="order-card-top"><span>{pick('۰۱ / سفارش مستقیم','01 / DIRECT ORDER')}</span><ShoppingBag size={30}/></div><div className="order-card-icon" aria-hidden="true">✦</div><div className="order-card-copy"><span className="order-mode-pill"><CheckCircle2 size={14}/> {pick('قیمت مشخص','Fixed price')}</span><h3>{pick("قیمت داره؟","KNOW THE PRICE?")}<br/>{pick("مستقیم سفارش بده.","ORDER DIRECTLY.")}</h3><p>{pick("برای محصولاتی که قیمت نهایی‌شان توسط مجموعه تعیین شده است، بدون تماس وارد فرایند سفارش شو.","For products with a confirmed price, place an order directly through your account.")}</p><Link href={path("/catalog")}>{pick("مشاهده محصولات","View products")} <ArrowUpLeft size={20}/></Link></div></Reveal>
-   <Reveal className="expressive-order-card order-quote" delay={.12}><div className="order-card-top"><span>{pick('۰۲ / درخواست اختصاصی','02 / CUSTOM REQUEST')}</span><Headset size={30}/></div><div className="order-card-orb" aria-hidden="true"><span>؟</span></div><div className="order-card-copy"><span className="order-mode-pill">{pick("سفارشی و استعلامی","Custom quote")}</span><h3>{pick("کار خاص داری؟","HAVE A UNIQUE IDEA?")}<br/>{pick("بذار بررسی کنیم.","LET’S TALK.")}</h3><p>{pick("جزئیات و ابعاد را ارسال کن، درخواست در حساب کاربری‌ات ثبت می‌شود و قیمت پس از بررسی اعلام می‌شود.","Share the details and specifications. We will review your request and prepare a quote.")}</p><Link href={path("/order")}>{pick("ثبت درخواست استعلام","Request a quote")} <ArrowUpLeft size={20}/></Link></div></Reveal></div>
-   <p className="expressive-trust-note"><CheckCircle2 size={17}/> {pick("هیچ قیمت، زمان تحویل یا تخفیفی بدون تأیید مجموعه اعلام نمی‌شود.","All pricing, lead times and offers are subject to studio confirmation.")}</p>
- </div></section>
- <section className="expressive-process" aria-labelledby="process-heading"><div className="container expressive-process-grid"><div className="expressive-process-copy"><Reveal><span className="atelier-label">{pick('۰۴ / از فایل تا چاپ','04 / FROM FILE TO FINAL')}</span><h2 id="process-heading">{pick("از ایده تا","FROM IDEA")}<br/><em>{pick("اثر نهایی.","TO PRINT.")}</em></h2><p>{pick("ثبت سفارش چاپ نباید پیچیده باشد. مسیر را قدم‌به‌قدم جلو می‌بریم تا قبل از چاپ، همه چیز واضح باشد.","Printing should feel straightforward. We guide every step, from choosing your product to confirming your file.")}</p></Reveal><div className="expressive-journey">{steps.map((item,i)=><Reveal key={item.step} delay={i*.09} className="expressive-journey-item"><span className="journey-number">{item.step}</span><div><h3>{item.title}</h3><p>{item.sub}</p></div><item.icon size={23}/></Reveal>)}</div><Link href={path("/guide")} className="atelier-action atelier-action-dark">{pick("راهنمای چاپ و فایل","Print file guide")} <ArrowUpLeft size={20}/></Link></div>
-    <PosterParallax className="expressive-process-art" strength={62}><div className="process-stage"><span className="process-stage-grid"/><div className="process-paper process-paper-back"><span>{pick('سفیر هنر / دنیای رنگ‌ها','SH / EXPLORING COLORS')}</span><strong>{pick('رنگ','CM')}<br/>{pick('ها','YK.')}</strong><b>{pick('آزمایش چاپ / ۰۲','PRINT EXPERIMENT / 02')}</b></div><div className="process-paper process-paper-front"><span>{pick('چاپ سفیر هنر / نسخه ۰۱','SAFIRE HONAR · EDITION 01')}</span><strong>{pick("جزئیات","DETAILS")}<br/><i>{pick("مهم‌اند.","MATTER.")}</i></strong><div className="process-paper-shape"/><span>{pick('طراحی‌شده برای ماندگاری','DESIGNED TO LEAVE A MARK')} ↗</span></div><span className="process-stage-stamp">✳</span></div></PosterParallax>
- </div></section>
- <section className="expressive-outro" aria-labelledby="outro-heading"><div className="container expressive-outro-inner"><Reveal><span className="atelier-label">{pick('۰۵ / شروع یک کار ماندگار','05 / LET’S MAKE SOMETHING GOOD')}</span><h2 id="outro-heading">{pick("حالا نوبت","IT’S YOUR")}<br/><em>{pick("ایده توئه!","TURN.")}</em></h2><p>{pick("از دسته‌بندی شروع کن یا طرح خودت رو برای بررسی بفرست.","Explore a collection or send your own artwork for a custom quote.")}</p><div className="outro-ctas"><Link href={path("/catalog")} className="atelier-action atelier-action-light">{pick("دیدن دسته‌ها","Browse collections")} <ArrowUpLeft size={20}/></Link><Link href={path("/order")} className="atelier-outro-plain">{pick("ثبت درخواست اختصاصی","Start a custom project")} <ChevronLeft size={20}/></Link></div></Reveal><div className="outro-glyph" aria-hidden="true">✳</div></div></section>
- </div>}
+
+export default async function Home(){
+ const {locale,pick}=await siteText();
+ const url=(path:string)=>localePath(path,locale);
+ const [allCategories,hero,featured]=await Promise.all([storeCategories(locale),cmsPage('home',locale),storeGalleryProducts(locale)]);
+ const categories=mainCategories(allCategories);
+ const lead=categories[0];
+ const showcase=categories.slice(0,8);
+ const steps=[
+  {number:'01',icon:Layers3,title:pick('محصولت را پیدا کن','Find your format'),desc:pick('از بین دسته‌بندی‌های چاپ، نوع محصول مناسب ایده‌ات را انتخاب کن.','Explore our printing categories and find the format that suits your idea.')},
+  {number:'02',icon:PenTool,title:pick('جزئیات را مشخص کن','Make it yours'),desc:pick('ابعاد، جنس، تیراژ و فایل را متناسب با نیازت آماده کن.','Prepare the size, material, quantity and artwork that your project needs.')},
+  {number:'03',icon:ShieldCheck,title:pick('با اطمینان ثبت کن','Submit with clarity'),desc:pick('درخواست را ثبت کن تا مشخصات، قیمت و زمان اجرا بررسی شوند.','Submit your request so the studio can review details, price and timing.')}
+ ];
+ return <div className="studio-home">
+  <section className="studio-hero" aria-labelledby="studio-hero-title">
+   <div className="container studio-hero-grid">
+    <div className="studio-hero-copy">
+     <div className="studio-kicker"><span className="studio-kicker-mark"/> {pick('استودیو طراحی و چاپ سفیر هنر','SAFIRE HONAR / PRINT & DESIGN STUDIO')}</div>
+     <h1 id="studio-hero-title">{hero?.title||<>{pick('هر ایده‌ای','Ideas worth')}<br/><em>{pick('ارزش دیده‌شدن دارد.','being seen.')}</em></>}</h1>
+     <p className="studio-hero-lead">{hero?.body||pick('از کارت ویزیت و بسته‌بندی تا تابلو و چاپ‌های بزرگ. محصولت را پیدا کن، نمونه‌ها را ببین و چاپ بعدی‌ات را دقیق‌تر شروع کن.','From business cards and packaging to signage and large format printing. Explore products, discover design ideas, and start your next project with confidence.')}</p>
+     <div className="studio-hero-actions">
+      <Link className="studio-btn studio-btn-solid" href={url('/catalog')}>{pick('مشاهده محصولات چاپی','Explore print products')} <ArrowUpLeft size={19}/></Link>
+      <Link className="studio-btn studio-btn-quiet" href={url('/order')}>{pick('درخواست اختصاصی','Custom print request')} <ArrowUpLeft size={18}/></Link>
+     </div>
+     <div className="studio-hero-meta"><span><Check size={15}/>{pick('انتخاب نوع چاپ','Explore formats')}</span><span><Check size={15}/>{pick('بررسی جزئیات سفارش','Review specifications')}</span><span><Check size={15}/>{pick('استعلام شفاف','Clear quote process')}</span></div>
+    </div>
+    <div className="studio-hero-visual">
+      <div className="studio-visual-grid" aria-hidden="true"/>
+      <div className="studio-sheet studio-sheet-rear" aria-hidden="true"><div className="studio-sheet-ribbon"/><span>PRINT / FORMAT / 01</span><strong>FORM<br/>MEETS<br/>FUNCTION.</strong><i/></div>
+      <div className="studio-sheet studio-sheet-mid" aria-hidden="true"><span>SAFIRE HONAR / STUDIO</span><div className="studio-sheet-circle"/><b>NEW<br/>PERSPECTIVE.</b><span>CREATIVE PRINT OBJECTS</span></div>
+      <div className="studio-sheet studio-sheet-front"><span className="studio-sheet-heading">{pick('از یک ایده تا یک اثر چاپی','IDEAS INTO TANGIBLE WORK')}</span>
+       {lead?<Link href={url('/catalog/'+lead.slug)} className="studio-hero-feature"><CategoryArtwork slug={lead.slug} name={lead.name} imageUrl={lead.image_url} locale={locale}/><span className="studio-feature-caption">{lead.name}<ArrowUpLeft size={19}/></span></Link>:<div className="studio-fallback-art"><Printer size={62}/></div>}
+      </div>
+      <div className="studio-hero-stamp" aria-hidden="true">SH<span>®</span><small>PRINT STUDIO</small></div>
+    </div>
+   </div>
+   <div className="container studio-hero-foot"><span>{pick('جایی برای شکل‌گرفتن ایده‌ها','MADE FOR IDEAS THAT MATTER')}</span><span>SAFIRE HONAR / 2026</span></div>
+  </section>
+
+  <section className="studio-collections container" id="collections" aria-labelledby="studio-collections-title">
+   <div className="studio-section-head"><div><span className="studio-eyebrow"><span>01</span> / {pick('دسته‌بندی‌های چاپ','OUR PRINT COLLECTIONS')}</span><h2 id="studio-collections-title">{pick('برای هر ایده،','The right format')}<br/><em>{pick('یک راه برای چاپ.','for every idea.')}</em></h2></div><div className="studio-head-side"><p>{pick('انواع چاپ، خدمات و زیرمجموعه‌ها را یکجا ببین. هر دسته، مسیر مستقل خودش را برای انتخاب و سفارش دارد.','Discover printing categories and specialized formats. Find the right starting point for your next project.')}</p><Link href={url('/catalog')} className="studio-text-link">{pick('مشاهده همه دسته‌ها','Browse all collections')} <ArrowUpLeft size={18}/></Link></div></div>
+   <div className="studio-categories-grid">
+    {showcase.map((category,i)=><Link key={category.id} className="studio-category-card" href={url('/catalog/'+category.slug)}>
+      <div className="studio-category-image"><CategoryArtwork slug={category.slug} name={category.name} imageUrl={category.image_url} small locale={locale}/><span className="studio-category-number">{String(i+1).padStart(2,'0')}</span></div>
+      <div className="studio-category-bottom"><div><h3>{category.name}</h3><p>{category.description}</p></div><span className="studio-category-arrow"><ArrowUpLeft size={21}/></span></div>
+    </Link>)}
+   </div>
+   <div className="studio-collection-bottom"><span>{pick('مجموعه‌هایی برای ایده‌های کوچک و پروژه‌های بزرگ.','Thoughtfully selected formats for projects of every size.')}</span><Link href={url('/catalog')} className="studio-text-link">{pick('تمام دسته‌ها','All collections')} <ArrowUpLeft size={18}/></Link></div>
+  </section>
+
+  {featured&&featured.length>0&&<section className="studio-work" aria-labelledby="studio-work-title"><div className="container">
+   <div className="studio-section-head"><div><span className="studio-eyebrow"><span>02</span> / {pick('گالری محصولات','PRINT WORK')}</span><h2 id="studio-work-title">{pick('نمونه‌های چاپ،','Real products,')}<br/><em>{pick('با جزئیات بیشتر.','closer details.')}</em></h2></div><div className="studio-head-side"><p>{pick('محصولاتی که از پنل مدیریت منتشر شده‌اند، با همان تصویر و مشخصات اصلی نمایش داده می‌شوند.','Published products appear here with their original images, titles and specifications.')}</p><Link className="studio-text-link" href={url('/designs')}>{pick('ورود به گالری','Explore gallery')} <ArrowUpLeft size={18}/></Link></div></div>
+   <div className="studio-featured-grid">{featured.slice(0,4).map(p=><ProductTile key={p.id} product={p} locale={locale}/>)}</div>
+  </div></section>}
+
+  <section className="studio-how" aria-labelledby="studio-how-title"><div className="container studio-how-grid">
+    <div className="studio-how-heading"><span className="studio-eyebrow"><span>03</span> / {pick('مسیر ساده سفارش','HOW IT WORKS')}</span><h2 id="studio-how-title">{pick('از انتخاب تا چاپ،','A considered process.')}<br/><em>{pick('بدون پیچیدگی.','No guesswork.')}</em></h2><p>{pick('مسیر سفارش شفاف طراحی شده تا هر مرحله، قبل از تأیید نهایی، قابل بررسی باشد.','A clear, simple order journey so every detail can be checked before production.')}</p><Link href={url('/guide')} className="studio-text-link">{pick('راهنمای آماده‌سازی فایل','File preparation guide')} <ArrowUpLeft size={18}/></Link></div>
+    <div className="studio-step-list">{steps.map(step=><div key={step.number} className="studio-step"><span className="studio-step-num">{step.number}</span><div className="studio-step-copy"><h3>{step.title}</h3><p>{step.desc}</p></div><step.icon size={27} strokeWidth={1.5}/></div>)}</div>
+   </div></section>
+
+  <section className="studio-paths container" aria-labelledby="studio-paths-title"><div className="studio-section-head studio-section-head-compact"><div><span className="studio-eyebrow"><span>04</span> / {pick('روش‌های ثبت سفارش','ORDER OPTIONS')}</span><h2 id="studio-paths-title">{pick('راه مناسب','Choose how')} <em>{pick('سفارشت را انتخاب کن.','to get started.')}</em></h2></div></div>
+   <div className="studio-path-grid">
+     <article className="studio-path studio-path-direct"><div className="studio-path-top"><span>{pick('محصولات قیمت‌دار','FIXED-PRICE PRODUCTS')}</span><ScanLine size={26}/></div><div><h3>{pick('انتخاب کن.','Choose it.')}<br/>{pick('مستقیم ثبت کن.','Order it.')}</h3><p>{pick('برای محصولاتی که قیمت نهایی و شرایطشان در سایت مشخص است.','For products with published and confirmed pricing.')}</p><Link className="studio-path-link" href={url('/catalog')}>{pick('مشاهده محصولات','Explore products')} <ArrowUpLeft size={21}/></Link></div></article>
+     <article className="studio-path studio-path-custom"><div className="studio-path-top"><span>{pick('پروژه‌های اختصاصی','CUSTOM PROJECTS')}</span><FileText size={26}/></div><div><h3>{pick('ایده‌ات را بگو.','Share the idea.')}<br/>{pick('ما بررسی می‌کنیم.','Let’s shape it.')}</h3><p>{pick('برای چاپ‌هایی که قیمت و مشخصاتشان بعد از بررسی دقیق اعلام می‌شود.','For print jobs that need tailored specifications and pricing.')}</p><Link className="studio-path-link" href={url('/order')}>{pick('ثبت درخواست استعلام','Request a quote')} <ArrowUpLeft size={21}/></Link></div></article>
+   </div>
+  </section>
+
+  <section className="studio-closer"><div className="container studio-closer-grid"><div><span className="studio-eyebrow">{pick('سفیر هنر / استودیو چاپ','SAFIRE HONAR / PRINT STUDIO')}</span><h2>{pick('ایده بعدی تو','What will you')}<br/><em>{pick('چیه؟','create next?')}</em></h2><p>{pick('از یک دسته‌بندی شروع کن، نمونه‌ها را ببین یا ایده اختصاصی‌ات را برای بررسی بفرست.','Explore our collections or bring your own concept for a custom print quote.')}</p></div><div className="studio-closer-action"><Link href={url('/order')} className="studio-btn studio-btn-light">{pick('شروع یک سفارش','Start a project')} <ArrowUpLeft size={22}/></Link><span>{pick('جزئیات خوب، نتیجه خوب.','GOOD DETAILS. GREAT PRINT.')}</span></div></div></section>
+ </div>;
+}

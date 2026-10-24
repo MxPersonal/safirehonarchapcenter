@@ -21,7 +21,7 @@ export default async function Guide(){
  {icon:ScanLine,title:'Final proof',text:'Review spelling, names, numbers, logos, dimensions, layout direction and important information before approval.'}
  ];
  const tips=locale==='en'?en:fa;
- return <><section className="page-banner"><div className="container"><span className="section-label">PRINT PRODUCTION GUIDE</span>
+ return <><section className="page-banner"><div className="container"><span className="section-label">{pick('راهنمای آماده‌سازی چاپ','PRINT PRODUCTION GUIDE')}</span>
  <h1>{pick('یک فایل خوب،','A GOOD FILE')} <em>{pick('نیمی از کار','MAKES THE DIFFERENCE')}</em></h1>
  <p>{pick('چند نکته کاربردی برای آنکه نتیجه نهایی به ایده ذهنی شما نزدیک‌تر باشد.','A few essential guidelines for print-ready results.')}</p></div></section>
  <section className="section container guide-section"><div className="guide-grid">{tips.map((tip,i)=><article className="guide-item" key={tip.title}><span className="guide-no">0{i+1}</span><tip.icon size={29} strokeWidth={1.5}/><h2>{tip.title}</h2><p>{tip.text}</p></article>)}</div>

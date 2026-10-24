@@ -1,8 +1,10 @@
+import {siteText} from '@/lib/i18n-server';
+import {localePath} from '@/lib/i18n';
 import {signedCustomerAvatar} from '@/lib/avatar';
 import Link from 'next/link';import {redirect} from 'next/navigation';import {currentCustomer} from '@/lib/supabase/server';import CustomerDashboard from '@/components/customer-dashboard';
-export const dynamic='force-dynamic';export const metadata={title:'ناحیه کاربری'};
-export default async function Account(){const {db,user,profile}=await currentCustomer();if(!db)return <section className="container v2-empty account-notready"><h1>ناحیه مشتریان</h1><p>ورود و ذخیره سفارش‌ها پس از اتصال پایگاه داده فعال می‌شود. فایل نمونه تنظیمات در مخزن موجود است.</p><Link href="/catalog">مشاهده گالری</Link></section>;
- if(!user)redirect('/login?next=/account');
+export const dynamic='force-dynamic';
+export default async function Account(){const {locale,pick}=await siteText();const path=(s:string)=>localePath(s,locale);const {db,user,profile}=await currentCustomer();if(!db)return <section className="container v2-empty account-notready"><h1>{pick('ناحیه مشتریان','Customer account')}</h1><p>{pick('ورود و ذخیره سفارش‌ها پس از اتصال پایگاه داده فعال می‌شود. فایل نمونه تنظیمات در مخزن موجود است.','Login and order storage will be available once our database connection is enabled.')}</p><Link href={path("/catalog")}>{pick("مشاهده گالری","View the gallery")}</Link></section>;
+ if(!user)redirect(path('/login')+'?next='+encodeURIComponent(path('/account')));
  const [orders,quotes,carts,audits]=await Promise.all([db.from('orders').select('id,status,total_toman,created_at,customer_note').eq('user_id',user.id).order('created_at',{ascending:false}),db.from('quotes').select('id,title,details,status,response,created_at').eq('user_id',user.id).order('created_at',{ascending:false}),db.from('carts').select('id,cart_items(id,quantity,notes,products(id,name,price_toman,mode))').eq('user_id',user.id).maybeSingle(),db.from('audit_logs').select('occurred_at,action').eq('target_user_id',user.id).order('occurred_at',{ascending:false}).limit(20)]);
  const avatarRecord=await db.from('profiles').select('avatar_path').eq('id',user.id).maybeSingle();
  const avatarUrl=await signedCustomerAvatar(user.id,avatarRecord.data?.avatar_path);

@@ -21,3 +21,12 @@ jobs:
         run: npm run typecheck
       - name: Production build
         run: npm run build
+
+      - name: Verify both languages across public routes
+        run: |
+          npm run start -- -p 3100 > /tmp/safir-next.log 2>&1 &
+          for i in $(seq 1 40); do
+            if curl --silent --fail http://127.0.0.1:3100/fa > /dev/null; then break; fi
+            sleep 2
+          done
+          node scripts/verify-i18n.mjs

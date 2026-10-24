@@ -1,0 +1,32 @@
+/* Direction-aware layout refinements for the English language and locale controls. */
+.language-switcher{display:inline-flex;align-items:center;gap:7px;direction:ltr!important;background:#f2efff;border:1px solid #d5cbee;padding:5px 8px;border-radius:999px;color:#35277f;flex-shrink:0;font:800 11px/1.5 Arial,sans-serif}
+.language-switcher a{padding:4px 6px;border-radius:8px;color:#494266;text-decoration:none}
+.language-switcher a.selected{background:#6146d9;color:#fff}
+.language-switcher a:hover{background:#ded8ff}
+.language-switcher a.selected:hover{background:#4731b8;color:white}
+html[dir=ltr] body {font-family:Arial,Inter,system-ui,sans-serif;letter-spacing:normal;line-height:1.65}
+html[dir=ltr] h1,html[dir=ltr] h2,html[dir=ltr] h3,
+html[dir=ltr] .atelier-hero-headline,html[dir=ltr] .expressive-heading h2,
+html[dir=ltr] .expressive-intro h2,html[dir=ltr] .expressive-process-copy h2,
+html[dir=ltr] .spotlight-details h3,html[dir=ltr] .v2-inner-head h1,
+html[dir=ltr] .order-card-copy h3,html[dir=ltr] .expressive-outro h2{
+ font-family:Arial,Inter,system-ui,sans-serif!important;font-weight:900!important;
+ letter-spacing:-.045em!important;line-height:1.1!important;
+}
+html[dir=ltr] .atelier-hero-headline{font-size:clamp(44px,5.4vw,85px)!important;line-height:1.09!important}
+html[dir=ltr] .atelier-hero-headline>span{white-space:normal}
+html[dir=ltr] .expressive-heading h2{font-size:clamp(40px,5.4vw,75px)!important}
+html[dir=ltr] .expressive-outro h2{font-size:clamp(50px,7vw,104px)!important}
+html[dir=ltr] .v2-brand .brand-copy{direction:ltr;text-align:left}
+html[dir=ltr] .site-header,html[dir=ltr] .footer{text-align:left}
+html[dir=ltr] .nav-desktop a,html[dir=ltr] .admin-tabs button{text-align:left}
+html[dir=ltr] .breadcrumbs{text-align:left}
+html[dir=ltr] .v2-catalog-card,html[dir=ltr] .spotlight-details,
+html[dir=ltr] .admin-list,html[dir=ltr] .admin-editor{text-align:left}
+html[dir=ltr] .header-actions{direction:ltr}
+html[dir=ltr] .atelier-sup,html[dir=ltr] .atelier-sheet-top,html[dir=ltr] .atelier-sheet-foot{direction:ltr}
+html[dir=ltr] .v3-auth-shell{direction:ltr}
+html[dir=ltr] input[type=email],html[dir=ltr] input[type=tel],html[dir=ltr] input[type=number]{direction:ltr}
+html[dir=ltr] .dashboard-profile-bar,html[dir=ltr] .admin-customer-choice,html[dir=ltr] .admin-product-choice{text-align:left}
+@media(max-width:1080px){.language-switcher-compact{gap:3px;padding:4px 6px}.language-switcher-compact svg{display:none}}
+@media(max-width:700px){.language-switcher{font-size:10px}.language-switcher a{padding:5px}html[dir=ltr] .atelier-hero-headline{font-size:clamp(39px,10.1vw,65px)!important}}

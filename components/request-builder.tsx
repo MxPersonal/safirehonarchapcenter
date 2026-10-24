@@ -24,7 +24,7 @@ function Form({mode}:{mode:'order'|'price'}){
   catch{setErr(pick('کپی خودکار ممکن نشد. متن خروجی را دستی کپی کنید.','Could not copy automatically. Copy the text manually.'));}
  }
  return <div className="request-layout"><div className="request-form">
-  <div className="form-heading"><span className="section-label">YOUR REQUEST</span>
+  <div className="form-heading"><span className="section-label">{pick('درخواست شما','YOUR REQUEST')}</span>
    <h2>{pick('مشخصات پروژه‌ات','Your project details')}</h2>
    <p>{pick('اطلاعات را آماده کن تا بتوانی برای استعلام در اختیار مجموعه قرار بدهی.','Prepare a detailed request to share with our print team.')}</p>
   </div>
@@ -46,7 +46,7 @@ function Form({mode}:{mode:'order'|'price'}){
    {file&&<button className="small-link" type="button" onClick={()=>setFile(null)}>{pick('حذف فایل انتخاب‌شده','Remove selected file')}</button>}
   </div>
  </div>
- <aside className="request-summary"><span className="section-label">PROJECT SUMMARY</span>
+ <aside className="request-summary"><span className="section-label">{pick('خلاصه پروژه','PROJECT SUMMARY')}</span>
   <h2>{pick('خلاصه درخواست','Request summary')}</h2>
   <div className="summary-line"><span>{pick('نوع چاپ','Service')}</span><b>{shown(services,service)}</b></div>
   <div className="summary-line"><span>{pick('اندازه','Dimensions')}</span><b>{width&&height?`${width} × ${height} cm`:pick('تکمیل نشده','Incomplete')}</b></div>

@@ -5,6 +5,7 @@ import {ArrowUpLeft,CheckCircle2,ChevronLeft,ClipboardCheck,Headset,Layers3,Pain
 import {storeCategories,mainCategories,cmsPage} from '@/lib/store';
 import {CategorySpotlight,CollectionRail} from '@/components/showcase';
 import HeroExperience from '@/components/hero-experience';
+import CreativeMarquee from '@/components/creative-marquee';
 import {Reveal,WordReveal,PosterParallax} from '@/components/scroll-experience';
 
 export const dynamic='force-dynamic';
@@ -26,7 +27,7 @@ export default async function Home(){const {locale,pick}=await siteText();const 
     <div className="spotlight-stack">{categories.map((category,index)=><CategorySpotlight key={category.id} category={category} index={index} locale={locale}/>)}</div>
     <Reveal className="expressive-collection-footer"><span>{String(categories.length).padStart(2,'0')} / {pick('دسته‌های چاپ','PRINT FAMILIES')}</span><Link href={path("/catalog")} className="atelier-action atelier-action-dark">{pick("تمام دسته‌های چاپ","See all print products")} <ArrowUpLeft size={19}/></Link></Reveal>
  </div></section>
- <section className="expressive-marquee-block" aria-label={pick("طرح‌های چاپی","Creative print designs")}><div><span>{pick('داستانت را','PRINT')}</span> {pick('با','YOUR')} <i>{pick('چاپ،','STORY.')}</i> <strong>✳</strong> {pick('ماندگار','MAKE IT')} <em>{pick('کن!','LOUD.')}</em></div></section>
+ <CreativeMarquee locale={locale}/>
  <section className="expressive-order" aria-labelledby="order-way-heading"><div className="container">
    <Reveal className="expressive-heading"><div><span className="atelier-label">{pick('۰۳ / مسیر سفارش شما','03 / YOUR ORDER, YOUR WAY')}</span><h2 id="order-way-heading">{pick("دو مسیر،","TWO WAYS.")}<br/><em>{pick("یک نتیجه عالی.","GREAT RESULTS.")}</em></h2></div><p>{pick("همه سفارش‌ها یک شکل نیستند. هر محصول، مسیر خرید مناسب خودش را دارد.","Choose the right way to order for every print project.")}</p></Reveal>
    <div className="expressive-order-grid"><Reveal className="expressive-order-card order-fixed"><div className="order-card-top"><span>{pick('۰۱ / سفارش مستقیم','01 / DIRECT ORDER')}</span><ShoppingBag size={30}/></div><div className="order-card-icon" aria-hidden="true">✦</div><div className="order-card-copy"><span className="order-mode-pill"><CheckCircle2 size={14}/> {pick('قیمت مشخص','Fixed price')}</span><h3>{pick("قیمت داره؟","KNOW THE PRICE?")}<br/>{pick("مستقیم سفارش بده.","ORDER DIRECTLY.")}</h3><p>{pick("برای محصولاتی که قیمت نهایی‌شان توسط مجموعه تعیین شده است، بدون تماس وارد فرایند سفارش شو.","For products with a confirmed price, place an order directly through your account.")}</p><Link href={path("/catalog")}>{pick("مشاهده محصولات","View products")} <ArrowUpLeft size={20}/></Link></div></Reveal>

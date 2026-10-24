@@ -1,4 +1,3 @@
-import {Suspense} from 'react';
 import LanguageSwitcher from '@/components/language-switcher';
 import {siteText} from '@/lib/i18n-server';
 import {localePath} from '@/lib/i18n';
@@ -17,7 +16,7 @@ export default async function Admin(){
  if(!await validAdminSession())redirect(localePath('/admin/login',locale));
  const hasDb=Boolean(adminDatabase());
  return <section className="container v2-admin">
-   <div className="admin-secure-logout"><span>{pick('ورود تأییدشده:','Signed in as:')} {adminEmail()}</span><div className="admin-toolbar-controls"><span className="admin-language-label">{pick('زبان پنل:','Dashboard language:')}</span><Suspense fallback={<span>FA / EN</span>}><LanguageSwitcher/></Suspense><form action={signOutAdmin}><button type="submit" className="v2-outline">{pick('خروج امن','Sign out')}</button></form></div></div>
+   <div className="admin-secure-logout"><span>{pick('ورود تأییدشده:','Signed in as:')} {adminEmail()}</span><div className="admin-toolbar-controls"><span className="admin-language-label">{pick('زبان پنل:','Dashboard language:')}</span><LanguageSwitcher/><form action={signOutAdmin}><button type="submit" className="v2-outline">{pick('خروج امن','Sign out')}</button></form></div></div>
    {!hasDb?<div className="v2-notice" role="alert"><strong>{pick('اتصال خصوصی دیتابیس کامل نشده است.','The private database connection is incomplete.')}</strong><p>{pick('اتصال عمومی Supabase به‌تنهایی برای مدیریت کافی نیست. در Vercel مقدار SUPABASE_URL و SUPABASE_SECRET_KEY (یا کلید قدیمی SUPABASE_SERVICE_ROLE_KEY) را فقط برای سرور تنظیم کنید.','Public Supabase connection details cannot authorize administration. Configure the private SUPABASE_URL and SUPABASE_SECRET_KEY (or legacy SUPABASE_SERVICE_ROLE_KEY) in Vercel server environment variables.')}</p></div>:<AdminConsole/>}
  </section>;
 }

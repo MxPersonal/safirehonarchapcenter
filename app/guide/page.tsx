@@ -1,7 +1,9 @@
+import {siteLocale} from '@/lib/i18n-server';
 import Link from 'next/link';
 import {ArrowUpLeft,FileImage,FileText,Maximize2,Palette,ScanLine} from 'lucide-react';
 import {siteText} from '@/lib/i18n-server';
 import {localePath} from '@/lib/i18n';
+export async function generateMetadata(){return {title:(await siteLocale())==='en'?'Print File Preparation Guide':'راهنمای آماده‌سازی فایل'}}
 export default async function Guide(){
  const {locale,pick}=await siteText();
  const fa=[

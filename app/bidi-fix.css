@@ -139,3 +139,17 @@ html[dir='rtl'] :is(input[type='email'],input[type='tel'],input[type='url'],
 @media(prefers-reduced-motion:reduce){
  .language-switcher .language-switcher-option{transition:none!important;transform:none!important}
 }
+
+/* Standalone admin language controls: always visible on the dashboard. */
+.admin-toolbar-controls{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:13px}
+.admin-toolbar-controls .language-switcher{flex-shrink:0}
+.admin-language-label{font-size:12px;font-weight:800;opacity:.85}
+.admin-secure-logout{flex-wrap:wrap;row-gap:14px}
+.admin-secure-logout .admin-toolbar-controls>.v2-outline,
+.admin-secure-logout .admin-toolbar-controls form .v2-outline{min-height:39px}
+html[dir='ltr'] .admin-toolbar-controls{direction:ltr}
+@media(max-width:680px){
+ .admin-secure-logout{align-items:stretch}
+ .admin-toolbar-controls{width:100%;justify-content:space-between}
+ .admin-language-label{font-size:11px}
+}

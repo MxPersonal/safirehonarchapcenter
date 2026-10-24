@@ -111,3 +111,7 @@ The dedicated login is at `/admin/login`, while customer login and signup remain
 **Important separation:** Admin login still needs only `ADMIN_EMAIL` and `ADMIN_PASSWORD`. The CMS bridge is now implemented at `/admin/api`, but real database operations also require server-only `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (or the legacy service-role key) and the two database migrations. The admin dashboard reports missing tables or credentials. Customer authentication continues to use Supabase independently. See `ADMIN-CMS.md`.
 
 **Security note:** Since Vercel stores the password value as configured, choose a long unique password, use Vercel's Sensitive setting, and apply an appropriate WAF/rate limit to `/admin/login` before commercial use. Invalid credentials and missing configuration fail closed. There is no in-process rate limiter reliable across Vercel instances.
+
+
+## Admin areas & accounting (October 2026)
+The dashboard now separates **Site Management** (categories, products/gallery and editable pages) from **Store Management** (accounting, orders, quotations, carts and customers). Accounting uses cash-basis transaction entries separate from orders. See [`ACCOUNTING.md`](ACCOUNTING.md) and apply the additive `20261024000100_finance_ledger.sql` migration to the correct production Supabase project before enabling finance. No existing order is automatically booked as paid income.

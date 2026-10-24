@@ -6,6 +6,7 @@ import {designs} from '@/lib/catalog';
 export type StoreCategory={id:string;slug:string;name:string;description:string;theme:string;image_url:string|null;parent_id:string|null;sort_order?:number;isSample?:boolean;name_en?:string|null;description_en?:string|null};
 export type StoreProduct={id:string;slug:string;name:string;description:string;category_id:string|null;image_url:string|null;mode:'fixed'|'quote';price_toman:number|null;active:boolean;name_en?:string|null;description_en?:string|null};
 
+// Category names and site UI are localized. Product entities, images, names, descriptions, SKUs and prices remain IDENTICAL in FA and EN.
 // Product types are primary categories. Occasions, dimensions and finishes are subcategories.
 // These are clearly marked DEMO categories until a Supabase catalog is configured.
 const baseCategories:Omit<StoreCategory,'id'>[]=[
@@ -58,11 +59,11 @@ export async function storeProducts(category?:StoreCategory,all?:StoreCategory[]
  if(!category||category.isSample)return [];
  const db=await serverDb();if(!db)return [];
  const ids=[category.id,...(all?categoryDescendants(all,category).map(c=>c.id):[])];
- const {data}=await db.from('products').select('*').eq('active',true).in('category_id',ids).order('created_at',{ascending:false});return ((data as StoreProduct[])||[]).map(p=>translatedFields(p,locale,'product'));
+ const {data}=await db.from('products').select('*').eq('active',true).in('category_id',ids).order('created_at',{ascending:false});return (data as StoreProduct[])||[];
 }
 export async function storeProduct(slug:string,locale:Locale='fa'):Promise<StoreProduct|null>{
  const db=await serverDb();if(!db)return null;
- const {data}=await db.from('products').select('*').eq('slug',slug).eq('active',true).maybeSingle();return data?translatedFields(data as StoreProduct,locale,'product'):null;
+ const {data}=await db.from('products').select('*').eq('slug',slug).eq('active',true).maybeSingle();return (data as StoreProduct|null)||null;
 }
 export async function cmsPage(slug:string,locale:Locale='fa'){const db=await serverDb();if(!db)return null;const {data}=await db.from('site_pages').select('*').eq('slug',slug).maybeSingle();return data?translatedPage({...data,slug},locale):null;}
 export function exampleDesigns(category:string){return designs.filter(d=>d.category===category)}
@@ -75,5 +76,5 @@ export async function storeGalleryProducts(locale:Locale='fa'):Promise<StoreProd
  const {data,error}=await db.from('products').select('*').eq('active',true).order('created_at',{ascending:false}).limit(200);
  if(error)return null;
  if(data?.length===0){const {count}=await db.from('products').select('id',{count:'exact',head:true});if(count===0)return null;}
- return (data as StoreProduct[]).map(p=>translatedFields(p,locale,'product'));
+ return data as StoreProduct[];
 }

@@ -1,9 +1,11 @@
+import {siteLocale} from '@/lib/i18n-server';
 import Link from 'next/link';
 import {ArrowUpLeft,ScanLine} from 'lucide-react';
 import {storeCategories,mainCategories} from '@/lib/store';
 import {siteText} from '@/lib/i18n-server';
 import {localePath} from '@/lib/i18n';
 export const dynamic='force-dynamic';
+export async function generateMetadata(){return {title:(await siteLocale())==='en'?'Print Services':'خدمات چاپ'};}
 export default async function Services(){
  const {locale,pick}=await siteText();
  const categories=mainCategories(await storeCategories(locale));

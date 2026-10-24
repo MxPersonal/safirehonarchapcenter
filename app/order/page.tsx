@@ -11,7 +11,7 @@ export default async function Order(){
  const {locale,pick}=await siteText();
  const {db,user}=await currentCustomer();
  if(db&&!user)redirect(localePath('/login?next='+encodeURIComponent(localePath('/order',locale)),locale));
- return <><section className="v2-inner-head"><div className="container"><span className="tiny-label">START A PROJECT</span>
+ return <><section className="v2-inner-head"><div className="container"><span className="tiny-label">{pick('شروع سفارش','START A PROJECT')}</span>
  <h1>{pick('سفارش اختصاصی،','CUSTOM PRINTING,')} <em>{pick('بدون سردرگمی.','MADE SIMPLE.')}</em></h1>
  <p>{pick('قیمت محصولات سفارشی بعد از بررسی واقعی ابعاد، جنس، تیراژ و شرایط چاپ اعلام می‌شود.','Custom printing is priced after we review dimensions, material, quantity and production requirements.')}</p></div></section>
  <div className="container v2-order-layout"><div className="order-info"><h2>{pick('از یک ایده تا یک سفارش دقیق.','From a great idea to the right print.')}</h2>

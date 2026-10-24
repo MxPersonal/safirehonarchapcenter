@@ -30,7 +30,7 @@ async function send(action:string,value:Record<string,unknown>,id=''):Promise<Re
 }
 export default function AdminConsole(){
  const {locale,pick}=useI18n();
- const [starter,setStarter]=useState<Starter|null>(null),[importing,setImporting]=useState(false);
+ const [starter,setStarter]=useState<Starter|null>(null),[importing,setImporting]=useState(false),[hasLoaded,setHasLoaded]=useState(false);
  const [importReport,setImportReport]=useState<Result|null>(null);
  const [area,setArea]=useState<'site'|'commerce'>('site');
  const [tab,setTab]=useState<string>('categories'),[msg,setMsg]=useState(''),[warning,setWarning]=useState(''),[busy,setBusy]=useState(false),[cats,setCats]=useState<C[]>([]),[products,setProducts]=useState<P[]>([]),[manualProducts,setManualProducts]=useState<ManualProduct[]>([]),[pages,setPages]=useState<Page[]>(pageDefaults),[customers,setCustomers]=useState<User[]>([]),[carts,setCarts]=useState<Cart[]>([]),[orders,setOrders]=useState<Order[]>([]),[quotes,setQuotes]=useState<Quote[]>([]);
@@ -45,7 +45,7 @@ export default function AdminConsole(){
   const combined=pageDefaults.map(defaultPage=>data.pages?.find(p=>p.slug===defaultPage.slug)||data.starter?.pages.find(p=>p.slug===defaultPage.slug)||defaultPage);
   setPages(combined);setPageForm(current=>combined.find(p=>p.slug===current.slug)||combined[0]);
   setCustomers(data.customers||[]);setCarts(data.carts||[]);setOrders(data.orders||[]);setQuotes(data.quotes||[]);
-  setWarning((data.warnings||[]).join(' | '));
+  setWarning((data.warnings||[]).join(' | '));setHasLoaded(true);
  } catch(e){setWarning(e instanceof Error?e.message:'خطای غیرمنتظره اتصال Supabase.')}finally{setBusy(false)}}
  useEffect(()=>{void load()},[]);
  async function run(action:string,value:Record<string,unknown>,id=''){setBusy(true);setMsg('');try{await send(action,value,id);setMsg('تغییرات با موفقیت در پایگاه داده ذخیره شد.');await load();return true;}catch(e){setMsg(e instanceof Error?e.message:'ذخیره انجام نشد.');return false;}finally{setBusy(false)}}
@@ -80,6 +80,18 @@ export default function AdminConsole(){
  const hasFixedProducts=manualProducts.some(p=>p.mode==='fixed'&&p.source==='database');
  const customerName=(id:string)=>{const u=customers.find(x=>x.id===id);return u?`${u.display_name||pick('مشتری','Customer')} (${u.email})`:id.slice(0,8)};
  return <><div className="admin-heading"><div><span className="tiny-label">{pick('سفیر هنر / مدیریت سایت و فروشگاه','SAFIRE HONAR / CONTENT & COMMERCE')}</span><h1>{pick('پنل مدیریت چاپ سفیر هنر','Safire Honar Administration')}</h1><p>{pick('مدیریت سایت و فروشگاه از دو فضای مستقل با کنترل کامل محتوا و گزارش‌های مالی انجام می‌شود.','Manage website content, store operations and financial reports from one dashboard.')}</p></div><button disabled={busy} className="v2-outline" onClick={load}>{pick('بازخوانی داده‌ها','Refresh data')} <RefreshCw size={17}/></button></div>
+ <div className="studio-admin-overview" aria-label={pick('نمای کلی داده‌های ثبت‌شده','Recorded data overview')} aria-busy={!hasLoaded}>
+  {([
+   {id:'categories',area:'site' as const,label:pick('دسته‌بندی‌ها','Categories'),count:cats.length,icon:Layers},
+   {id:'products',area:'site' as const,label:pick('محصولات منتشرشده','Published products'),count:products.filter(p=>p.active).length,icon:ShoppingBag},
+   {id:'customers',area:'commerce' as const,label:pick('حساب‌های مشتری','Customer accounts'),count:customers.length,icon:UserRound},
+   {id:'orders',area:'commerce' as const,label:pick('سفارش‌های ثبت‌شده','Recorded orders'),count:orders.length,icon:Settings2}
+  ]).map(item=><button type="button" key={item.id} className="studio-admin-metric" onClick={()=>{setArea(item.area);setTab(item.id);setMsg('')}}>
+   <span className="studio-admin-metric-label">{item.label}<item.icon size={18}/></span>
+   <strong>{hasLoaded?item.count.toLocaleString(locale==='fa'?'fa-IR':'en-US'):'…'}</strong>
+   <small>{pick('مشاهده و مدیریت','Open and manage')} <ArrowUpLeft size={13}/></small>
+  </button>)}
+ </div>
  <div className="admin-area-switcher" role="group" aria-label={pick("بخش‌های اصلی پنل مدیریت","Main dashboard areas")}>
    <button type="button" className={area==='site'?'active':''} aria-pressed={area==='site'} onClick={()=>{setArea('site');setTab('categories');setMsg('')}}><PanelsTopLeft size={27}/><span><strong>{pick('مدیریت سایت','Site management')}</strong><small>{pick('دسته‌ها، محصولات، نمونه‌کارها و صفحات','Categories, products, portfolio and pages')}</small></span></button>
    <button type="button" className={area==='commerce'?'active':''} aria-pressed={area==='commerce'} onClick={()=>{setArea('commerce');setTab('accounting');setMsg('')}}><Store size={27}/><span><strong>{pick('مدیریت فروشگاه','Store management')}</strong><small>{pick('حسابداری، سفارش‌ها، مشتری‌ها و استعلام‌ها','Accounting, orders, customers and quotes')}</small></span></button>

@@ -41,12 +41,12 @@ export const pageEnglish:Record<string,[string,string]>={
  privacy:['Privacy Policy','The business administrator will review and publish the official privacy policy.']
 };
 export const slugTitle=(slug:string)=>slug.replace(/[-_]+/g,' ').replace(/\b\w/g,c=>c.toUpperCase());
-export function translatedFields(record:{slug:string;name:string;description:string;name_en?:string|null;description_en?:string|null},locale:Locale,kind:'category'|'product'){
+export function translatedFields<T extends {slug:string;name:string;description:string;name_en?:string|null;description_en?:string|null}>(record:T,locale:Locale,kind:'category'|'product'):T{
  if(locale==='fa')return record;
  const pair=(kind==='category'?categoryEnglish:designEnglish)[record.slug];
  return {...record,
   name:record.name_en?.trim()||pair?.[0]||slugTitle(record.slug),
-  description:record.description_en?.trim()||pair?.[1]||'Contact our studio for more information about this print product.'};
+  description:record.description_en?.trim()||pair?.[1]||'Contact our studio for more information about this print product.'} as T;
 }
 export function translatedPage(record:{slug:string;title:string;body:string;title_en?:string|null;body_en?:string|null},locale:Locale){
  if(locale==='fa')return record;

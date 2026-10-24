@@ -19,6 +19,8 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Verify native locale navigation and admin direction
         run: node scripts/check-language-navigation.mjs
+      - name: Verify stable products and moving marquee
+        run: node scripts/check-marquee-and-products.mjs
       - name: Static typecheck
         run: npm run typecheck
       - name: Production build

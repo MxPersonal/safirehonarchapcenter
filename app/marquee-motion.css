@@ -1,0 +1,89 @@
+/* Seamless bilingual type ticker; placed last in the CSS cascade. */
+.expressive-marquee-block.creative-marquee{
+ position:relative;
+ isolation:isolate;
+ overflow:hidden;
+ padding:clamp(22px,4vw,40px) 0;
+ transform:rotate(.45deg) scale(1.01);
+ background:linear-gradient(105deg,#6244e7 0%,#683ee6 48%,#7b48e9 100%)!important;
+ box-shadow:0 9px 0 #14132a!important;
+}
+.expressive-marquee-block.creative-marquee::before,
+.expressive-marquee-block.creative-marquee::after{
+ content:'';
+ display:block;
+ position:absolute;
+ z-index:2;
+ top:0;bottom:0;
+ width:clamp(16px,5vw,75px);
+ pointer-events:none;
+}
+.expressive-marquee-block.creative-marquee::before{left:0;background:linear-gradient(to right,#6244e7aa,transparent)}
+.expressive-marquee-block.creative-marquee::after{right:0;background:linear-gradient(to left,#7b48e9aa,transparent)}
+.expressive-marquee-block > .creative-marquee-track{
+ display:flex;
+ flex-flow:row nowrap;
+ align-items:center;
+ justify-content:flex-start;
+ gap:0;
+ width:max-content;
+ max-width:none;
+ white-space:nowrap;
+ direction:ltr;
+ text-align:left;
+ will-change:transform;
+ backface-visibility:hidden;
+ transform:translate3d(0,0,0);
+ animation:safire-creative-marquee 24s linear infinite;
+}
+.expressive-marquee-block .creative-marquee-copy{
+ display:flex;
+ align-items:center;
+ justify-content:space-around;
+ flex:0 0 auto;
+ min-width:100vw;
+ padding-inline:clamp(32px,6vw,110px);
+ gap:clamp(32px,5vw,85px);
+ white-space:nowrap;
+}
+.expressive-marquee-block .creative-marquee-word{
+ display:inline-block;
+ flex:0 0 auto;
+ white-space:nowrap;
+ font:900 clamp(37px,6.4vw,99px)/1.15 Arial,Inter,system-ui,sans-serif;
+ letter-spacing:-.045em;
+ text-align:center;
+ color:#fff7ed;
+}
+html[lang='fa'] .expressive-marquee-block .creative-marquee-word{
+ font-family:var(--font-display),'Lalezar',Tahoma,sans-serif;
+ font-weight:400;
+ letter-spacing:0;
+ line-height:1.4;
+}
+.expressive-marquee-block .creative-marquee-lime{color:#d9ff8d!important}
+.expressive-marquee-block .creative-marquee-coral{color:#ffc1a9!important}
+.expressive-marquee-block .creative-marquee-plain{color:#fff9ef!important}
+.expressive-marquee-block .creative-marquee-star{
+ color:#ffb5cc!important;
+ font-size:clamp(42px,5.7vw,80px);
+ line-height:1;
+}
+@keyframes safire-creative-marquee {
+ from{transform:translate3d(0,0,0)}
+ to{transform:translate3d(-50%,0,0)}
+}
+@media(max-width:750px){
+ .expressive-marquee-block.creative-marquee{padding:26px 0}
+ .expressive-marquee-block .creative-marquee-word{font-size:clamp(35px,8.3vw,64px)}
+ html[lang='fa'] .expressive-marquee-block .creative-marquee-word{font-size:clamp(35px,8.5vw,60px)}
+ .expressive-marquee-block .creative-marquee-copy{gap:clamp(24px,6vw,46px);padding-inline:32px}
+ .expressive-marquee-block > .creative-marquee-track{animation-duration:19s}
+}
+@media(prefers-reduced-motion:reduce){
+ .expressive-marquee-block > .creative-marquee-track{
+  animation:none!important;
+  will-change:auto;
+  transform:none!important;
+ }
+}

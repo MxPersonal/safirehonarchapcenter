@@ -49,7 +49,7 @@ export async function storeCategories(locale:Locale='fa'):Promise<StoreCategory[
  }
  return demoCategories.map(c=>translatedFields(c,locale,'category'));
 }
-export function mainCategories(categories:StoreCategory[]){return categories.filter(c=>!c.parent_id)}
+export function mainCategories(categories:StoreCategory[]){const ids=new Set(categories.map(c=>c.id));return categories.filter(c=>!c.parent_id||!ids.has(c.parent_id))}
 export function childCategories(categories:StoreCategory[],parent:StoreCategory){return categories.filter(c=>c.parent_id===parent.id)}
 export function categoryDescendants(categories:StoreCategory[],parent:StoreCategory):StoreCategory[]{
  const visited=new Set([parent.id]),queue=[parent],found:StoreCategory[]=[];

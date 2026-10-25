@@ -16,7 +16,7 @@ export default function GlassInteractions(){
 
   let animationFrame=0;
   let pending:{card:HTMLElement;x:number;y:number}|null=null;
-  const timers=new Map<HTMLElement,ReturnType<typeof setTimeout>>();
+  const timers=new Map<HTMLElement,number>();
 
   const findCard=(target:EventTarget|null):HTMLElement|null=>
    target instanceof Element?target.closest<HTMLElement>(CARD_SELECTOR):null;

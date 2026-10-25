@@ -1,0 +1,52 @@
+/* Safire Honar / premium Persian typography pairing
+   Cairo is reserved for expressive headings. Vazirmatn handles UI, catalogue,
+   forms and long reading. Both font packages are self-hosted through Fontsource.
+   This stylesheet is deliberately loaded last to overcome older display weights.
+*/
+html[lang='fa']{
+ --font-body:'Vazirmatn Variable',Tahoma,sans-serif;
+ --font-display:'Cairo Variable','Vazirmatn Variable',Tahoma,sans-serif;
+ font-synthesis:none;
+}
+html[lang='fa'] body{
+ font-family:var(--font-body)!important;
+ font-weight:450;line-height:1.87;
+}
+html[lang='fa'] :is(
+ .pw-hero h1,.pw-section-heading h2,.pw-process h2,.pw-order-card h3,
+ .pw-endcap h2,.pw-art-paper>strong,.pw-admin-brand strong,
+ .v2-inner-head h1,.page-banner h1,.admin-heading h1,.finance-top h2,
+ .v2-catalog-card h2,.v2-product-page h1,.v2-hero h1,.section-heading h2,
+ .form-heading h2,.dashboard-head h1
+){
+ font-family:var(--font-display)!important;
+ font-weight:800!important;
+ letter-spacing:0!important;
+ font-synthesis:none;
+}
+/* Cairo's larger vertical metrics need more breathing room than Lalezar. */
+html[lang='fa'] :is(
+ .pw-hero h1,.pw-section-heading h2,.pw-process h2,
+ .pw-order-card h3,.pw-endcap h2,.v2-inner-head h1,.page-banner h1
+){line-height:1.38!important}
+html[lang='fa'] .pw-art-paper>strong{font-weight:900!important;line-height:1.30!important}
+html[lang='fa'] :is(
+ .site-header,.nav-desktop,.mobile-menu,.header-actions,.pw-category-details,
+ .shop-meta,.v2-catalog-card,.v2-product-page,.v2-order-layout,
+ .v2-admin,.pw-admin-sidebar,.pw-admin-content,.admin-secure-logout,
+ .admin-editor,.admin-list,.admin-entry,.finance-console,
+ .v3-auth-shell,.v3-auth-form,.v2-account,.pw-process-step,.footer,
+ button,input,textarea,select,label,summary
+){font-family:var(--font-body)!important}
+/* The decorative numbers and the language switch deliberately keep Latin glyphs. */
+html[lang='fa'] :is(.language-switcher.language-toggle-single,.language-switcher.language-toggle-single>span){
+ font-family:Arial,sans-serif!important;
+}
+@media(max-width:700px){
+ html[lang='fa'] :is(.pw-hero h1,.pw-section-heading h2,.pw-process h2,.pw-endcap h2){
+  line-height:1.43!important;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ html[lang='fa'] body{scroll-behavior:auto}
+}

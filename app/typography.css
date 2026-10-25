@@ -1,7 +1,12 @@
-/* Safire Honar Persian typography | SIL OFL 1.1 display and UI fonts */
+/* Safire Honar Persian typography | Vazirmatn + Cairo, both OFL-1.1 */
 :root {
-  --font-body: 'Estedad Variable', Tahoma, sans-serif;
-  --font-display: 'Lalezar', 'Estedad Variable', Tahoma, sans-serif;
+  --font-body: 'Vazirmatn Variable', Tahoma, sans-serif;
+  --font-display: 'Cairo Variable', 'Vazirmatn Variable', Tahoma, sans-serif;
+}
+/* Never apply Persian display letterforms to the site's English version. */
+html[lang='en']{
+  --font-body: Arial, Inter, system-ui, sans-serif;
+  --font-display: Arial, Inter, system-ui, sans-serif;
 }
 html { font-synthesis: none; }
 body, button, input, select, textarea, summary { font-family: var(--font-body); letter-spacing: normal; }

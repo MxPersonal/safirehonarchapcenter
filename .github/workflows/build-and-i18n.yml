@@ -23,6 +23,8 @@ jobs:
         run: node scripts/check-marquee-and-products.mjs
       - name: Verify full Studio 26 redesign
         run: node scripts/check-studio-redesign.mjs
+      - name: Verify glass UI and touch interactions
+        run: node scripts/check-glass-ui.mjs
       - name: Static typecheck
         run: npm run typecheck
       - name: Production build

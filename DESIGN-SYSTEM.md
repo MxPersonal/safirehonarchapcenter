@@ -1,65 +1,33 @@
-# Safire Honar | PRINTWORKS design system
+# Safire Honar | Aurora Glass UI System
 
-## Design intent
-A premium contemporary print-business website and a practical back-office application.
-Product-first, readable, bilingual, sober. Replaces the previous green editorial theme and the purple moving marquee.
+## Visual direction
+A premium, accessible glassmorphism style with layered frosted panels, subtle neon cyan/purple lighting, dimensional depth and restrained microinteractions. Product-first UX, not a full-screen effect that blocks content.
 
-## Palette
-- Ink: `#171B22`
-- Dark hero and admin sidebar: `#141820`
-- Paper: `#F7F6F2`
-- White surfaces: `#FFFFFF`
-- Vermilion accent: `#EF6546`
-- Sand: `#EF EDE7` (actual `#EFEDE7`)
-- Divider: `#E2E3E0`
-- Muted copy: `#697079`
+## Design tokens
+- Frosted surface: translucent white in Light Mode, smoked navy glass in Dark Mode.
+- Neon edges: cyan `#33CDE5`, violet `#8C79FA`, subtle rose `#F397C7`.
+- Blur: `blur(20px) saturate(155%)` where appropriate.
+- Shadows: soft deep elevation plus narrow electric rim highlights.
+- Always preserve strong contrast for text, form labels, prices and buttons.
 
-## Typography
-- Persian: locally installed Estedad for body text and Lalezar for selected editorial display headings.
-- English: readable native sans-serif, strong typographic scale, natural LTR.
-- Text is never overlaid on busy decorative patterns.
+## Applied to
+Global body background, header, language and theme toggles, homepage Hero, category cards, product/portfolio cards, call-to-action areas, gallery, inner pages, authentication, customer dashboard, administrator navigation, administration CRUD panels and finance KPIs/charts.
 
-## Homepage
-1. Full-width dark hero with controlled hierarchy and clear primary/secondary CTAs.
-2. The hero shows a real published product image if available, otherwise an original static typographic composition; no fabricated product image.
-3. Compact category grid with stable imagery, numbers and practical descriptions.
-4. Published product cards from `storeGalleryProducts(locale)` only, hidden entirely when no products exist.
-5. Three-step order guide and two clearly differentiated order routes.
-6. High-contrast final action area.
+## Three-dimensional card behavior
+`components/glass-interactions.tsx` is a lightweight delegated client behavior with no new dependencies. For real mouse pointers, cards tilt up to ±3.6° with cursor movement, lift around 11px on hover, and display a light reflection. For touch, the pressed card lifts briefly and returns softly after 320ms. Real product links remain links; pointer handlers never call preventDefault.
 
-**Removed:** duplicate ticker, moving purple strip, diagonal rotating paper sheets, previous green theme.
+For `prefers-reduced-motion: reduce`, transformations and animation are disabled. Navigation and content remain keyboard-accessible. CSS hover motion is limited to pointers that actually support hover.
 
-## Secondary pages
-The final `app/printworks.css` stylesheet covers categories, galleries, product details, guides, CMS pages, login, customer account, order/request forms, header and footer. Existing APIs and data structures are preserved.
+## Product / CMS invariants
+All products retain original data, names, URLs, images, prices, order identifiers, and commerce actions. The original product data is intentionally language-invariant; category labels and site UI remain bilingual. Existing database, admin authentication, Supabase migrations, accounting calculations and workflows are untouched.
 
-## Administrator UI
-- Desktop: fixed-width **grouped navigation sidebar**, responsive to a horizontal scrollable menu on narrow screens.
-- Site: categories, products and portfolio, editable pages.
-- Store: accounting, orders, quotes, customer carts, customers.
-- Operations summary includes counts from authenticated `/admin/api` responses only, never invented metrics.
-- All existing data CRUD handlers and image previews preserved.
-- Financial screen retains actual accounting controls, reports, reversals and audit-related data. Visual presentation changes only.
+## Implementation
+- `app/glass-aurora.css`: final theme override after Printworks and previous Dark Mode CSS.
+- `components/glass-interactions.tsx`: one delegated pointer controller mounted in the root layout.
+- `app/layout.tsx`: adds those two references, preserving locale direction.
+- `scripts/check-glass-ui.mjs`: regression checks, added to GitHub Actions.
 
-## Localization & invariant products
-- `/fa` => Persian site UI and RTL.
-- `/en` => English site UI and LTR.
-- Categories, nav, legal/about/help text are localized where translations are available.
-- Product identity, product name, media, price and order data never change when switching locale.
-- Server-authenticated administration stays protected; no new credential keys.
+## QA
+Run `node scripts/check-glass-ui.mjs`, `npm run typecheck`, `npm run build`. Check /fa and /en in Light Mode and Dark Mode, category/product cards under mouse hover and mobile touch, prices and navigation, RTL and LTR, sign in / register, accounting, and the keyboard/reduced-motion cases. This source validation is distinct from an actual live graphical-device review.
 
-## Interaction
-- Native full-page FA/EN links so root layout and direction update reliably.
-- Keyboard focus ring, adequate tap size and `prefers-reduced-motion`.
-- No marquee or looping animation.
-- Main content widths adapt at 1180px, 940px, 700px and 380px breakpoints.
-
-## Build validation
-- `node scripts/check-studio-redesign.mjs`
-- `node scripts/check-marquee-and-products.mjs`
-- `node scripts/check-language-navigation.mjs`
-- `npm run typecheck` then `npm run build`.
-- Visit /fa and /en on mobile and desktop; inspect dashboard after logging in and verify all actionable controls.
-- CI pass and READY deploy status must be confirmed before claiming production is complete.
-
-## Deployment
-Make incremental changes on staging; update `main` only once for the full redesign. Vercel is linked to GitHub and deploys automatically. Do not create a separate manual deployment.
+Deployment is automatic through GitHub main. Do not manually redeploy Vercel.

@@ -5,7 +5,7 @@ import {categoryEnglish,designEnglish,pageEnglish} from '@/lib/translated-conten
 
 import {useEffect,useState} from 'react';
 import Link from 'next/link';
-import {ArrowUpLeft,Plus,RefreshCw,Save,Settings2,ShoppingBag,UserRound,Layers,FilePen,MessagesSquare,Landmark,PanelsTopLeft,Store} from 'lucide-react';
+import {ArrowUpLeft,Plus,RefreshCw,Save,Settings2,ShoppingBag,UserRound,Layers,FilePen,MessagesSquare,Landmark,PanelsTopLeft,Store,Menu,ChevronDown} from 'lucide-react';
 import AccountingConsole from '@/components/accounting-console';
 import AdminArtworkPreview from '@/components/admin-artwork-preview';
 import {CustomerVisualPicker,ProductVisualPicker,CustomerAvatar} from '@/components/admin-visual-picker';
@@ -33,6 +33,7 @@ export default function AdminConsole(){
  const [starter,setStarter]=useState<Starter|null>(null),[importing,setImporting]=useState(false),[hasLoaded,setHasLoaded]=useState(false);
  const [importReport,setImportReport]=useState<Result|null>(null);
  const [area,setArea]=useState<'site'|'commerce'>('site');
+ const [mobileMenuOpen,setMobileMenuOpen]=useState<'site'|'commerce'|null>(null);
  const [tab,setTab]=useState<string>('categories'),[msg,setMsg]=useState(''),[warning,setWarning]=useState(''),[busy,setBusy]=useState(false),[cats,setCats]=useState<C[]>([]),[products,setProducts]=useState<P[]>([]),[manualProducts,setManualProducts]=useState<ManualProduct[]>([]),[pages,setPages]=useState<Page[]>(pageDefaults),[customers,setCustomers]=useState<User[]>([]),[carts,setCarts]=useState<Cart[]>([]),[orders,setOrders]=useState<Order[]>([]),[quotes,setQuotes]=useState<Quote[]>([]);
  const [catForm,setCatForm]=useState({id:'',name:'',name_en:'',slug:'',description:'',description_en:'',theme:'coral',image_url:'',parent_id:'',sort_order:'0',active:true});
  const [pForm,setPForm]=useState({id:'',name:'',name_en:'',slug:'',description:'',description_en:'',category_id:'',mode:'quote',price_toman:'',image_url:'',active:true});
@@ -148,11 +149,30 @@ export default function AdminConsole(){
  return <div className="pw-admin-workspace">
  <aside className="pw-admin-sidebar" aria-label={pick('ناوبری مدیریت','Administration navigation')}>
   <div className="pw-admin-brand"><span>{pick('سفیر هنر / مدیریت','SH / CONTROL')}</span><strong>{pick('مرکز مدیریت','Management hub')}</strong><small>{pick('چاپ سفیر هنر','Safire Honar Print Studio')}</small></div>
-  <nav className="pw-admin-navigation" aria-label={pick('بخش‌های پنل مدیریت','Administration sections')}>
+  {/* Desktop navigation stays exactly as before. Mobile and tablet use separate collapsible groups. */}
+  <nav className="pw-admin-navigation pw-admin-navigation-desktop" aria-label={pick('بخش‌های پنل مدیریت','Administration sections')}>
    <span className="pw-admin-nav-title">{pick('مدیریت سایت','SITE MANAGEMENT')}</span>
    {siteTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item" aria-current={tab===key?'page':undefined} onClick={()=>{setArea('site');setTab(key);setMsg('')}}><Icon size={18}/>{locale==='en'?({categories:'Categories',products:'Products & portfolio',pages:'Site pages'} as Record<string,string>)[key]:name}</button>)}
    <span className="pw-admin-nav-title">{pick('مدیریت فروشگاه','STORE OPERATIONS')}</span>
    {commerceTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item" aria-current={tab===key?'page':undefined} onClick={()=>{setArea('commerce');setTab(key);setMsg('')}}><Icon size={18}/>{locale==='en'?({accounting:'Accounting',orders:'Orders',quotes:'Quotes',carts:'Customer carts',customers:'Customers'} as Record<string,string>)[key]:name}</button>)}
+  </nav>
+  <nav className="pw-admin-mobile-navigation" aria-label={pick('منوهای مدیریت در موبایل و تبلت','Administration menus on mobile and tablet')} onKeyDown={event=>{if(event.key==='Escape')setMobileMenuOpen(null)}}>
+   <section className="pw-admin-mobile-group" aria-label={pick('مدیریت سایت','Site management')}>
+    <button type="button" className="pw-admin-mobile-trigger" aria-expanded={mobileMenuOpen==='site'} aria-controls="pw-admin-site-mobile-menu" aria-label={pick('باز و بسته کردن منوی مدیریت سایت','Toggle site management menu')} onClick={()=>setMobileMenuOpen(current=>current==='site'?null:'site')}>
+     <Menu size={20} aria-hidden="true"/><span>{pick('مدیریت سایت','Site management')}</span><ChevronDown className="pw-admin-mobile-chevron" size={16} aria-hidden="true"/>
+    </button>
+    <div id="pw-admin-site-mobile-menu" className="pw-admin-mobile-menu" hidden={mobileMenuOpen!=='site'}>
+     {siteTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item" aria-current={tab===key?'page':undefined} onClick={()=>{setArea('site');setTab(key);setMsg('');setMobileMenuOpen(null)}}><Icon size={18}/><span>{locale==='en'?({categories:'Categories',products:'Products & portfolio',pages:'Site pages'} as Record<string,string>)[key]:name}</span></button>)}
+    </div>
+   </section>
+   <section className="pw-admin-mobile-group" aria-label={pick('مدیریت فروشگاه','Store management')}>
+    <button type="button" className="pw-admin-mobile-trigger" aria-expanded={mobileMenuOpen==='commerce'} aria-controls="pw-admin-commerce-mobile-menu" aria-label={pick('باز و بسته کردن منوی مدیریت فروشگاه','Toggle store management menu')} onClick={()=>setMobileMenuOpen(current=>current==='commerce'?null:'commerce')}>
+     <Menu size={20} aria-hidden="true"/><span>{pick('مدیریت فروشگاه','Store management')}</span><ChevronDown className="pw-admin-mobile-chevron" size={16} aria-hidden="true"/>
+    </button>
+    <div id="pw-admin-commerce-mobile-menu" className="pw-admin-mobile-menu" hidden={mobileMenuOpen!=='commerce'}>
+     {commerceTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item" aria-current={tab===key?'page':undefined} onClick={()=>{setArea('commerce');setTab(key);setMsg('');setMobileMenuOpen(null)}}><Icon size={18}/><span>{locale==='en'?({accounting:'Accounting',orders:'Orders',quotes:'Quotes',carts:'Customer carts',customers:'Customers'} as Record<string,string>)[key]:name}</span></button>)}
+    </div>
+   </section>
   </nav>
   <div className="pw-admin-sidebar-foot">{pick('محتوای سایت و عملیات فروشگاه از یک فضای امن مدیریت می‌شوند.','Website content and store operations are managed in one secure workspace.')}</div>
  </aside>

@@ -1,6 +1,6 @@
 import {siteLocale} from '@/lib/i18n-server';
 import {LocaleProvider} from '@/components/locale-provider';
-import type {Metadata} from 'next';import '@fontsource-variable/estedad/wght.css';import '@fontsource/lalezar/400.css';import './globals.css';import './upgrade.css';import './typography.css';import './taxonomy-auth.css';import './experience.css';import './expressive.css';import './admin/login/admin-login.css';import './admin-preview.css';import './admin-visual-pickers.css';import './accounting.css';import './i18n.css';import './bidi-fix.css';import './printworks.css';import {ScrollProgress} from '@/components/scroll-experience';import Header from '@/components/header';import Footer from '@/components/footer';
+import type {Metadata} from 'next';import '@fontsource-variable/estedad/wght.css';import '@fontsource/lalezar/400.css';import './globals.css';import './upgrade.css';import './typography.css';import './taxonomy-auth.css';import './experience.css';import './expressive.css';import './admin/login/admin-login.css';import './admin-preview.css';import './admin-visual-pickers.css';import './accounting.css';import './i18n.css';import './bidi-fix.css';import './printworks.css';import './theme-logos.css';import {ScrollProgress} from '@/components/scroll-experience';import Header from '@/components/header';import Footer from '@/components/footer';
 const url=process.env.NEXT_PUBLIC_SITE_URL;
 export async function generateMetadata():Promise<Metadata>{
  const locale=await siteLocale();

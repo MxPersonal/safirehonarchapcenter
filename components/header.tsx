@@ -6,6 +6,7 @@ import Brand from './brand';
 import {browserDb} from '@/lib/supabase/client';
 import {useI18n} from './locale-provider';
 import LanguageSwitcher from './language-switcher';
+import ThemeToggle from './theme-toggle';
 export default function Header(){
  const {locale,t,path,pick}=useI18n();
  const [open,setOpen]=useState(false),[authenticated,setAuthenticated]=useState(false);
@@ -22,6 +23,7 @@ export default function Header(){
    <nav className="nav-desktop" aria-label={pick('ناوبری اصلی','Main navigation')}>{links.map(([href,title])=><Link key={href} href={path(href)}>{title}</Link>)}</nav>
    <div className="header-actions">
     <LanguageSwitcher compact/>
+    <ThemeToggle/>
     <Link className="icon-button only-desktop" href={path('/catalog')} aria-label={t.products}><Search size={20}/></Link>
     {authenticated?<><Link className="v3-auth-nav-link" href={path('/account')}><UserRound size={17}/>{t.myAccount}</Link><Link className="icon-button cart-button" href={path('/account')} aria-label={t.cart}><ShoppingBag size={20}/></Link></>:<><Link className="v3-auth-nav-link v3-signin-nav" href={path('/login')}><UserRound size={17}/>{t.login}</Link><Link className="v3-auth-nav-register" href={path('/register')}><UserRoundPlus size={17}/>{t.register}</Link></>}
     <Link className="header-order-button" href={path('/order')}>{pick('شروع سفارش','Start an order')} <ArrowUpLeft size={17}/></Link>

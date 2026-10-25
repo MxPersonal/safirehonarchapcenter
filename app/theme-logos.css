@@ -1,0 +1,132 @@
+/* Official Safire Honar PNG logos. Cropped transparent artwork for sharp legibility. */
+.theme-aware-brand{gap:10px!important;align-items:center!important;max-width:100%}
+.theme-aware-brand .brand-emblem{
+ display:block!important;position:relative!important;flex:0 0 auto!important;
+ width:131px!important;height:96px!important;overflow:visible!important;
+ background:transparent!important;border:0!important;border-radius:0!important;
+ box-shadow:none!important;padding:0!important;
+}
+.theme-aware-brand .brand-emblem img{
+ position:absolute!important;inset:0!important;left:0!important;top:0!important;
+ width:100%!important;height:100%!important;object-fit:contain!important;
+ max-width:100%!important;max-height:100%!important;
+ mix-blend-mode:normal!important;filter:none!important;
+}
+.theme-aware-brand .brand-logo-light{display:block!important}
+.theme-aware-brand .brand-logo-dark{display:none!important}
+.site-header .header-inner{min-height:102px!important}
+.site-header .brand-anchor{display:flex;align-items:center;min-width:0}
+.site-header .brand-copy{flex-shrink:0}
+.site-header .brand-copy strong{font-size:clamp(16px,1.55vw,22px)!important}
+.site-header .brand-copy small{font-size:8px!important;letter-spacing:.06em!important}
+.footer .theme-aware-brand .brand-logo-light{display:none!important}
+.footer .theme-aware-brand .brand-logo-dark{display:block!important}
+.footer .theme-aware-brand .brand-emblem{width:124px!important;height:92px!important}
+.footer .theme-aware-brand .brand-copy strong{color:#fff!important}
+.footer .theme-aware-brand .brand-copy small{color:#d4dae0!important}
+/* Appearance is independent of the FA / EN language selection. */
+.site-theme-toggle{
+ display:inline-flex;align-items:center;justify-content:center;flex:0 0 42px;
+ width:42px;height:42px;padding:0;border-radius:9px;
+ background:#f4f4f3;border:1px solid #dedfdd;color:#242933;
+ cursor:pointer;transition:background .18s,color .18s,border-color .18s;
+}
+.site-theme-toggle:hover{background:#e7e4e0;border-color:#bbc0bf}
+.site-theme-toggle:focus-visible{outline:3px solid #ef6546;outline-offset:3px}
+html[data-theme='dark']{color-scheme:dark}
+html[data-theme='dark'] body{background:#161b21!important;color:#f5f5f3!important}
+html[data-theme='dark'] .site-header{
+ background:#1d232b!important;border-bottom:1px solid #3d454d!important;
+}
+html[data-theme='dark'] .site-header .theme-aware-brand .brand-logo-light{display:none!important}
+html[data-theme='dark'] .site-header .theme-aware-brand .brand-logo-dark{display:block!important}
+html[data-theme='dark'] .site-header .brand-copy strong{color:#f5f5f4!important}
+html[data-theme='dark'] .site-header .brand-copy small{color:#b9c1c8!important}
+html[data-theme='dark'] .site-header .nav-desktop a{color:#e4e5e6!important}
+html[data-theme='dark'] .site-header .nav-desktop a:hover{color:#ff9b82!important}
+html[data-theme='dark'] .site-header .menu-toggle,
+html[data-theme='dark'] .site-header .icon-button{color:#f5f5f3!important}
+html[data-theme='dark'] .v3-auth-nav-link{color:#f1f1f0!important}
+html[data-theme='dark'] .language-switcher{
+ background:#313943!important;border-color:#4b535c!important
+}
+html[data-theme='dark'] .language-switcher .language-switcher-option{color:#d3d9de!important}
+html[data-theme='dark'] .language-switcher .language-switcher-option.selected,
+html[data-theme='dark'] .language-switcher .language-switcher-option[aria-current='page']{
+ background:#f5f2ed!important;color:#1c232b!important
+}
+html[data-theme='dark'] .site-theme-toggle{background:#343d47;color:#ffd6a7;border-color:#535c66}
+html[data-theme='dark'] .site-theme-toggle:hover{background:#45515d}
+html[data-theme='dark'] .mobile-menu{
+ background:#222a34!important;border-color:#444e58!important
+}
+html[data-theme='dark'] .mobile-menu a{color:#f2f3f3!important;border-color:#3a444e!important}
+html[data-theme='dark'] .pw-section,html[data-theme='dark'] .pw-categories,
+html[data-theme='dark'] .pw-order-options{background:#161b21!important}
+html[data-theme='dark'] :is(.pw-section-heading h2,.pw-process h2,
+ .pw-category-details h3,.pw-categories-footer,.pw-process-step h3){color:#f7f7f5!important}
+html[data-theme='dark'] :is(.pw-section-heading p,.pw-process-intro>p,
+ .pw-category-details p,.pw-process-step p,.pw-categories-footer){color:#bac2c7!important}
+html[data-theme='dark'] .pw-process,
+html[data-theme='dark'] .pw-featured{background:#1b2229!important}
+html[data-theme='dark'] .pw-category-item{
+ background:#252e36!important;border-color:#41474f!important;color:#f7f7f5!important
+}
+html[data-theme='dark'] .pw-category-details>span{color:#f4af95!important}
+html[data-theme='dark'] .pw-underlined-link{color:#fff!important;border-color:#b0b8bc}
+html[data-theme='dark'] .pw-process-steps,
+html[data-theme='dark'] .pw-process-step,
+html[data-theme='dark'] .pw-categories-footer{border-color:#434b52!important}
+html[data-theme='dark'] .pw-process-step svg{color:#f4b39e}
+html[data-theme='dark'] .pw-order-card-ready{background:#343b43;color:#fff}
+html[data-theme='dark'] .pw-order-card-quote{background:#2b333d}
+html[data-theme='dark'] :is(.page-banner,.v2-inner-head,.page-banner.dark-banner,.simple-banner){
+ background:#252e36!important;border-color:#414a52!important
+}
+html[data-theme='dark'] :is(.page-banner h1,.v2-inner-head h1){color:#fff!important}
+html[data-theme='dark'] :is(.page-banner p,.v2-inner-head p,.breadcrumbs a){color:#c6cbd0!important}
+html[data-theme='dark'] :is(.v2-catalog-card,.v3-subcategory-card,.design-card,.shop-tile,
+ .dashboard-box,.v2-cms-paper,.product-config,.product-preview,.service-block,
+ .guide-item,.request-form,.request-summary,.tracking-placeholder,.quote-panel,
+ .dashboard-profile-bar,.dashboard-stats>div){
+ background:#252d35!important;border-color:#434b55!important;color:#f3f4f3!important
+}
+html[data-theme='dark'] :is(.v2-catalog-card,.v3-subcategory-card,.design-card,.shop-tile,
+ .dashboard-box,.v2-cms-paper,.product-config,.request-form,.request-summary) 
+ :is(h2,h3,strong,label){color:#f5f6f4!important}
+html[data-theme='dark'] :is(.v2-cms-body,.product-config p,.request-form p){color:#c8ccd0!important}
+html[data-theme='dark'] .v2-admin,
+html[data-theme='dark'] .finance-console{color:#f5f5f3!important}
+html[data-theme='dark'] :is(.admin-secure-logout,.admin-heading,
+ .pw-admin-kpi,.admin-editor,.admin-list,.admin-entry,.admin-quote,.admin-order,
+ .admin-cart,.finance-panel,.finance-stat,.finance-modal,.admin-import-report){
+ background:#242b33!important;border-color:#434b55!important;color:#f4f5f4!important
+}
+html[data-theme='dark'] :is(.admin-heading h1,.admin-editor h2,.admin-list h2,
+ .finance-top h2,.finance-panel h3,.pw-admin-kpi>strong){color:#fff!important}
+html[data-theme='dark'] :is(.admin-heading p,.admin-editor label,.admin-list label,
+ .finance-form label,.pw-admin-kpi>span){color:#d1d6d7!important}
+html[data-theme='dark'] :is(.admin-editor,.admin-order,.finance-form,.request-form,.v3-auth-fields)
+ :is(input,select,textarea){
+ background:#303943!important;color:#f5f5f4!important;border-color:#5b6470!important
+}
+html[data-theme='dark'] .v3-auth-panel{background:#252d34!important}
+html[data-theme='dark'] .footer{background:#11171d!important}
+@media(max-width:1180px){
+ .theme-aware-brand .brand-emblem{width:106px!important;height:78px!important}
+ .site-header .header-inner{min-height:86px!important}
+ .site-header .brand-copy strong{font-size:16px!important}
+}
+@media(max-width:700px){
+ .site-header .header-inner{min-height:79px!important}
+ .site-header .theme-aware-brand .brand-emblem{width:91px!important;height:68px!important}
+ .site-header .brand-copy{display:none!important}
+ .site-theme-toggle{width:36px;height:36px;flex-basis:36px}
+ .site-header .header-actions{gap:3px!important}
+ .footer .theme-aware-brand .brand-emblem{width:117px!important;height:86px!important}
+ .footer .theme-aware-brand .brand-copy{display:flex!important}
+}
+@media(max-width:380px){
+ .site-header .theme-aware-brand .brand-emblem{width:78px!important;height:59px!important}
+ .site-theme-toggle{width:32px;height:32px;flex-basis:32px}
+}

@@ -326,3 +326,45 @@ html[data-theme='dark'] .admin-site-category-buttons [aria-pressed='true']{backg
 @media(prefers-reduced-motion:reduce){
  .pw-admin-mobile-trigger,.pw-admin-mobile-chevron{transition:none!important}
 }
+
+/* 2.5: Site-wide FA / EN one-button toggle, visually paired with dark/light. */
+.language-switcher.language-toggle-single{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ flex:0 0 42px!important;width:42px!important;min-width:42px!important;max-width:42px!important;
+ height:42px!important;min-height:42px!important;gap:0!important;padding:0!important;
+ border-radius:9px!important;direction:ltr!important;text-align:center!important;
+ font-family:Arial,sans-serif!important;font-size:13px!important;font-weight:900!important;
+ line-height:1!important;letter-spacing:.02em!important;text-decoration:none!important;
+ color:#2d3b61!important;background:rgba(255,255,255,.51)!important;
+ border:1px solid rgba(133,164,219,.41)!important;
+ box-shadow:none!important;transform:none!important;
+ cursor:pointer;transition:background-color .18s ease,border-color .18s ease!important
+}
+.language-switcher.language-toggle-single>span{
+ display:block;direction:ltr;line-height:1;color:inherit!important;
+ font-family:Arial,sans-serif!important;font-size:13px!important;font-weight:900!important
+}
+.language-switcher.language-toggle-single:hover{
+ background:#e3ebfc!important;border-color:#879bd0!important;color:#233975!important
+}
+html[data-theme='dark'] .language-switcher.language-toggle-single,
+html[data-theme='dark'] .site-header .header-actions .language-switcher.language-toggle-single{
+ background:rgba(37,49,82,.76)!important;border:1px solid #596d99!important;
+ color:#edf4ff!important;box-shadow:none!important
+}
+html[data-theme='dark'] .language-switcher.language-toggle-single:hover,
+html[data-theme='dark'] .site-header .header-actions .language-switcher.language-toggle-single:hover{
+ background:#3d5184!important;border-color:#809ad0!important;color:#fff!important
+}
+@media(max-width:900px){
+ .language-switcher.language-toggle-single{height:39px!important;min-height:39px!important}
+}
+@media(max-width:700px){
+ .language-switcher.language-toggle-single{
+  width:36px!important;min-width:36px!important;max-width:36px!important;flex-basis:36px!important;
+  height:36px!important;min-height:36px!important;font-size:12px!important
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .language-switcher.language-toggle-single{transition:none!important}
+}

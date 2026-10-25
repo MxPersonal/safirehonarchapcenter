@@ -10,8 +10,10 @@ const proxy=read('proxy.ts');
 assert.ok(switcher.includes("usePathname()"),'Language path must reflect current page');
 assert.ok(switcher.includes("const current=new URL(window.location.href)"),'Use real browser path, not middleware rewrite');
 assert.ok(switcher.includes("window.location.assign(destination)"),'Preserve query and hash on navigation');
-assert.ok(switcher.includes("<a href={localePath(pathname,'fa')}"),'Persian switch must be a native anchor');
-assert.ok(switcher.includes("<a href={localePath(pathname,'en')}"),'English switch must be a native anchor');
+assert.ok(switcher.includes("const target=locale==='fa'?'en':'fa'"),'The single control must toggle to the other language');
+assert.ok(switcher.includes("href={localePath(pathname,target)}"),'Locale control must be a native document-navigation anchor');
+assert.equal((switcher.match(/<a\\b/g)||[]).length,1,'Render exactly one language control, not two pills');
+assert.ok(switcher.includes('>{label}</span>'),'The control must clearly show the destination language');
 assert.ok(!switcher.includes("from 'next/link'"),'Do not use Next Link for changing locale');
 assert.ok(!switcher.includes('useSearchParams'),'Do not make language switcher suspend');
 assert.ok(!header.includes('Suspense fallback={<span lang="en">FA / EN</span>}'),'Header switcher must render immediately');
@@ -21,4 +23,4 @@ assert.ok(layout.includes('<html lang={locale} dir={locale==='),"Root HTML must 
 assert.ok(css.includes("html[dir='ltr'] :is(.v2-admin"),'English admin must be LTR');
 assert.ok(css.includes("html[lang='fa'],html[lang='fa'] body{direction:rtl}"),'Persian must be RTL');
 assert.ok(proxy.includes("headers.set('x-safir-locale',locale)"),'Proxy must send explicit locale header');
-console.log('Language navigation regression checks: 14 passed.');
+console.log('Language navigation and single-toggle regression checks passed.');

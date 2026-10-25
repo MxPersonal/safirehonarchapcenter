@@ -11,6 +11,11 @@ for(const suffix of routes){for(const locale of ['fa','en']){
  const words=shown.match(/[\u0600-\u06ff]+/g)||[];
  if(locale==='en')assert.ok(/Print products|Design gallery|Print services|Home/.test(shown),url+' missing translated English site navigation; untranslated product data may still be Persian by design');
  else assert.ok(words.length>=12,url+' Persian page missing Persian content: '+words.length);
- if(suffix==='/'||suffix==='/catalog'){const target='/'+(suffix==='/'?'':suffix.slice(1));assert.ok(html.includes('href="/fa'+(suffix==='/'?'':suffix)+'"'),url+' missing FA link');assert.ok(html.includes('href="/en'+(suffix==='/'?'':suffix)+'"'),url+' missing EN link');}
+ if(suffix==='/'||suffix==='/catalog'){
+  const destination=locale==='fa'?'en':'fa';
+  const other='/'+destination+(suffix==='/'?'':suffix);
+  assert.ok(html.includes('href="'+other+'"'),url+' missing single opposite-language link');
+  assert.ok(html.includes('language-toggle-single'),url+' missing one-button locale control');
+ }
  checks++;}}
 console.log('Bilingual SSR pages passed:',checks);

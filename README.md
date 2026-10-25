@@ -1,117 +1,62 @@
-# چاپ سفیر هنر | Safire Honar Print Studio
+# چاپ سفیر هنر | Safire Honar Print Center
 
-A Persian, RTL, responsive printing storefront with editorial visual design, category showcases, two product workflows, customer accounts, and a restricted admin console.
+### چاپی که دیده می‌شود.
 
-## Stack
-- Next.js 16 App Router / React 19 / TypeScript
-- Bespoke CSS with mobile responsive layouts, reduced-motion support, and accessible focus states
-- Supabase Auth + PostgreSQL + Storage + Row Level Security (when configured)
-- GitHub → Vercel Git deployment
+**سفیر هنر، مرکز تخصصی چاپ و طراحی**، فضایی برای آشنایی با محصولات چاپی، مشاهده نمونه‌طرح‌ها و ثبت درخواست‌های چاپ اختصاصی است. از ظرافت یک کارت ویزیت تا بنرهای عریض و تابلوهای تبلیغاتی، می‌توانید نوع محصول موردنیازتان را پیدا کنید و جزئیات سفارش را برای بررسی ارسال کنید.
 
-## Development
+**[ورود به وب‌سایت چاپ سفیر هنر](https://safirehonarprintcenter.vercel.app/)**
 
-```sh
-npm install
-cp .env.example .env.local
-npm run dev
-npm run typecheck
-npm run build
-```
+---
 
-Without Supabase settings, the public **visual portfolio/gallery remains available** with clearly labeled fictional showcase examples. Customer auth and persisted carts/orders/quotes need Supabase. Admin login requires only `ADMIN_EMAIL` and `ADMIN_PASSWORD`; live CMS operations also require a server-only Supabase key and the storefront schema.
+## محصولات و خدمات چاپ
 
-## Database configuration
+| دسته‌بندی | توضیحات |
+| --- | --- |
+| **بنر** | بنرهای مناسبتی، تسلیت، تولد، زیارتی، تبلیغاتی و افتتاحیه در ابعاد مختلف |
+| **بروشور** | بروشورهای معرفی محصول، خدمات و کسب‌وکار، از جمله بروشور دو لت و سه لت |
+| **کارت ویزیت** | کارت‌های رسمی و خلاقانه با جنس، روکش و پرداخت‌های متنوع |
+| **تابلو و حروف برجسته** | تابلوهای فروشگاهی، حروف برجسته، لایت‌باکس و سازه‌های تبلیغاتی |
+| **استیکر و لیبل** | برچسب محصولات، استیکر ویترین و طرح‌های اختصاصی بسته‌بندی |
+| **تراکت و پوستر** | چاپ اقلام تبلیغاتی، اطلاع‌رسانی و معرفی رویدادها |
+| **بسته‌بندی چاپی** | پاکت، جعبه و اقلام چاپی مرتبط با هویت برند |
+| **سازه و چاپ نمایشگاهی** | استند، رول‌آپ، پاپ‌آپ و ملزومات چاپی غرفه‌ها |
 
-1. Create an isolated Supabase project for Safire Honar.
-2. Run `supabase/migrations/20261023_print_commerce.sql` via SQL Editor, once.
-3. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` using Supabase > Connect > API Keys. These values are public by design. **Never deploy a service-role or secret key to the browser.**
-4. Configure the Auth Site URL and Redirect URL matching your real HTTPS domain.
-5. Register an account through `/account/login` and **verify ownership** of the email.
-6. For **admin login**, configure the two Vercel variables `ADMIN_EMAIL` and `ADMIN_PASSWORD`. You do not need to promote a Supabase customer to admin for this independent login.
-7. For **admin CMS data access**, configure server-only `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (or legacy `SUPABASE_SERVICE_ROLE_KEY`) in Vercel. The API at `/admin/api` checks the signed administrator session before privileged reads/writes. Visit `/admin` to edit categories, products, images, homepage Hero and content pages. See `ADMIN-CMS.md`.
-8. Update official business information, approved policies and pricing. Do not publish placeholder operational claims as facts.
-9. Put environment values into Vercel > Project Settings > Environment Variables, then redeploy.
+برای دیدن گروه‌های اصلی و زیرمجموعه‌های آن‌ها به **[فهرست محصولات چاپی](https://safirehonarprintcenter.vercel.app/catalog)** سر بزنید.
 
-## Customer flows
-- `/catalog`: all categories, including categories later created in admin
-- `/catalog/[slug]`: category detail, showcase, real products (sample illustrations fall back when no database catalog exists)
-- `/shop/[slug]`: fixed-price products can be saved to the authenticated account cart; quote-mode products create authenticated quote records
-- `/order`: custom print request or request-for-contact workflow. **Not** a confirmed calendar reservation
-- `/account/login`: customer sign in/up
-- `/account`: saved account cart, quote status, purchase-request state, admin cart-change history
-- `/admin`: admin-only categories, product pricing/visibility, CMS pages, customers, carts, orders, and quote responses
-- `/about`, `/contact`, `/terms`, `/privacy`: CMS-powered editable content
+## از ایده تا سفارش
 
-## Important operational boundaries
+فرآیند شروع یک سفارش در سفیر هنر در سه گام معرفی شده است:
 
-**This is not yet a live paid checkout.** Fixed-price carts create `pending_review` orders via a database RPC using prices re-read server-side. The app does not collect payments, issue payment links, promise delivery times, allocate inventory, or sync shipping logistics. Before enabling payment, add a regulated gateway integration, order/payment verification, idempotent callbacks, robust refund policy, consent/privacy content, storage/media validation, and E2E tests.
+1. **انتخاب محصول:** از میان دسته‌های چاپی، محصول یا نوع خدمات دلخواهتان را انتخاب کنید.
+2. **ثبت جزئیات:** ابعاد، جنس، تعداد، فایل طرح و نیازهای اختصاصی سفارش را مشخص کنید.
+3. **بررسی و تأیید:** اطلاعات درخواست برای بررسی ارسال می‌شود و شرایط اجرا و قیمت براساس مشخصات کار اعلام خواهد شد.
 
-Admin cart edits and manually added orders use the protected server API with a privileged key and attempt to create audit log records. The customer dashboard can see when an admin modified their cart. For a production rollout, add customer notification and a reason code for every material change to a confirmed order, and consider immutable accounting ledgers.
+### دو راه برای شروع
 
-The provided artworks are **concept examples**, not real printed product photos. Real product/price/delivery information must be entered by an authorized business operator. Upload only assets you own or are licensed to use.
+**محصولات با قیمت مشخص:** اگر برای یک محصول قیمت نهایی در فروشگاه اعلام شده باشد، می‌توانید مسیر ثبت سفارش همان محصول را دنبال کنید.
 
-**Hosting:** Vercel Hobby terms limit usage to personal non-commercial deployments. A live revenue-generating storefront requires a permitted commercial deployment plan or a different host whose terms allow commercial usage.
+**چاپ و طراحی اختصاصی:** اگر پروژه شما ابعاد، متریال یا طرح ویژه‌ای دارد، مشخصات آن را ارسال کنید تا امکان اجرا و قیمت بررسی شود.
 
-## Security design
-- Supabase browser clients use only the publishable key, RLS on every application table.
-- Admin access uses a signed server session derived from `ADMIN_EMAIL` / `ADMIN_PASSWORD`. Admin CMS data mutations use a server-only privileged Supabase client after authorization, not a browser client. Customer access remains RLS restricted.
-- Customer records and carts are private to their owner and admins; no public user enumeration.
-- No payment amounts accepted from browsers at checkout; `checkout_fixed_cart` prices items from product records within a DB transaction.
-- `/admin` renders no public admin dashboard or seeded passwords when the backend is absent.
-- Public catalog images can be uploaded by admins only and stored in a size/type limited public bucket.
-- Site CMS content is rendered as **text**, never untrusted HTML.
-- Avoid sending personally identifiable print texts / files to analytics.
+**[ثبت درخواست چاپ اختصاصی](https://safirehonarprintcenter.vercel.app/order)**
 
-## Test checklist
-- Verify login + email confirmation and ownership of accounts
-- Verify customer cannot edit products, users, orders or another customer's cart via Supabase API
-- Verify admin update to cart appears in `audit_logs` and customer dashboard
-- Verify quote and fixed price mode boundaries / server-side price snapshots
-- Verify keyboard, 390px/768px/1440px layouts, large type, form errors, reduced motion
-- Verify domains, phone, pricing, opening hours and business policies prior to launch
+## گالری نمونه‌طرح‌ها
 
-## Product-type categories and customer registration (October 2026 update)
+در گالری سایت می‌توانید طرح‌های چاپی و نمونه‌های گرافیکی دسته‌های مختلف را ببینید و برای انتخاب سبک و محصول مناسب ایده بگیرید. بعضی از نمونه‌های نمایشی برای معرفی سبک طراحی هستند و به‌تنهایی به معنی موجودی، قیمت قطعی یا اجرای نهایی آن‌ها نیستند.
 
-The public homepage and `/catalog` show **top-level product families** (banner, brochure, business card, signboards/raised letters, stickers/labels, flyers, packaging and exhibitions), not banner occasions. `/catalog/banner` shows the child categories (condolence, birthday, pilgrimage, occasions, advertising), which open under their own URLs. The same parent/child structure is editable in the Admin > Categories form. Admins may attach products to a parent or subcategory. Sample designs on disconnected deployments are illustrative only.
+**[مشاهده نمونه‌طرح‌ها](https://safirehonarprintcenter.vercel.app/designs)**
 
-Registration and login now have distinct public routes:
+## بیشتر با سفیر هنر آشنا شوید
 
-- `/register`: create a customer account using email and password, accept legal terms.
-- `/login`: sign in after registration (and email confirmation if required).
-- `/account`: protected customer dashboard for saved cart, orders and quotes.
-- `/admin`: protected staff access requiring a valid signed admin session; **not** a Supabase Auth admin user.
-- `/order`: authenticated quotation request; fixed-price products post to `/api/cart` only for signed-in customers.
+- **[خدمات چاپ](https://safirehonarprintcenter.vercel.app/services):** مروری بر دسته‌های محصولات و خدمات.
+- **[راهنمای آماده‌سازی فایل چاپ](https://safirehonarprintcenter.vercel.app/guide):** نکات مرتبط با ثبت مشخصات و آماده‌سازی سفارش.
+- **[درباره ما](https://safirehonarprintcenter.vercel.app/about):** آشنایی بیشتر با مجموعه.
+- **[تماس با ما](https://safirehonarprintcenter.vercel.app/contact):** راه‌های ارتباط و پیگیری.
+- **[قوانین و شرایط](https://safirehonarprintcenter.vercel.app/terms):** آشنایی با شرایط ثبت درخواست و سفارش.
 
-Before the customer forms can perform real signups or orders, you **must** configure the Supabase environment variables shown in `.env.example` in Vercel and run both SQL migrations in `supabase/migrations` in order. The second migration adds `parent_id` to `categories` and seeds only missing product families. Existing customer and order IDs remain unchanged.
+---
 
-In Supabase Dashboard > Authentication, enable Email/Password and configure confirmation emails. For an SSR-compatible confirmation link set the **Confirm signup** email template link to:
+### Safire Honar | Print & Design
 
-`{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email`
+*From business cards and brochures to banners, labels, signage and exhibition graphics. Explore print categories, discover design examples and submit the details of your custom printing project for review.*
 
-Set Site URL to the actual deployed site, and configure allowed redirects for the canonical domain. Enable email verification before accepting live customers. `/auth/confirm` verifies the token and redirects to `/login` for a deliberate login step.
-
-With missing backend settings, the pages render safely but signup and persisted ordering cannot work. There is no public admin test account, sample password, fabricated order, or live payment service. Payment integration requires separate work.
-
-## Simple administrator login (two Vercel environment variables)
-
-The dedicated login is at `/admin/login`, while customer login and signup remain at `/login` and `/register`.
-
-1. Open **Vercel → Project → Settings → Environment Variables** and set **only these credentials** for your administrator login:
-
-   ```dotenv
-   ADMIN_EMAIL=you@example.com
-   ADMIN_PASSWORD=choose-a-strong-unique-password
-   ```
-
-2. Mark `ADMIN_PASSWORD` as **Sensitive** if available, and **do not** prefix the names with `NEXT_PUBLIC_`. Do not commit actual values to GitHub.
-3. **Redeploy** the project so Vercel's server runtime receives the new variables.
-4. Open `/admin/login`, enter the same email and password, and you will be redirected to `/admin` on successful sign-in. No Supabase administrator account, role assignment, password-hash generator, or third admin environment variable is needed.
-5. Use **خروج از مدیریت** to sign out. The server checks a signed 8-hour `HttpOnly`, `SameSite=Strict` admin session. Changing the password and redeploying invalidates old sessions.
-
-**Important separation:** Admin login still needs only `ADMIN_EMAIL` and `ADMIN_PASSWORD`. The CMS bridge is now implemented at `/admin/api`, but real database operations also require server-only `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (or the legacy service-role key) and the two database migrations. The admin dashboard reports missing tables or credentials. Customer authentication continues to use Supabase independently. See `ADMIN-CMS.md`.
-
-**Security note:** Since Vercel stores the password value as configured, choose a long unique password, use Vercel's Sensitive setting, and apply an appropriate WAF/rate limit to `/admin/login` before commercial use. Invalid credentials and missing configuration fail closed. There is no in-process rate limiter reliable across Vercel instances.
-
-
-## Admin areas & accounting (October 2026)
-The dashboard now separates **Site Management** (categories, products/gallery and editable pages) from **Store Management** (accounting, orders, quotations, carts and customers). Accounting uses cash-basis transaction entries separate from orders. See [`ACCOUNTING.md`](ACCOUNTING.md) and apply the additive `20261024000100_finance_ledger.sql` migration to the correct production Supabase project before enabling finance. No existing order is automatically booked as paid income.
+**[Visit the website](https://safirehonarprintcenter.vercel.app/)**

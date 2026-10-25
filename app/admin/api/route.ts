@@ -180,6 +180,22 @@ async function repairStarterCategoryLinks(){
   summary:`متصل‌شده: ${repaired} | ارتباط سالم: ${alreadyLinked} | دسته مقصد موجود نیست: ${missingCategory} | خطا: ${failed}`});
 }
 
+async function ensureSiteCategory(db:NonNullable<ReturnType<typeof adminDatabase>>,slug:string):Promise<string>{
+ const sample=starterCategories.find(c=>c.slug===slug);
+ if(!sample)throw new Error('دستهٔ نمونه معتبر نیست.');
+ const existing=await db.from('categories').select('id').eq('slug',slug).maybeSingle();
+ if(existing.error)throw new Error(safeError(existing.error)||'خواندن دسته ممکن نشد.');
+ if(existing.data)return existing.data.id;
+ const parent_id=sample.parent_slug?await ensureSiteCategory(db,sample.parent_slug):null;
+ const {parent_slug,...record}=sample;
+ const inserted=await db.from('categories').insert({...record,parent_id}).select('id').single();
+ if(inserted.data)return inserted.data.id;
+ if(inserted.error?.code==='23505'){
+  const same=await db.from('categories').select('id').eq('slug',slug).maybeSingle();
+  if(same.data)return same.data.id;
+ }
+ throw new Error(safeError(inserted.error)||'ثبت دسته ممکن نشد.');
+}
 export async function POST(req:NextRequest){
  if(!await allowed())return json({error:'ابتدا با حساب مدیریت وارد شوید.'},401);
  const origin=req.headers.get('origin');if(!origin||origin!==new URL(req.url).origin)return json({error:'درخواست خارج از سایت مجاز نیست.'},403);
@@ -199,15 +215,19 @@ export async function POST(req:NextRequest){
  let changed:unknown=null;
  try {
   if(action==='saveCategory'){
-   const slug=s(value.slug,80),name=s(value.name,160),parent_id=value.parent_id;
-   if(!SLUG.test(slug)||!name||s(value.description,5000).length>5000||parent_id && !uuid(parent_id)||id && !uuid(id))return json({error:'اطلاعات دسته‌بندی نامعتبر است.'},400);
+   const slug=s(value.slug,80),name=s(value.name,160),requestedParent=s(value.parent_id,120);
+   const sampleParent=requestedParent.startsWith('starter:')&&starterCategories.some(c=>c.slug===requestedParent.slice(8));
+   if(!SLUG.test(slug)||!name||s(value.description,5000).length>5000||requestedParent&&!uuid(requestedParent)&&!sampleParent||id&&!uuid(id))return json({error:'اطلاعات دسته‌بندی نامعتبر است.'},400);
+   const parent_id=sampleParent?await ensureSiteCategory(db,requestedParent.slice(8)):requestedParent||null;
    const theme=s(value.theme,20);
    const row={slug,name,description:s(value.description,3000),theme:themes.includes(theme)?theme:'coral',name_en:s(value.name_en,160)||null,description_en:s(value.description_en,3000)||null,image_url:s(value.image_url,2000)||null,parent_id:parent_id||null,sort_order:int(value.sort_order,-10000,10000)??0,active:bool(value.active)};
    const r=id?await db.from('categories').update(row).eq('id',id).select('id').single():await db.from('categories').insert(row).select('id').single();error=r.error;changed=r.data;
   }else if(action==='saveProduct'){
-   const slug=s(value.slug,80),name=s(value.name,160),mode=s(value.mode,20),category_id=value.category_id;
+   const slug=s(value.slug,80),name=s(value.name,160),mode=s(value.mode,20),requestedCategory=s(value.category_id,120);
+   const sampleCategory=requestedCategory.startsWith('starter:')&&starterCategories.some(c=>c.slug===requestedCategory.slice(8));
    const price=mode==='fixed'?int(value.price_toman,0,1_000_000_000_000):null;
-   if(!SLUG.test(slug)||!name||!uuid(category_id)||!['fixed','quote'].includes(mode)||mode==='fixed'&&price===null||id&&!uuid(id))return json({error:'نام، دسته‌بندی یا قیمت محصول صحیح نیست.'},400);
+   if(!SLUG.test(slug)||!name||!uuid(requestedCategory)&&!sampleCategory||!['fixed','quote'].includes(mode)||mode==='fixed'&&price===null||id&&!uuid(id))return json({error:'نام، دسته‌بندی یا قیمت محصول صحیح نیست.'},400);
+   const category_id=sampleCategory?await ensureSiteCategory(db,requestedCategory.slice(8)):requestedCategory;
    // Never persist a product in a category that was deleted or never imported.
    const category=await db.from('categories').select('id').eq('id',category_id).maybeSingle();
    if(category.error)return json({error:safeError(category.error)},409);
@@ -286,5 +306,5 @@ export async function POST(req:NextRequest){
   if(error)return json({error:safeError(error)},400);
   revalidatePath('/');revalidatePath('/catalog');revalidatePath('/about');revalidatePath('/contact');revalidatePath('/terms');revalidatePath('/privacy');
   return json({ok:true,data:changed});
- }catch{return json({error:'انجام عملیات ممکن نشد؛ تنظیمات دیتابیس و داده‌های ورودی را بررسی کنید.'},500)}
+ }catch(err){return json({error:err instanceof Error?err.message:'انجام عملیات ممکن نشد؛ تنظیمات دیتابیس و داده‌های ورودی را بررسی کنید.'},500)}
 }

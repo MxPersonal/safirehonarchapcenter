@@ -290,7 +290,7 @@ html[data-theme='dark'] .admin-site-category-buttons [aria-pressed='true']{backg
   border:1px solid rgba(165,197,255,.36)!important;border-radius:13px!important;
   background:rgba(44,59,108,.74)!important;color:#f2f7ff!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
-  font:800 clamp(11px,1.5vw,14px)/1.5 inherit;text-align:start;
+  font-family:inherit;font-size:clamp(11px,1.5vw,14px);font-weight:800;line-height:1.5;text-align:start;
   cursor:pointer;transition:background .16s ease,border-color .16s ease;
  }
  .pw-admin-mobile-trigger>svg:first-child{flex:0 0 20px}

@@ -12,7 +12,7 @@ assert.ok(switcher.includes("const current=new URL(window.location.href)"),'Use 
 assert.ok(switcher.includes("window.location.assign(destination)"),'Preserve query and hash on navigation');
 assert.ok(switcher.includes("const target=locale==='fa'?'en':'fa'"),'The single control must toggle to the other language');
 assert.ok(switcher.includes("href={localePath(pathname,target)}"),'Locale control must be a native document-navigation anchor');
-assert.equal((switcher.match(/<a\\b/g)||[]).length,1,'Render exactly one language control, not two pills');
+assert.equal((switcher.match(/<a\b/g)||[]).length,1,'Render exactly one language control, not two pills');
 assert.ok(switcher.includes('>{label}</span>'),'The control must clearly show the destination language');
 assert.ok(!switcher.includes("from 'next/link'"),'Do not use Next Link for changing locale');
 assert.ok(!switcher.includes('useSearchParams'),'Do not make language switcher suspend');

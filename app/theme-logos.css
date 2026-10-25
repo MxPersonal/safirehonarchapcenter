@@ -130,3 +130,129 @@ html[data-theme='dark'] .footer{background:#11171d!important}
  .site-header .theme-aware-brand .brand-emblem{width:78px!important;height:59px!important}
  .site-theme-toggle{width:32px;height:32px;flex-basis:32px}
 }
+
+
+/* Customer login + registration: a complete, legible dark appearance.
+   The account form uses .v3-auth-form-wrap, NOT .v3-auth-panel.
+   Keep white inputs for fast scanning and strong contrast on dark surfaces. */
+html[data-theme='dark'] .v3-auth-shell{
+ background:#1b212a!important;
+ color:#f6f7f8!important;
+ border:1px solid #454e5b!important;
+ box-shadow:0 22px 65px #0005!important;
+}
+html[data-theme='dark'] .v3-auth-form-wrap,
+html[data-theme='dark'] .v3-auth-form{
+ background:#1b212a!important;
+ color:#f6f7f8!important;
+}
+html[data-theme='dark'] .v3-auth-form :is(h1,h2,h3){
+ color:#fafafa!important;
+ text-shadow:none!important;
+}
+html[data-theme='dark'] .v3-auth-form>p,
+html[data-theme='dark'] .v3-auth-form .v2-subtle,
+html[data-theme='dark'] .v3-auth-loading{
+ color:#c6cdd5!important;
+}
+html[data-theme='dark'] .v3-auth-form .tiny-label{
+ color:#ffae93!important;
+}
+html[data-theme='dark'] .v3-auth-badge{
+ background:#37404b!important;
+ border:1px solid #5a6370!important;
+ color:#ffb89e!important;
+}
+html[data-theme='dark'] .v3-auth-fields>label,
+html[data-theme='dark'] .v3-auth-fields>label>span,
+html[data-theme='dark'] .v3-auth-terms,
+html[data-theme='dark'] .v3-auth-terms>span{
+ color:#f2f4f6!important;
+}
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields input:not([type='checkbox']),
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields select,
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields textarea{
+ background:#fff!important;
+ color:#17202b!important;
+ border:1.5px solid #d9dfe4!important;
+ box-shadow:none!important;
+ -webkit-text-fill-color:#17202b!important;
+ color-scheme:light;
+ caret-color:#18202b!important;
+ opacity:1!important;
+}
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields input:not([type='checkbox'])::placeholder,
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields textarea::placeholder{
+ color:#626f7c!important;
+ opacity:1!important;
+ -webkit-text-fill-color:#626f7c!important;
+}
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields input:not([type='checkbox']):focus-visible,
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields input:not([type='checkbox']):focus,
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields textarea:focus{
+ border-color:#ef795a!important;
+ outline:3px solid #ef795a63!important;
+ outline-offset:1px!important;
+}
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields input:-webkit-autofill,
+html[data-theme='dark'] .v3-auth-form .v3-auth-fields input:-webkit-autofill:focus{
+ -webkit-box-shadow:0 0 0 1000px #fff inset!important;
+ -webkit-text-fill-color:#17202b!important;
+ box-shadow:0 0 0 1000px #fff inset!important;
+ caret-color:#17202b!important;
+}
+html[data-theme='dark'] .v3-password-control button{
+ color:#344351!important;
+ border:0!important;
+ background:transparent!important;
+}
+html[data-theme='dark'] .v3-password-control button:hover{
+ color:#d65336!important;
+}
+html[data-theme='dark'] .v3-auth-switch{
+ color:#d5dbe0!important;
+ border-top:1px solid #454c57!important;
+}
+html[data-theme='dark'] :is(.v3-auth-switch a,.v3-auth-terms a){
+ color:#ffab8d!important;
+ text-underline-offset:4px;
+}
+html[data-theme='dark'] .v3-auth-form .v3-auth-submit{
+ background:#ef7253!important;
+ color:#1b2027!important;
+ border:1px solid #ef7253!important;
+ font-weight:900!important;
+}
+html[data-theme='dark'] .v3-auth-form .v3-auth-submit:hover{
+ background:#ff9578!important;
+ border-color:#ff9578!important;
+}
+html[data-theme='dark'] .v3-auth-form .v3-auth-submit:disabled{
+ opacity:.55!important;
+}
+html[data-theme='dark'] .v3-auth-form .v3-auth-success{
+ background:#173e31!important;
+ border:1px solid #4e986e!important;
+ color:#e9f9ed!important;
+}
+html[data-theme='dark'] .v3-auth-form .form-error,
+html[data-theme='dark'] .v3-auth-form [role='alert']{
+ background:#512c2b!important;
+ border:1px solid #be6864!important;
+ color:#ffe7e2!important;
+ border-radius:8px;
+}
+html[data-theme='dark'] .v3-auth-form .v2-notice{
+ background:#3a3540!important;
+ border-color:#786477!important;
+ color:#f8e6ed!important;
+}
+html[data-theme='dark'] .v3-auth-terms input[type='checkbox']{
+ accent-color:#ef795a!important;
+}
+html[data-theme='dark'] .v3-auth-form .v2-subtle:hover{
+ color:#fff!important;
+}
+@media(max-width:590px){
+ html[data-theme='dark'] .v3-auth-shell{box-shadow:none!important}
+}

@@ -1,0 +1,224 @@
+/* Safire Honar / Glass 2.1
+   Separate light and dark HERO palettes; physical/elevated light-mode cards.
+   Product/category administration: visible linked hierarchy and quick filters.
+   This stylesheet intentionally loads AFTER glass-aurora.css.
+*/
+
+/* A light hero must actually be a LIGHT hero: no navy-gradient inheritance. */
+html:not([data-theme='dark']) .pw-hero{
+ background:
+  radial-gradient(ellipse 56% 80% at 91% 13%,rgba(144,173,255,.28),transparent 75%),
+  radial-gradient(ellipse 45% 62% at 5% 83%,rgba(122,223,239,.24),transparent 77%),
+  linear-gradient(126deg,#edf5ff 0%,#e5edff 55%,#f7f2ff 100%)!important;
+ color:#202b4d!important;
+ border-bottom:1px solid #d0ddf3!important;
+}
+html:not([data-theme='dark']) .pw-hero::before{
+ background:radial-gradient(circle at 75% 75%,#cddffd77,transparent 48%)!important;
+ opacity:1!important;
+}
+html:not([data-theme='dark']) .pw-hero h1{
+ color:#17284d!important;text-shadow:none!important;
+}
+html:not([data-theme='dark']) .pw-hero h1 em{
+ color:#5860bf!important;text-shadow:none!important;
+}
+html:not([data-theme='dark']) .pw-hero-overline{
+ color:#526596!important;
+}
+html:not([data-theme='dark']) .pw-hero-copy>p,
+html:not([data-theme='dark']) .pw-hero-baseline{
+ color:#4f6281!important;
+}
+html:not([data-theme='dark']) .pw-hero-baseline i{background:#626aca!important}
+html:not([data-theme='dark']) .pw-hero .pw-button-light{
+ background:linear-gradient(115deg,#3d548b,#6b61b8)!important;
+ border:1px solid #778dcc!important;
+ box-shadow:0 9px 22px #526bba30!important;
+ color:white!important;
+}
+html:not([data-theme='dark']) .pw-hero .pw-button-outline{
+ background:rgba(255,255,255,.68)!important;
+ color:#2e4477!important;
+ border:1px solid #a0b8e1!important;
+ box-shadow:0 5px 15px #5074a512!important;
+}
+html:not([data-theme='dark']) .pw-hero .pw-button-outline:hover{
+ background:#fff!important;border-color:#798de1!important;
+}
+html:not([data-theme='dark']) .pw-hero-bottom{
+ color:#687a9a!important;border-color:#cbdaf2!important;
+}
+html:not([data-theme='dark']) .pw-hero-bottom a{color:#3b5593!important}
+html:not([data-theme='dark']) .pw-hero-media{
+ box-shadow:0 20px 55px #345a9c27,0 2px 8px #6a84be18!important;
+ border:1px solid #ffffffde!important;
+}
+/* The home graphic is a UI illustration, not product content, so it follows
+   the site language. Keep illustration text readable in both languages. */
+html[lang='fa'] .pw-art-paper>strong{
+ font-family:var(--font-display),'Lalezar',Tahoma,sans-serif!important;
+ font-size:clamp(53px,5.8vw,83px)!important;
+ font-weight:400!important;letter-spacing:0!important;
+ line-height:1.3!important;
+ direction:rtl;text-align:right!important;
+}
+html[lang='fa'] .pw-art-paper>span,
+html[lang='fa'] .pw-art-paper>small{
+ font-family:var(--font-body),Tahoma,sans-serif!important;
+ letter-spacing:0!important;font-size:11px!important;
+}
+html:not([data-theme='dark']) .pw-art-paper{
+ background:linear-gradient(146deg,#7ecfe3,#9fb8eb 80%)!important;
+ box-shadow:15px 17px 0 #a6badd91!important;
+ color:#213657!important;
+}
+html:not([data-theme='dark']) .pw-art-paper>strong{color:#1e3159!important}
+html:not([data-theme='dark']) .pw-art-paper>strong i{color:#faffff!important}
+html:not([data-theme='dark']) .pw-art-disc{border-color:#b5a8ef!important}
+html:not([data-theme='dark']) .pw-hero-corner{background:#eef3ffdc!important;color:#314577!important}
+html[data-theme='dark'] .pw-hero{
+ background:
+  radial-gradient(ellipse at 80% 15%,rgba(126,92,220,.27),transparent 45%),
+  radial-gradient(ellipse at 9% 84%,rgba(24,154,231,.18),transparent 50%),
+  linear-gradient(130deg,#091329 0%,#111e41 56%,#201942 100%)!important;
+ color:#f6f8ff!important;border-bottom:1px solid #344477!important;
+}
+html[data-theme='dark'] .pw-hero h1{color:#fafcff!important}
+html[data-theme='dark'] .pw-hero h1 em{color:#a9e6ff!important}
+html[data-theme='dark'] .pw-hero-copy>p,
+html[data-theme='dark'] .pw-hero-baseline{color:#d2dff6!important}
+html[data-theme='dark'] .pw-hero-bottom{border-color:#8193d452!important;color:#cbdbf7!important}
+html[data-theme='dark'] .pw-hero-bottom a{color:#f3f8ff!important}
+html[data-theme='dark'] .pw-hero-media{
+ box-shadow:0 25px 76px #0009,0 0 28px #5d74de32!important;
+}
+html[data-theme='dark'] .pw-art-paper{
+ background:linear-gradient(135deg,#e7676d,#ae57a1)!important;
+ color:#fefbfc!important;
+}
+html[data-theme='dark'] .pw-art-paper>strong{color:#fff!important}
+html[data-theme='dark'] .pw-art-paper>strong i{color:#f9d5f2!important}
+html[data-theme='dark'] .pw-art-disc{border-color:#a887dc!important}
+
+/* LIGHT MODE = actual physical lift, bevel and layered shadow, NOT neon.
+   Cursor follows a small 3D angle while the whole card raises above the
+   content plane. Dark Mode retains tasteful neon on hover. */
+html:not([data-theme='dark']) :is(
+ .pw-category-item,.shop-tile,.v2-catalog-card,.v3-subcategory-card,.design-card){
+ background:linear-gradient(152deg,#fff 0%,#f5f8fe 72%,#edf2fa 100%)!important;
+ border:1px solid #d5deec!important;
+ box-shadow:
+  0 2px 2px #8fa0bc20,
+  0 8px 0 -2px #bdcce0,
+  0 13px 16px #7188ad1a,
+  0 27px 48px #627ca51d,
+  inset 0 2px 0 #ffffff!important;
+ border-radius:18px!important;
+ overflow:visible;
+}
+html:not([data-theme='dark']) :is(
+ .pw-category-item,.shop-tile,.v2-catalog-card,.v3-subcategory-card,.design-card)::after{
+ opacity:0!important;display:none!important;
+}
+html:not([data-theme='dark']) :is(
+ .pw-category-item,.shop-tile,.v2-catalog-card,.v3-subcategory-card,.design-card) :is(img,.pw-category-details,.shop-meta){
+ backface-visibility:hidden;
+}
+@media(hover:hover) and (pointer:fine){
+ html:not([data-theme='dark']) :is(
+  .pw-category-item,.shop-tile,.v2-catalog-card,.v3-subcategory-card,.design-card):hover{
+  --glass-rise:-17px!important;
+  --glass-scale:1.037!important;
+  border-color:#b0c1df!important;
+  box-shadow:
+   0 3px 1px #93a8c044,
+   0 17px 0 -5px #becde0,
+   0 26px 24px #6b84ab30,
+   0 42px 75px #566f9b32,
+   inset 0 2px 0 #fff!important;
+ }
+}
+html:not([data-theme='dark']) :is(
+ .pw-category-item,.shop-tile,.v2-catalog-card,.v3-subcategory-card,.design-card).glass-touched{
+ --glass-rise:-12px!important;
+ --glass-scale:1.025!important;
+ border-color:#a1b6d4!important;
+ box-shadow:0 13px 0 -4px #bdcee2,0 24px 38px #7891ba3e,inset 0 2px 0 #fff!important;
+}
+html:not([data-theme='dark']) :is(.pw-category-arrow,.arrow-round){
+ background:linear-gradient(140deg,#344d87,#6272bc)!important;
+ border:1px solid #aabde2!important;box-shadow:0 5px 9px #34548727!important;
+}
+html:not([data-theme='dark']) .pw-category-details,
+html:not([data-theme='dark']) .shop-meta{background:transparent!important}
+html:not([data-theme='dark']) .pw-category-cover{border-radius:16px 16px 0 0!important}
+html:not([data-theme='dark']) .pw-category-item{overflow:hidden}
+/* Context-aware catalog management UI */
+.admin-product-category-tools{
+ display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+ align-items:end;gap:11px;padding:15px;margin:14px 0 17px;
+ border:1px solid #c9d9f1;border-radius:15px;
+ background:rgba(233,241,255,.48);
+}
+.admin-product-category-tools>label{
+ display:grid;gap:7px;font-size:12px;font-weight:800;color:#344466;
+}
+.admin-product-category-tools :is(input,select),
+.admin-category-picker select{
+ width:100%;max-width:100%;min-height:42px;
+ border:1px solid #bfcfea!important;
+ background:rgba(255,255,255,.92)!important;
+ color:#24365b!important;border-radius:10px!important;
+ font:inherit;padding:9px 12px;
+}
+.admin-product-category-tools>p{
+ grid-column:1/-1;color:#586b92;font-size:11px;margin:0;
+}
+.admin-category-picker{
+ display:grid;gap:12px;padding:16px;margin:10px 0;
+ border:1px solid #cbd9f0;border-radius:14px;
+ background:linear-gradient(145deg,#f4f8ffdd,#e8effddd);
+}
+.admin-category-picker>label{display:grid;gap:7px}
+.admin-category-picker-meta{
+ display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+ justify-content:space-between;font-size:12px;color:#3a5180;
+}
+.admin-category-picker-meta .v2-outline{font-size:11px!important;min-height:34px!important;padding:6px 12px!important}
+.admin-product-category-path{
+ display:block;color:#536ab5!important;font-size:11px!important;
+ font-weight:800!important;line-height:1.7;
+}
+.admin-category-summary{border-top:1px solid #d8e2f3;margin-top:18px;padding-top:16px;display:grid;gap:12px}
+.admin-category-summary>strong{color:#394d7c!important;font-size:13px}
+.admin-category-quicklinks{display:flex;flex-wrap:wrap;gap:7px}
+.admin-category-quicklinks button{font-size:11px!important;min-height:34px!important;padding:7px 12px!important}
+.admin-category-warning{display:grid;gap:7px;margin-bottom:12px}
+.admin-category-warning p{font-size:11px!important;margin:0!important}
+.admin-category-warning button{justify-self:start}
+@media(max-width:680px){
+ .admin-product-category-tools{grid-template-columns:1fr}
+ .admin-product-category-tools>p{grid-column:auto}
+ .admin-category-picker{padding:12px}
+ html:not([data-theme='dark']) :is(.pw-category-item,.shop-tile,.design-card){box-shadow:0 7px 0 -2px #cbd7e6,0 13px 25px #657da52c!important}
+}
+html[data-theme='dark'] .admin-product-category-tools,
+html[data-theme='dark'] .admin-category-picker{
+ background:rgba(31,43,85,.66)!important;border-color:#6174a7!important;
+}
+html[data-theme='dark'] :is(.admin-product-category-tools>label,
+ .admin-product-category-tools>p,.admin-category-picker>label,
+ .admin-category-picker-meta,.admin-category-summary>strong){
+ color:#dce8ff!important;
+}
+html[data-theme='dark'] :is(.admin-product-category-tools input,
+ .admin-product-category-tools select,.admin-category-picker select){
+ background:#222d50!important;color:#f6f8ff!important;border-color:#6379aa!important;
+}
+html[data-theme='dark'] .admin-product-category-path{color:#b7ceff!important}
+@media(prefers-reduced-motion:reduce){
+ html:not([data-theme='dark']) :is(.pw-category-item,.shop-tile,.v2-catalog-card,.v3-subcategory-card,.design-card):hover{
+  --glass-rise:0px!important;--glass-scale:1!important;
+ }
+}

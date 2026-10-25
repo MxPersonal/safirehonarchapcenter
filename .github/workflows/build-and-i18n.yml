@@ -25,6 +25,8 @@ jobs:
         run: node scripts/check-studio-redesign.mjs
       - name: Verify glass UI and touch interactions
         run: node scripts/check-glass-ui.mjs
+      - name: Verify glass cards, hero theme and category linking
+        run: node scripts/check-glass-categories.mjs
       - name: Static typecheck
         run: npm run typecheck
       - name: Production build

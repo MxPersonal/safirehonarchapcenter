@@ -151,6 +151,35 @@ async function importCurrentSite(){
    'محتوای باقی‌مانده همگام شد؛ محتوای قبلی، عکس‌ها و قیمت‌ها تغییر نکردند.'});
 }
 
+/** Repair orphaned starter product links without overwriting custom assignments,
+ * product descriptions, images, prices or availability. */
+async function repairStarterCategoryLinks(){
+ const db=adminDatabase();
+ if(!db)return json({error:'ارتباط اختصاصی Supabase برقرار نیست.'},503);
+ const [categories,products]=await Promise.all([
+  db.from('categories').select('id,slug').limit(500),
+  db.from('products').select('id,slug,category_id').in('slug',starterProducts.map(p=>p.slug)).limit(500)
+ ]);
+ if(categories.error||products.error)return json({error:'خواندن ارتباط محصولات و دسته‌ها ممکن نشد: '+(safeError(categories.error||products.error)||'خطای پایگاه داده')},409);
+ const categoryBySlug=new Map((categories.data||[]).map(c=>[c.slug,c.id]));
+ const validCategoryIds=new Set((categories.data||[]).map(c=>c.id));
+ const starterBySlug=new Map(starterProducts.map(p=>[p.slug,p]));
+ let repaired=0,alreadyLinked=0,missingCategory=0,failed=0;
+ for(const product of products.data||[]){
+  const starter=starterBySlug.get(product.slug);
+  if(!starter)continue;
+  // A still-existing category may be an intentional administrator choice.
+  if(product.category_id&&validCategoryIds.has(product.category_id)){alreadyLinked++;continue;}
+  const wanted=categoryBySlug.get(starter.category_slug);
+  if(!wanted){missingCategory++;continue;}
+  const result=await db.from('products').update({category_id:wanted}).eq('id',product.id).select('id').maybeSingle();
+  if(result.error||!result.data)failed++;else repaired++;
+ }
+ revalidatePath('/');revalidatePath('/catalog');
+ return json({ok:failed===0,repaired,alreadyLinked,missingCategory,failed,
+  summary:`متصل‌شده: ${repaired} | ارتباط سالم: ${alreadyLinked} | دسته مقصد موجود نیست: ${missingCategory} | خطا: ${failed}`});
+}
+
 export async function POST(req:NextRequest){
  if(!await allowed())return json({error:'ابتدا با حساب مدیریت وارد شوید.'},401);
  const origin=req.headers.get('origin');if(!origin||origin!==new URL(req.url).origin)return json({error:'درخواست خارج از سایت مجاز نیست.'},403);
@@ -163,6 +192,7 @@ export async function POST(req:NextRequest){
  const db=adminDatabase();if(!db)return json({error:'کلید اتصال اختصاصی Supabase در سرور تنظیم نشده است.'},503);
  const action=s(payload.action,40);
  if(action==='importCurrentSite')return importCurrentSite();
+ if(action==='repairStarterCategoryLinks')return repairStarterCategoryLinks();
  const value=payload.value && typeof payload.value==='object'&&!Array.isArray(payload.value)?payload.value as Record<string,unknown>:{};
  const id=s(payload.id,40);
  let error: {message:string;code?:string}|null=null;
@@ -178,6 +208,10 @@ export async function POST(req:NextRequest){
    const slug=s(value.slug,80),name=s(value.name,160),mode=s(value.mode,20),category_id=value.category_id;
    const price=mode==='fixed'?int(value.price_toman,0,1_000_000_000_000):null;
    if(!SLUG.test(slug)||!name||!uuid(category_id)||!['fixed','quote'].includes(mode)||mode==='fixed'&&price===null||id&&!uuid(id))return json({error:'نام، دسته‌بندی یا قیمت محصول صحیح نیست.'},400);
+   // Never persist a product in a category that was deleted or never imported.
+   const category=await db.from('categories').select('id').eq('id',category_id).maybeSingle();
+   if(category.error)return json({error:safeError(category.error)},409);
+   if(!category.data)return json({error:'دسته انتخاب‌شده در دیتابیس وجود ندارد. ابتدا دسته را ثبت یا همگام‌سازی کنید.'},400);
    const row={slug,name,description:s(value.description,6000),category_id,mode,price_toman:price,name_en:s(value.name_en,160)||null,description_en:s(value.description_en,5000)||null,image_url:s(value.image_url,2000)||null,active:bool(value.active)};
    const r=id?await db.from('products').update(row).eq('id',id).select('id').single():await db.from('products').insert(row).select('id').single();error=r.error;changed=r.data;
   }else if(action==='savePage'){

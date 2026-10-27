@@ -160,6 +160,31 @@ Run `npm run typecheck` and `npm run build` before release. More regression tool
 
 Project documentation and implementation belong to their respective rightsholders. No standalone `LICENSE` file was present when this README was written; do not assume open-source reuse rights.
 
+## 🧪 Maintainer's release checklist | چک‌لیست انتشار
+
+| Domain | Inspect these paths | Practical smoke test |
+|:--|:--|:--|
+| Visual system | `DESIGN-SYSTEM.md`, `components/header.tsx`, `app/globals.css` | Light/dark, glass surfaces, usable contrast |
+| Bilingual content | `lib/i18n.ts`, `lib/translated-content.ts` | All navigation, forms and categories in FA/EN |
+| Product & design catalog | `lib/catalog.ts`, `app/catalog/`, `app/designs/` | Category → detail → request/cart |
+| Admin operations | `components/admin-console.tsx`, `app/admin/` | Unauthorized visitor blocked |
+| Checkout & quotations | `app/api/checkout/route.ts`, `app/api/quote/route.ts` | Validation and clear failure messages |
+| Accounting | `components/accounting-console.tsx`, `ACCOUNTING.md` | Totals, missing data and permissions |
+
+~~~bash
+npm run typecheck
+npm run build
+node scripts/verify-i18n.mjs
+~~~
+
+The repository also contains targeted regression scripts under `scripts/`; run the scripts applicable to the components changed. A passing build is not confirmation of a functioning payment provider or fully configured Supabase instance.
+
+### 🔐 Operational boundaries
+
+**Public:** any `NEXT_PUBLIC_*` value. **Private:** `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `SUPABASE_SECRET_KEY` or a legacy service-role key. Never move private keys into client components or screenshots. Apply the Supabase migrations in the required order and validate database authorization independently of the UI. Refer to [ADMIN-CMS.md](ADMIN-CMS.md), [ACCOUNTING.md](ACCOUNTING.md) and [CONTENT-SYNC.md](CONTENT-SYNC.md) for subsystem-specific documentation.
+
+> Product visuals, CMS previews and locally seeded examples are not by themselves proof of live orders, real customer records or reconciled revenue.
+
 <div align="center">
 
 **SAFIRE HONAR · Print, with presence.** ✦

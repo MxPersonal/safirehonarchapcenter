@@ -1,62 +1,167 @@
-# چاپ سفیر هنر | Safire Honar Print Center
+<div align="center">
 
-### چاپی که دیده می‌شود.
+<img src="./public/safir-logo-light.png" alt="چاپ سفیر هنر | Safire Honar" width="190" />
 
-**سفیر هنر، مرکز تخصصی چاپ و طراحی**، فضایی برای آشنایی با محصولات چاپی، مشاهده نمونه‌طرح‌ها و ثبت درخواست‌های چاپ اختصاصی است. از ظرافت یک کارت ویزیت تا بنرهای عریض و تابلوهای تبلیغاتی، می‌توانید نوع محصول موردنیازتان را پیدا کنید و جزئیات سفارش را برای بررسی ارسال کنید.
+# چاپ سفیر هنر
+### SAFIRE HONAR · PRINT & DESIGN STUDIO
 
-**[ورود به وب‌سایت چاپ سفیر هنر](https://safirehonarprintcenter.vercel.app/)**
+**چاپی که دیده می‌شود.**
 
----
+از کارت ویزیت تا چاپ عریض و تابلوهای تبلیغاتی؛ یک تجربه دیجیتال برای کشف محصولات، درخواست چاپ و مدیریت کسب‌وکار.
 
-## محصولات و خدمات چاپ
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-149ECA?logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-Postgres-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com/)
+[![Vercel](https://img.shields.io/badge/Deploy-Vercel-black?logo=vercel)](https://vercel.com/)
 
-| دسته‌بندی | توضیحات |
-| --- | --- |
-| **بنر** | بنرهای مناسبتی، تسلیت، تولد، زیارتی، تبلیغاتی و افتتاحیه در ابعاد مختلف |
-| **بروشور** | بروشورهای معرفی محصول، خدمات و کسب‌وکار، از جمله بروشور دو لت و سه لت |
-| **کارت ویزیت** | کارت‌های رسمی و خلاقانه با جنس، روکش و پرداخت‌های متنوع |
-| **تابلو و حروف برجسته** | تابلوهای فروشگاهی، حروف برجسته، لایت‌باکس و سازه‌های تبلیغاتی |
-| **استیکر و لیبل** | برچسب محصولات، استیکر ویترین و طرح‌های اختصاصی بسته‌بندی |
-| **تراکت و پوستر** | چاپ اقلام تبلیغاتی، اطلاع‌رسانی و معرفی رویدادها |
-| **بسته‌بندی چاپی** | پاکت، جعبه و اقلام چاپی مرتبط با هویت برند |
-| **سازه و چاپ نمایشگاهی** | استند، رول‌آپ، پاپ‌آپ و ملزومات چاپی غرفه‌ها |
+### [🌐 مشاهده وب‌سایت](https://safirehonarprintcenter.vercel.app/) · [🎨 Design System](DESIGN-SYSTEM.md) · [🛠️ Admin CMS](ADMIN-CMS.md)
 
-برای دیدن گروه‌های اصلی و زیرمجموعه‌های آن‌ها به **[فهرست محصولات چاپی](https://safirehonarprintcenter.vercel.app/catalog)** سر بزنید.
-
-## از ایده تا سفارش
-
-فرآیند شروع یک سفارش در سفیر هنر در سه گام معرفی شده است:
-
-1. **انتخاب محصول:** از میان دسته‌های چاپی، محصول یا نوع خدمات دلخواهتان را انتخاب کنید.
-2. **ثبت جزئیات:** ابعاد، جنس، تعداد، فایل طرح و نیازهای اختصاصی سفارش را مشخص کنید.
-3. **بررسی و تأیید:** اطلاعات درخواست برای بررسی ارسال می‌شود و شرایط اجرا و قیمت براساس مشخصات کار اعلام خواهد شد.
-
-### دو راه برای شروع
-
-**محصولات با قیمت مشخص:** اگر برای یک محصول قیمت نهایی در فروشگاه اعلام شده باشد، می‌توانید مسیر ثبت سفارش همان محصول را دنبال کنید.
-
-**چاپ و طراحی اختصاصی:** اگر پروژه شما ابعاد، متریال یا طرح ویژه‌ای دارد، مشخصات آن را ارسال کنید تا امکان اجرا و قیمت بررسی شود.
-
-**[ثبت درخواست چاپ اختصاصی](https://safirehonarprintcenter.vercel.app/order)**
-
-## گالری نمونه‌طرح‌ها
-
-در گالری سایت می‌توانید طرح‌های چاپی و نمونه‌های گرافیکی دسته‌های مختلف را ببینید و برای انتخاب سبک و محصول مناسب ایده بگیرید. بعضی از نمونه‌های نمایشی برای معرفی سبک طراحی هستند و به‌تنهایی به معنی موجودی، قیمت قطعی یا اجرای نهایی آن‌ها نیستند.
-
-**[مشاهده نمونه‌طرح‌ها](https://safirehonarprintcenter.vercel.app/designs)**
-
-## بیشتر با سفیر هنر آشنا شوید
-
-- **[خدمات چاپ](https://safirehonarprintcenter.vercel.app/services):** مروری بر دسته‌های محصولات و خدمات.
-- **[راهنمای آماده‌سازی فایل چاپ](https://safirehonarprintcenter.vercel.app/guide):** نکات مرتبط با ثبت مشخصات و آماده‌سازی سفارش.
-- **[درباره ما](https://safirehonarprintcenter.vercel.app/about):** آشنایی بیشتر با مجموعه.
-- **[تماس با ما](https://safirehonarprintcenter.vercel.app/contact):** راه‌های ارتباط و پیگیری.
-- **[قوانین و شرایط](https://safirehonarprintcenter.vercel.app/terms):** آشنایی با شرایط ثبت درخواست و سفارش.
+</div>
 
 ---
 
-### Safire Honar | Print & Design
+## ✦ معرفی | The vision
 
-*From business cards and brochures to banners, labels, signage and exhibition graphics. Explore print categories, discover design examples and submit the details of your custom printing project for review.*
+**چاپ سفیر هنر** وب‌سایت معرفی خدمات چاپ و سفارش‌های اختصاصی است که با یک پنل مدیریت عملیاتی همراه شده است. بازدیدکننده می‌تواند دسته‌بندی‌ها و نمونه‌کارها را ببیند، اقلام قابل سفارش را بررسی کند و برای پروژه‌های سفارشی درخواست ثبت کند. مدیر نیز محتوا، محصولات، سفارش‌ها و گزارش‌های مالی را از پنل اختصاصی پیگیری می‌کند.
 
-**[Visit the website](https://safirehonarprintcenter.vercel.app/)**
+> **English:** A Persian-first, bilingual print-center web application combining a product catalog, quote/order flows, editorial visual identity, administration and a cash-based finance dashboard.
+
+## 🎨 Visual identity
+
+طراحی با تأکید بر **Glassmorphism**، لایه‌های نیمه‌شفاف، حاشیه‌های درخشان کنترل‌شده، عمق ظریف سه‌بعدی و حرکت روان شکل گرفته است. این جلوه‌ها باید در خدمت محصولات باشند، نه مانع تجربه خرید.
+
+| Layer | Implementation |
+|:--|:--|
+| **Glass + depth** | Frosted panels, soft elevations, restrained highlights |
+| **Brand palette** | Cyan, violet and rose accents with readable contrast |
+| **Motion** | GSAP + Motion; pointer-aware microinteractions |
+| **Languages** | فارسی / English, RTL / LTR |
+| **Themes** | Light and Dark UI |
+| **Typography** | Vazirmatn and Cairo font packages |
+
+Read the design principles in [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) and [GLASS-CATEGORIES.md](GLASS-CATEGORIES.md).
+
+## ✨ Features at a glance
+
+| Area | Capabilities |
+|:--|:--|
+| 🖨️ **Catalog** | دسته‌های چاپ، محصولات، تصاویر و نمونه‌طرح‌ها |
+| 🧾 **Custom quotes** | دریافت درخواست چاپ با مشخصات، ابعاد و جزئیات سفارش |
+| 🛒 **Commerce flow** | سبد خرید، حساب مشتری و جریان ثبت سفارش |
+| 📝 **Editable content** | مدیریت صفحات و متن‌های سایت از CMS |
+| 🧰 **Administration** | مدیریت دسته‌بندی‌ها، زیرمجموعه‌ها، کالاها، مشتریان، سبدها، درخواست‌ها و سفارش‌ها |
+| 📊 **Accounting** | ثبت دریافت/هزینه، اصلاحات معکوس، فیلتر دوره‌ای و گزارش جریان نقدی |
+| 🌗 **Experience** | Dark/Light, responsive layouts, FA/EN navigation and reduced-motion considerations |
+| 🔐 **Access** | ورود مدیر با متغیرهای سروری و نشست Cookie امضاشده |
+
+### Browse the application
+
+| Public routes | Back-office |
+|:--|:--|
+| `/`, `/catalog`, `/designs`, `/services` | `/admin/login` |
+| `/order`, `/pricing`, `/cart` | `/admin` |
+| `/about`, `/contact`, `/terms`, `/privacy` | `/admin/api` (protected server endpoint) |
+
+Some public paths are locale-prefixed as `/fa/...` or `/en/...` according to the site's language handling.
+
+## 🧱 Architecture
+
+~~~text
+Next.js App Router + React
+  ├── Public site / multilingual catalog
+  ├── Customer login, cart and quote/order interfaces
+  └── Admin CMS + accounting dashboard
+           │
+           ▼
+Next.js server routes / server-side operations
+  ├── Admin cookie validation
+  ├── Privileged admin API (protected)
+  └── Customer-facing data access (RLS-aware)
+           │
+           ▼
+Supabase PostgreSQL + Auth / Storage
+~~~
+
+**Repository map**
+
+- `app/`: pages, APIs, styles and localization-aware routes.
+- `components/`: reusable storefront, CMS, cart, admin and motion components.
+- `lib/`: catalog data, translations, authorization and server database access.
+- `supabase/migrations/`: database schema evolution, commerce, finance, avatars and localization.
+- `scripts/`: visual/i18n regression checks.
+- `ADMIN-CMS.md`, `ACCOUNTING.md`, `CONTENT-SYNC.md`, `I18N-FA-EN.md`: focused operational guides.
+
+## ⚡ Install & develop
+
+**Prerequisites:** Node.js, npm and a configured Supabase project for database-backed flows.
+
+~~~bash
+git clone https://github.com/MxPersonal/safirehonarprintcenter.git
+cd safirehonarprintcenter
+npm install
+cp .env.example .env.local
+npm run dev
+~~~
+
+Open `http://localhost:3000`. Without Supabase credentials/schema, **do not expect** database-backed storefront, CMS or accounting flows to work end-to-end.
+
+| Command | What it does |
+|:--|:--|
+| `npm run dev` | Development server |
+| `npm run typecheck` | TypeScript validation |
+| `npm run build` | Production build |
+| `npm run start` | Serve production build |
+| `node scripts/verify-i18n.mjs` | Localization checks |
+
+## 🔑 Configuration
+
+Copy [`.env.example`](.env.example). The core settings are:
+
+| Variable | Visibility | Purpose |
+|:--|:--|:--|
+| `NEXT_PUBLIC_SITE_URL` | Public | Canonical origin |
+| `NEXT_PUBLIC_SUPABASE_URL` | Public | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public | Client-side key, **only with correct RLS** |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Server secret | Dedicated admin sign-in |
+| `SUPABASE_URL` | Server | Backend database endpoint |
+| `SUPABASE_SECRET_KEY` (or legacy `SUPABASE_SERVICE_ROLE_KEY`) | Server secret | Authorized admin data operations |
+
+Phone, email, address and WhatsApp values in the template are optional public business details. **Never** put privileged keys under `NEXT_PUBLIC_*`, paste them into issues or commit a populated environment file.
+
+### Database and administration
+
+1. Connect the **correct** Supabase project and Vercel environment.
+2. Review existing migrations and backups; apply **only unapplied** SQL changes in the appropriate order.
+3. Configure `ADMIN_EMAIL` and `ADMIN_PASSWORD`, then access `/admin/login`.
+4. Verify storage bucket permissions, RLS, catalog persistence, admin CRUD and customer flows.
+5. For finance reporting, follow [ACCOUNTING.md](ACCOUNTING.md) and apply its **finance ledger migration** when required.
+
+**Start here:** [ADMIN-CMS.md](ADMIN-CMS.md) details the admin schema prerequisites, protected server API and known limitations.
+
+## 📊 About the accounting module
+
+Finance figures are **cash-based transaction summaries**. Pending orders do not imply collected revenue. Refunds and expenses reduce net cash flow; corrections are recorded as reversing entries. This is **not a certified double-entry accounting system** or a statement of tax-compliant profit.
+
+## ⚠️ Boundaries & readiness
+
+- A displayed product or request workflow is not evidence that an online payment gateway is live. **Payment processing is not enabled by the existing CMS setup.**
+- Provisioning Supabase environment variables does not automatically create tables or storage policies.
+- Manually assembled admin orders are not yet guaranteed to be one atomic database operation; review before retrying failed actions.
+- Visual implementation has source-level checks, which are not substitutes for cross-device live QA.
+
+## ☁️ Deployment & quality
+
+The repository targets **Vercel** and is designed for GitHub-connected deployment. After configuration, a push to `main` can trigger the usual automatic production deployment. Validate `/fa`, `/en`, light/dark UI, product hierarchy, admin authorization and actual database connections in the deployed app.
+
+Run `npm run typecheck` and `npm run build` before release. More regression tooling lives in `scripts/`.
+
+## 🤝 Ownership / License
+
+Project documentation and implementation belong to their respective rightsholders. No standalone `LICENSE` file was present when this README was written; do not assume open-source reuse rights.
+
+<div align="center">
+
+**SAFIRE HONAR · Print, with presence.** ✦
+
+</div>

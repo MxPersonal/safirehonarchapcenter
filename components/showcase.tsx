@@ -4,14 +4,11 @@ import Link from 'next/link';
 import {ArrowUpLeft,ArrowLeft,Plus} from 'lucide-react';
 import type {StoreCategory,StoreProduct} from '@/lib/store';
 import {tomans} from '@/lib/store';
-import PrintMockup from '@/components/print-mockups';
-import Artwork from '@/components/art';
-import {getDesign} from '@/lib/catalog';
 import {Reveal,PosterParallax} from '@/components/scroll-experience';
 
 export function CategoryArtwork({slug,name,imageUrl,small=false,locale='fa'}:{slug:string;name:string;imageUrl?:string|null;small?:boolean;locale?:Locale}){
  return <div className={`showcase-art expressive-art showcase-${slug} ${small?'showcase-small':''}`}>
-  {imageUrl?<img className="category-uploaded-image" src={imageUrl} alt={locale==='en'?'Sample: '+name:`نمونه ${name}`}/>:<PrintMockup slug={slug} name={name} locale={locale}/>}
+  {imageUrl?<img className="category-uploaded-image" src={imageUrl} alt={locale==='en'?'Photo: '+name:`تصویر ${name}`} loading="lazy" decoding="async"/>:<div className="safir-unset-image" aria-label={locale==='en'?'No category photo has been uploaded yet':'هنوز تصویری برای این دسته بارگذاری نشده است'}><img src="/safir-logo-light.png" alt="" loading="lazy"/><small>{locale==='en'?'Category photo not uploaded':'تصویر دسته‌بندی ثبت نشده'}</small></div>}
  </div>
 }
 export function CategorySpotlight({category,index,locale='fa'}:{category:StoreCategory;index:number;locale?:Locale}){
@@ -22,5 +19,5 @@ export function CategorySpotlight({category,index,locale='fa'}:{category:StoreCa
   </article>
  </Reveal>
 }
-export function ProductTile({product,locale='fa'}:{product:StoreProduct;locale?:Locale}){const originalDesign=getDesign(product.slug);return <Link className="shop-tile" href={localePath('/shop/'+product.slug,locale)}><div className="shop-thumb">{product.image_url?<img src={product.image_url} alt={product.name}/>:originalDesign?<Artwork design={{...originalDesign,name:product.name}} locale="fa"/>:<div className="shop-placeholder"><span>{locale==='fa'?'چاپ سفیر هنر':'SAFIRE HONAR'}</span><b>{product.name}</b><span>{locale==='fa'?'طراحی چاپ':'PRINT DESIGN'}</span></div>}<span className="shop-mode">{product.mode==='fixed'?(locale==='fa'?'قیمت مشخص':'Fixed price'):(locale==='fa'?'نیازمند استعلام':'Request a quote')}</span></div><div className="shop-meta"><div><h3>{product.name}</h3><span>{product.mode==='fixed'&&product.price_toman!==null?(locale==='fa'?tomans(product.price_toman):intlNumber(product.price_toman,locale)+' Toman'):(locale==='fa'?'استعلام قیمت':'Request a quote')}</span></div><Plus size={21}/></div></Link>}
+export function ProductTile({product,locale='fa'}:{product:StoreProduct;locale?:Locale}){return <Link className="shop-tile" href={localePath('/shop/'+product.slug,locale)}><div className="shop-thumb">{product.image_url?<img src={product.image_url} alt={product.name} loading="lazy" decoding="async"/>:<div className="safir-unset-image safir-product-unset"><img src="/safir-logo-light.png" alt="" loading="lazy"/><small>{locale==='fa'?'تصویر محصول ثبت نشده':'Product image not uploaded'}</small></div>}<span className="shop-mode">{product.mode==='fixed'?(locale==='fa'?'قیمت مشخص':'Fixed price'):(locale==='fa'?'نیازمند استعلام':'Request a quote')}</span></div><div className="shop-meta"><div><h3>{product.name}</h3><span>{product.mode==='fixed'&&product.price_toman!==null?(locale==='fa'?tomans(product.price_toman):intlNumber(product.price_toman,locale)+' Toman'):(locale==='fa'?'استعلام قیمت':'Request a quote')}</span></div><Plus size={21}/></div></Link>}
 export function CollectionRail({categories,locale='fa'}:{categories:StoreCategory[];locale?:Locale}){return <Reveal className="collection-rail"><>{categories.map((c,i)=><Link key={c.slug} href={localePath('/catalog/'+c.slug,locale)} className="collection-pill"><span>{String(i+1).padStart(2,'0')}</span>{c.name}<ArrowLeft size={15}/></Link>)}</></Reveal>}

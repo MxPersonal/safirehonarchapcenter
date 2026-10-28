@@ -1,0 +1,178 @@
+/* Safire Honar: source-asset fidelity & corrections from customer screenshot.
+ * This is deliberately the last stylesheet so older experimental headers do
+ * not override the brand assets, Nastaliq headline, or mobile spacing. */
+html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-emblem {
+  display:block!important;
+  position:relative!important;
+  width:104px!important;
+  height:75px!important;
+  flex:0 0 104px!important;
+  overflow:visible!important;
+  padding:0!important;
+  margin:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-emblem img {
+  display:block;
+  position:absolute!important;
+  width:100%!important;
+  height:100%!important;
+  max-width:100%!important;
+  max-height:100%!important;
+  top:0!important;left:0!important;
+  object-fit:contain!important;
+  object-position:center center!important;
+  filter:none!important;
+  mix-blend-mode:normal!important;
+}
+html .site-header.wf-header .wf-header-brand {
+  max-width:none!important;
+  flex-shrink:0!important;
+  min-width:0!important;
+}
+html .site-header.wf-header .wf-header-brand .theme-aware-brand {
+  display:flex!important;align-items:center!important;
+  gap:2px!important;max-width:none!important;
+}
+html .site-header.wf-header .wf-header-bar {min-height:83px!important;gap:13px!important;}
+/* The reference uses an uncluttered symbol-only mobile brand.
+   The logotype remains visible on larger screens. */
+@media(max-width:700px){
+  html .site-header.wf-header .wf-header-brand .brand-copy {display:none!important;}
+  html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-emblem {
+    width:104px!important;height:78px!important;flex-basis:104px!important;
+  }
+  html .site-header.wf-header .wf-header-bar {
+    min-height:85px!important;gap:8px!important;
+  }
+  html .site-header.wf-header .wf-header-actions {gap:6px!important;}
+  html .site-header.wf-header .wf-menu-overlay {
+    height:calc(100dvh - 85px)!important;
+    max-height:calc(100dvh - 85px)!important;
+  }
+}
+@media(max-width:375px){
+  html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-emblem {
+    width:85px!important;height:66px!important;flex-basis:85px!important;
+  }
+  html .site-header.wf-header .wf-header-bar {min-height:76px!important;}
+  html .site-header.wf-header .wf-menu-overlay {
+    height:calc(100dvh - 76px)!important;
+    max-height:calc(100dvh - 76px)!important;
+  }
+}
+@media(min-width:701px) and (max-width:1210px){
+  html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-emblem {
+    width:108px!important;height:78px!important;flex-basis:108px!important;
+  }
+}
+@media(min-width:1211px){
+  html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-emblem {
+    width:84px!important;height:64px!important;flex-basis:84px!important;
+  }
+}
+/* The rotating category titles read as broken grammar ("Give your ideas banner").
+   Fixed copy uses existing brand wording from project metadata/hero vocabulary. */
+html body .wf-site .wf-hero h1 {
+  max-width:910px!important;
+  overflow:visible!important;
+  text-wrap:balance;
+  margin-block:22px 20px!important;
+}
+html body .wf-site .wf-hero h1 .wf-hero-blue {
+  display:block!important;
+  color:var(--wf-blue-strong)!important;
+  overflow:visible!important;
+}
+html[lang='fa'] body .wf-site .wf-hero h1,
+html[lang='fa'] body .wf-site .wf-hero h1 .wf-hero-blue {
+  font-family:var(--safir-nastaliq),Tahoma,serif!important;
+  font-weight:400!important;
+  font-size:clamp(54px,6.1vw,86px)!important;
+  line-height:1.9!important;
+  letter-spacing:0!important;
+  font-style:normal!important;
+  padding-block:.08em .19em!important;
+}
+html[lang='fa'] body .wf-site .wf-hero h1 {
+  padding-block:.12em .3em!important;
+}
+html[lang='fa'] body .wf-site .wf-hero h1 .wf-hero-blue {
+  min-height:1.9em;
+}
+html[lang='en'] body .wf-site .wf-hero h1 .wf-hero-blue {
+  font-family:Arial,Inter,system-ui,sans-serif!important;
+  font-weight:850!important;
+  line-height:1.2!important;
+}
+@media(max-width:640px){
+  html body .wf-site .wf-hero-inner {padding-top:69px!important;padding-bottom:68px!important;}
+  html[lang='fa'] body .wf-site .wf-hero h1,
+  html[lang='fa'] body .wf-site .wf-hero h1 .wf-hero-blue {
+    font-size:clamp(40px,9.7vw,52px)!important;
+    line-height:1.85!important;
+  }
+  html[lang='fa'] body .wf-site .wf-hero h1 .wf-hero-blue {min-height:1.85em;}
+  html body .wf-site .wf-hero-description {margin-top:6px!important;}
+  html body .wf-site .wf-gallery-text h3 {padding-block:.03em .1em!important;}
+}
+@media(max-width:390px){
+  html[lang='fa'] body .wf-site .wf-hero h1,
+  html[lang='fa'] body .wf-site .wf-hero h1 .wf-hero-blue {
+    font-size:clamp(36px,9.7vw,42px)!important;
+  }
+}
+/* Uploaded category/product images are authoritative. Where there is none,
+   show the EXISTING brand logo and an explicit empty-image label. Never
+   fabricate a project photo or generate an imaginary printed mockup. */
+html .showcase-art .safir-unset-image,
+html .shop-thumb .safir-unset-image {
+  width:100%;height:100%;min-height:165px;
+  position:relative;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:13px;
+  overflow:hidden;background:#f6f7f8!important;
+  color:#607082!important;border:1px solid #e7ebef;
+  border-radius:inherit!important;box-shadow:none!important;
+}
+html .showcase-art .safir-unset-image::before,
+html .shop-thumb .safir-unset-image::before {content:none!important;}
+html .showcase-art .safir-unset-image img,
+html .shop-thumb .safir-unset-image img {
+  display:block;position:static!important;inset:auto!important;
+  width:min(43%,155px)!important;height:auto!important;
+  max-height:122px!important;object-fit:contain!important;
+  margin:0!important;filter:none!important;transform:none!important;
+}
+html .showcase-art .safir-unset-image small,
+html .shop-thumb .safir-unset-image small {
+  display:block;max-width:92%;font-size:12px!important;line-height:1.8;
+  font-family:var(--safir-yekan),Tahoma,sans-serif!important;
+  font-weight:400!important;color:#65758b!important;
+  text-align:center;
+  margin:0!important;
+}
+html[data-theme='dark'] .showcase-art .safir-unset-image,
+html[data-theme='dark'] .shop-thumb .safir-unset-image {
+  background:#eef1f4!important;
+  color:#596a7b!important;
+}
+html .wf-gallery-visual .showcase-art {
+  box-shadow:none!important;border:0!important;
+  background:transparent!important;
+}
+html .wf-gallery-visual:has(.safir-unset-image) {background:#f6f7f8!important;}
+html .wf-gallery-visual .category-uploaded-image {
+  width:100%!important;height:100%!important;object-fit:cover!important;
+  display:block!important;
+}
+html .wf-gallery-card .wf-gallery-text h3 {
+  color:var(--wf-ink)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html body .wf-site .wf-gallery-card,
+  html body .wf-site .wf-hero *,
+  html body .wf-header * {animation:none!important;transition:none!important;}
+}

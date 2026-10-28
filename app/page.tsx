@@ -5,7 +5,6 @@ import {localePath,intlNumber} from '@/lib/i18n';
 import {storeCategories,mainCategories,cmsPage,storeGalleryProducts} from '@/lib/store';
 import {CategoryArtwork,ProductTile} from '@/components/showcase';
 import PrintCollectionExplorer from '@/components/print-collection-explorer';
-import RotatingPrintTitle from '@/components/rotating-print-title';
 
 export const dynamic='force-dynamic';
 
@@ -29,7 +28,7 @@ export default async function Home(){
   <section className="wf-hero" aria-labelledby="wf-hero-heading">
     <div className="wf-container wf-hero-inner">
       <div className="wf-hero-badge"><i className="wf-signal" aria-hidden="true"/>{pick('مرکز تخصصی چاپ و طراحی سفیر هنر','SAFIRE HONAR / PRINT & DESIGN STUDIO')}<ArrowUpLeft size={13}/></div>
-      <h1 id="wf-hero-heading">{hero?.title || <>{pick('به ایده‌هایت','Give your ideas')} <br className="wf-hero-break"/><span className="wf-hero-blue"><RotatingPrintTitle phrases={categories.length?categories.slice(0,5).map(c=>c.name):[pick('رنگ و شکل بده','a new shape')]} locale={locale}/></span></>}</h1>
+      <h1 id="wf-hero-heading">{hero?.title || <>{pick('از ایده تا چاپ،','From idea to print,')}<br className="wf-hero-break"/><span className="wf-hero-blue">{pick('هنر در ابعاد تازه','Art in new dimensions')}</span></>}</h1>
       <p className="wf-hero-description">{hero?.body||pick('از انتخاب محصول تا ثبت سفارش چاپ، همه‌چیز در یک‌جا. بنر، کارت ویزیت، بروشور، تابلو و دیگر محصولات چاپی را بررسی کن و مناسب‌ترین گزینه را برای کسب‌وکارت پیدا کن.','Explore printed products, compare formats and start your next order, all in one place. From business cards and banners to brochures and signage.')}</p>
       <div className="wf-hero-actions">
         <Link href={path('/order')} className="wf-button wf-button-primary">{pick('شروع سفارش چاپ','Start your print request')}<ArrowUpLeft size={18}/></Link>
@@ -46,7 +45,7 @@ export default async function Home(){
 
   <section className="wf-section wf-references" id="references" aria-labelledby="wf-references-title">
     <div className="wf-container">
-      <div className="wf-section-intro"><span className="wf-tag"><span className="wf-tag-dot"/> {pick('محصولات چاپی','PRINT COLLECTIONS')}</span><h2 id="wf-references-title">{pick('ایده‌های واقعی.','Real ideas.')} <span>{pick('چاپ‌های متفاوت.','Thoughtful printing.')}</span></h2>
+      <div className="wf-section-intro"><span className="wf-tag"><span className="wf-tag-dot"/> {pick('محصولات چاپی','PRINT COLLECTIONS')}</span><h2 id="wf-references-title">{pick('محصولات چاپی.','Print collections.')} <span>{pick('انتخاب‌های متنوع.','Choose your format.')}</span></h2>
        <p>{pick('از کارت ویزیت تا تابلو، هر خانواده از محصولات را بشناس و برای ثبت سفارش وارد دسته‌بندی مربوط شو.','From business cards to signage, explore the print families available in our catalogue.')}</p>
        <Link href={path('/catalog')} className="wf-button wf-button-secondary">{pick('مشاهده همه دسته‌بندی‌ها','View all collections')} <ArrowUpLeft size={16}/></Link>
       </div>

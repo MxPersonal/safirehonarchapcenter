@@ -4,7 +4,7 @@ import {useEffect,useRef,useState} from 'react';
 import {usePathname} from 'next/navigation';
 import {ChevronLeft,ChevronRight,Phone,Mail} from 'lucide-react';
 import type {Locale} from '@/lib/i18n';
-import type {SocialLink} from '@/lib/social-links';
+import type {SocialLink} from '@/lib/social-link-types';
 import SocialIconView from '@/components/social-icon-view';
 
 type ManualState='open'|'closed'|null;

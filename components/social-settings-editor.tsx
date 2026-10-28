@@ -2,7 +2,7 @@
 import {useEffect,useState} from 'react';
 import {ArrowDown,ArrowUp,Plus,Save,Trash2,ExternalLink} from 'lucide-react';
 import {useI18n} from '@/components/locale-provider';
-import {SOCIAL_ICON_OPTIONS,type SocialLink,type SocialIcon} from '@/lib/social-links';
+import {SOCIAL_ICON_OPTIONS,type SocialLink,type SocialIcon} from '@/lib/social-link-types';
 import SocialIconView from '@/components/social-icon-view';
 
 const labels:Record<SocialIcon,string>={

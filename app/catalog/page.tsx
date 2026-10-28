@@ -32,7 +32,7 @@ export default async function Catalog(){
    <div className="sf-catalog-list-inner">
     <div className="sf-catalog-list-head">
      <div><span className="sf-catalog-list-kicker">{pick('مجموعه‌های چاپی','OUR COLLECTIONS')}</span>
-      <h2 id="sf-catalog-list-title">{pick('دسته‌بندی موردنظرت را انتخاب کن','Choose a print category')}</h2>
+      <h2 id="sf-catalog-list-title">{locale==='fa'?<><span className="sf-catalog-title-line">دسته‌بندی چاپ را</span><span className="sf-catalog-title-line">انتخاب کن</span></>:'Choose a print category'}</h2>
      </div>
      <span className="sf-catalog-list-meta">{intlNumber(categories.length,locale)} {pick('گروه محصول','product families')}</span>
     </div>

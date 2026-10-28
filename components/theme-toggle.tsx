@@ -5,18 +5,17 @@ import {useEffect,useState} from 'react';
 import {useI18n} from '@/components/locale-provider';
 
 type Theme='light'|'dark';
-const storageKey='safir-theme-wibify-v1';
+const storageKey='safir-theme-video-reference-v1';
 
 export default function ThemeToggle(){
- const [theme,setTheme]=useState<Theme>('dark');
+ const [theme,setTheme]=useState<Theme>('light');
  const {pick}=useI18n();
  useEffect(()=>{
-  let preference:Theme='dark';
+  let preference:Theme='light';
   try{
    const saved=window.localStorage.getItem(storageKey);
    if(saved==='dark'||saved==='light')preference=saved;
-   // Fresh redesign defaults to the Wibify dark appearance; user choice is persisted.
-  }catch{/* localStorage can be disabled */}
+  }catch{/* storage optional */}
   document.documentElement.dataset.theme=preference;
   setTheme(preference);
  },[]);
@@ -24,12 +23,12 @@ export default function ThemeToggle(){
   const next:Theme=theme==='dark'?'light':'dark';
   setTheme(next);
   document.documentElement.dataset.theme=next;
-  try{window.localStorage.setItem(storageKey,next)}catch{/* storage is optional */}
+  try{window.localStorage.setItem(storageKey,next)}catch{/* storage optional */}
  }
- return <button type="button" className="site-theme-toggle" onClick={change}
-  aria-label={theme==='light'?pick('فعال‌کردن حالت تاریک','Enable dark mode'):pick('فعال‌کردن حالت روشن','Enable light mode')}
-  title={theme==='light'?pick('حالت تاریک','Dark mode'):pick('حالت روشن','Light mode')}
-  aria-pressed={theme==='dark'}>
-  {theme==='dark'?<Sun aria-hidden="true" size={19}/>:<Moon aria-hidden="true" size={19}/>}
+ return <button type="button" className="site-theme-toggle wf-theme-toggle" onClick={change}
+ aria-label={theme==='light'?pick('تغییر به حالت تاریک','Switch to dark mode'):pick('تغییر به حالت روشن','Switch to light mode')}
+ title={theme==='light'?pick('حالت تاریک','Dark mode'):pick('حالت روشن','Light mode')}
+ aria-pressed={theme==='dark'}>
+ {theme==='dark'?<Sun aria-hidden="true" size={17}/>:<Moon aria-hidden="true" size={17}/>}
  </button>;
 }

@@ -3,23 +3,11 @@
    and github.com/DediData/Yekan-Font (OFL-1.1).
    Font assets are fetched and verified at build time by scripts/prepare-fonts.mjs.
 */
-@font-face {
-  font-family: 'Safir IranNastaliq';
-  src: url('/fonts/iran-nastaliq.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'Safir Yekan';
-  src: url('/fonts/yekan.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+/* Fonts are bundled by next/font/local in app/layout.tsx.
+   next/font emits hashed same-origin font assets and custom CSS variables. */
 html[lang='fa'] {
-  --font-body: 'Safir Yekan', 'Vazirmatn Variable', Tahoma, sans-serif;
-  --font-display: 'Safir IranNastaliq', 'Safir Yekan', Tahoma, serif;
+  --font-body: var(--safir-yekan), 'Vazirmatn Variable', Tahoma, sans-serif;
+  --font-display: var(--safir-nastaliq), var(--safir-yekan), Tahoma, serif;
 }
 /* Reserve calligraphy for primary branding and navigation. Keep forms,
    admin controls, descriptions, numerals and action buttons legible. */

@@ -5,17 +5,17 @@ import {useEffect,useState} from 'react';
 import {useI18n} from '@/components/locale-provider';
 
 type Theme='light'|'dark';
-const storageKey='safir-theme';
+const storageKey='safir-theme-wibify-v1';
 
 export default function ThemeToggle(){
- const [theme,setTheme]=useState<Theme>('light');
+ const [theme,setTheme]=useState<Theme>('dark');
  const {pick}=useI18n();
  useEffect(()=>{
-  let preference:Theme='light';
+  let preference:Theme='dark';
   try{
    const saved=window.localStorage.getItem(storageKey);
    if(saved==='dark'||saved==='light')preference=saved;
-   else if(window.matchMedia('(prefers-color-scheme: dark)').matches)preference='dark';
+   // Fresh redesign defaults to the Wibify dark appearance; user choice is persisted.
   }catch{/* localStorage can be disabled */}
   document.documentElement.dataset.theme=preference;
   setTheme(preference);

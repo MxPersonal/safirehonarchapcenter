@@ -16,7 +16,7 @@ export default async function Home() {
     cmsPage('home', locale),
     storeGalleryProducts(locale)
   ]);
-  const categories = mainCategories(all).slice(0, 8);
+  const categories = mainCategories(all);
   const featuredProducts = (products ?? []).slice(0, 4);
   const steps = [
     { no: '01', Icon: Layers3, title: pick('محصولت رو پیدا کن', 'Explore the collection'), text: pick('از دسته‌بندی‌های اصلی، چاپ مورد نظرت را انتخاب کن.', 'Find the right printing format in our product collections.') },
@@ -30,20 +30,20 @@ export default async function Home() {
     { q: pick('از کجا وضعیت سفارش را پیگیری کنم؟', 'Where can I follow up on my order?'), a: pick('از بخش حساب کاربری وارد شو و اطلاعات مربوط به درخواست‌ها و سفارش‌های خودت را بررسی کن.', 'Sign in to your customer account to review your requests and order information.') }
   ];
   return <div className="sx-home">
-    <section className="sx-hero" aria-labelledby="sx-hero-title">
+    <section className="sx-hero sx-wib-hero" aria-labelledby="sx-hero-title">
       <div className="sx-hero-noise" aria-hidden="true" />
       <div className="container sx-hero-grid">
-        <div className="sx-hero-copy">
-          <div className="sx-eyebrow sx-eyebrow-light"><span className="sx-live-dot" /> {pick('استودیو تخصصی چاپ و طراحی', 'CREATIVE PRINT & DESIGN STUDIO')} <span className="sx-eyebrow-index">01 / STUDIO</span></div>
+        <div className="sx-hero-copy sx-wib-hero-copy">
+          <div className="sx-eyebrow sx-eyebrow-light sx-wib-hero-badge"><span className="sx-live-dot" /> {pick('استودیو تخصصی چاپ و طراحی', 'CREATIVE PRINT & DESIGN STUDIO')} <span className="sx-eyebrow-index">01 / STUDIO</span></div>
           <h1 id="sx-hero-title">{hero?.title || <>{pick('هر ایده،', 'IDEAS MADE')}<br/><span>{pick('یک اثر ماندگار.', 'TO BE SEEN.')}</span></>}</h1>
           <p>{hero?.body || pick('از ظرافت کارت ویزیت تا جسارت یک بنر بزرگ. محصول مناسب ایده‌ات را پیدا کن، جزئیات را ببین و سفارش چاپ را با اطمینان بیشتری شروع کن.', 'From fine-detail business cards to large-format banners. Explore print collections, discover the right format and start your next order with clarity.')}</p>
-          <div className="sx-hero-actions">
-            <Link className="sx-btn sx-btn-lime" href={path('/catalog')}>{pick('کشف محصولات چاپی', 'Explore print products')} <ArrowUpLeft size={19}/></Link>
-            <Link className="sx-btn sx-btn-outline-dark" href={path('/order')}>{pick('ثبت سفارش اختصاصی', 'Custom print request')} <ArrowUpLeft size={19}/></Link>
+          <div className="sx-hero-actions sx-wib-hero-actions">
+            <Link className="sx-btn sx-btn-lime" href={path('/order')}>{pick('شروع سفارش چاپ', 'Start your print project')} <ArrowUpLeft size={19}/></Link>
+            <Link className="sx-btn sx-btn-outline-dark" href="#collections">{pick('مشاهده محصولات چاپی', 'Browse our collections')} <ArrowDownLeft size={19}/></Link>
           </div>
-          <div className="sx-hero-note"><span className="sx-note-asterisk">✳</span><span>{pick('از انتخاب محصول تا هماهنگی چاپ، قدم‌به‌قدم همراه ایده‌ات.', 'A clear journey from finding a format to reviewing your print request.')}</span></div>
+          <div className="sx-hero-note sx-wib-hero-note"><span className="sx-note-asterisk">✳</span><span>{pick('از انتخاب محصول تا هماهنگی چاپ، قدم‌به‌قدم همراه ایده‌ات.', 'A clear journey from finding a format to reviewing your print request.')}</span></div>
         </div>
-        <div className="sx-hero-visual" role="img" aria-label={pick('چیدمان نمایشی پوستر، کارت ویزیت و نمونه چاپ سفیر هنر','Illustrative composition of print studio stationery, poster and business cards')}>
+        <div className="sx-hero-visual sx-wib-hero-visual" role="img" aria-label={pick('چیدمان نمایشی پوستر، کارت ویزیت و نمونه چاپ سفیر هنر','Illustrative composition of print studio stationery, poster and business cards')}>
           <div className="sx-visual-orbit sx-visual-orbit-one" aria-hidden="true"/>
           <div className="sx-visual-orbit sx-visual-orbit-two" aria-hidden="true"/>
           <div className="sx-print-shadow" aria-hidden="true"/>
@@ -59,10 +59,10 @@ export default async function Home() {
           <div className="sx-visual-caption"><span className="sx-caption-dot"/>{pick('ترکیب گرافیکی نمایشی', 'ILLUSTRATIVE PRINT COMPOSITION')}</div>
         </div>
       </div>
-      <div className="container sx-hero-bottom"><span>{pick('چاپ سفیر هنر / فرم، رنگ، ایده', 'SAFIRE HONAR / FORM, COLOUR, IDEAS')}</span><a href="#collections">{pick('دنیای چاپ رو کشف کن', 'Discover our collections')} <ArrowDownLeft size={16}/></a></div>
+      <div className="container sx-hero-bottom sx-wib-hero-bottom"><span>{pick('چاپ سفیر هنر / فرم، رنگ، ایده', 'SAFIRE HONAR / FORM, COLOUR, IDEAS')}</span><a href="#collections">{pick('دنیای چاپ رو کشف کن', 'Discover our collections')} <ArrowDownLeft size={16}/></a></div>
     </section>
 
-    <section className="sx-intro-strip" aria-label={pick('مسیرهای اصلی سایت','Quick navigation')}>
+    <section className="sx-intro-strip sx-wib-intro-strip" aria-label={pick('مسیرهای اصلی سایت','Quick navigation')}>
       <div className="container sx-intro-grid">
         <Link href={path('/catalog')}><span className="sx-intro-icon"><Layers3 size={23}/></span><span><strong>{pick('محصولات چاپی','Print collections')}</strong><small>{pick('دسته‌بندی و انتخاب', 'Browse categories')}</small></span><ArrowUpLeft size={20}/></Link>
         <Link href={path('/designs')}><span className="sx-intro-icon"><Sparkles size={23}/></span><span><strong>{pick('گالری طرح‌ها','Design gallery')}</strong><small>{pick('نمونه‌ها و طرح‌ها', 'Explore the gallery')}</small></span><ArrowUpLeft size={20}/></Link>
@@ -70,7 +70,7 @@ export default async function Home() {
       </div>
     </section>
 
-    <section className="sx-collections sx-section" id="collections" aria-labelledby="sx-collections-title">
+    <section className="sx-collections sx-section sx-wib-collections" id="collections" aria-labelledby="sx-collections-title">
       <div className="container">
         <div className="sx-section-head">
           <div><span className="sx-section-kicker"><span>01</span> / {pick('دنیای محصولات','COLLECTIONS')}</span><h2 id="sx-collections-title">{pick('برای هر ایده،','A print for')} <em>{pick('یک شکل تازه.', 'every idea.')}</em></h2><p>{pick('از بین دسته‌بندی‌های چاپی، مناسب‌ترین مسیر را برای پروژه‌ات انتخاب کن.', 'Find the right print category for your next project.')}</p></div>
@@ -80,14 +80,14 @@ export default async function Home() {
       </div>
     </section>
 
-    {featuredProducts.length > 0 && <section className="sx-featured sx-section" aria-labelledby="sx-products-title">
+    {featuredProducts.length > 0 && <section className="sx-featured sx-section sx-wib-featured" aria-labelledby="sx-products-title">
       <div className="container">
         <div className="sx-section-head"><div><span className="sx-section-kicker"><span>02</span> / {pick('محصولات منتشرشده','PUBLISHED PRODUCTS')}</span><h2 id="sx-products-title">{pick('جزئیات،', 'The details')} <em>{pick('تفاوت می‌سازند.', 'make the difference.')}</em></h2><p>{pick('محصولات و تصاویر واقعی منتشرشده در فروشگاه، با قیمت یا شرایط استعلام همان محصول.', 'Published products from our actual store, with their current pricing or quote options.')}</p></div><Link className="sx-text-link" href={path('/catalog')}>{pick('رفتن به فروشگاه', 'Browse the shop')} <ArrowUpLeft size={18}/></Link></div>
         <div className="sx-product-grid">{featuredProducts.map(product => <ProductTile key={product.id} product={product} locale={locale}/>)}</div>
       </div>
     </section>}
 
-    <section className="sx-manifesto" aria-label={pick('نگاه ما به چاپ','Our approach to printing')}>
+    <section className="sx-manifesto sx-wib-manifesto" aria-label={pick('نگاه ما به چاپ','Our approach to printing')}>
       <div className="container sx-manifesto-grid">
         <div className="sx-manifesto-meta"><span className="sx-star">✳</span><span>THE ART OF PRINT<br/>SAFIRE HONAR / 2026</span></div>
         <div className="sx-manifesto-copy"><span className="sx-section-kicker">{pick('چرا سفیر هنر؟','OUR APPROACH')}</span><h2>{pick('چاپ، فقط خروجی نیست.', 'Print is more than output.')}<br/><em>{pick('شکل دیده‌شدن یک ایده‌ست.', 'It gives an idea its shape.')}</em></h2><p>{pick('یک انتخاب درست در جنس، اندازه و نوع چاپ می‌تواند نتیجه را متفاوت کند. دسته‌بندی‌ها را بشناس و قبل از سفارش، جزئیات را بررسی کن.', 'The right format, finish and size matter. Explore your options and review the details before placing a request.')}</p><Link href={path('/services')} className="sx-btn sx-btn-cream">{pick('آشنایی با خدمات چاپ', 'Explore our services')} <ArrowUpLeft size={19}/></Link></div>
@@ -95,13 +95,13 @@ export default async function Home() {
       </div>
     </section>
 
-    <section className="sx-steps sx-section" aria-labelledby="sx-steps-title">
+    <section className="sx-steps sx-section sx-wib-steps" aria-labelledby="sx-steps-title">
       <div className="container"><div className="sx-section-head"><div><span className="sx-section-kicker"><span>03</span> / {pick('مراحل سفارش','HOW IT WORKS')}</span><h2 id="sx-steps-title">{pick('از ایده تا چاپ،', 'From idea')} <em>{pick('مسیر روشنه.', 'to the final print.')}</em></h2><p>{pick('شروع سفارش از یک انتخاب ساده آغاز می‌شود.', 'A straightforward way to get your project started.')}</p></div><Link className="sx-text-link" href={path('/guide')}>{pick('راهنمای آماده‌سازی فایل', 'Artwork preparation guide')} <ArrowUpLeft size={18}/></Link></div>
         <div className="sx-steps-grid">{steps.map(step => <article className="sx-step" key={step.no}><div className="sx-step-top"><span>{step.no} / 03</span><step.Icon size={27} strokeWidth={1.5}/></div><div><h3>{step.title}</h3><p>{step.text}</p></div></article>)}</div>
       </div>
     </section>
 
-    <section className="sx-paths sx-section" aria-labelledby="sx-paths-title">
+    <section className="sx-paths sx-section sx-wib-paths" aria-labelledby="sx-paths-title">
       <div className="container"><div className="sx-section-head"><div><span className="sx-section-kicker"><span>04</span> / {pick('دو مسیر سفارش','TWO WAYS TO BEGIN')}</span><h2 id="sx-paths-title">{pick('هر سفارش،', 'Your project,')} <em>{pick('مسیر خودش رو داره.', 'your way.')}</em></h2></div></div>
         <div className="sx-paths-grid">
           <Link href={path('/catalog')} className="sx-path-card sx-path-ready"><div className="sx-path-top"><span>01 / {pick('خرید از فروشگاه', 'SHOP PRODUCTS')}</span><PackageCheck size={27}/></div><div className="sx-path-art" aria-hidden="true"><span className="sx-path-sheet"><i/><i/><i/></span><span className="sx-path-disc"/></div><div className="sx-path-bottom"><div><h3>{pick('محصول آماده انتخاب کن.', 'Find your print product.')}</h3><p>{pick('محصولات منتشرشده را ببین و اگر قیمت مشخص دارند، سفارش را از همان مسیر شروع کن.', 'Browse published products and choose a fixed-price option where available.')}</p></div><span className="sx-path-arrow"><ArrowUpLeft size={24}/></span></div></Link>
@@ -110,10 +110,10 @@ export default async function Home() {
       </div>
     </section>
 
-    <section className="sx-faq sx-section" aria-labelledby="sx-faq-title">
+    <section className="sx-faq sx-section sx-wib-faq" aria-labelledby="sx-faq-title">
       <div className="container sx-faq-grid"><div className="sx-faq-aside"><span className="sx-section-kicker"><span>05</span> / {pick('پرسش‌های متداول','GOOD TO KNOW')}</span><h2 id="sx-faq-title">{pick('سؤالی', 'Questions?')}<br/><em>{pick('باقی مونده؟', 'We can help.')}</em></h2><p>{pick('پیش از انتخاب محصول یا ثبت درخواست، جواب چند پرسش پرتکرار را ببین.', 'A few useful answers before you choose a product or make a request.')}</p><Link className="sx-text-link" href={path('/contact')}>{pick('تماس با ما','Contact the studio')} <ArrowUpLeft size={18}/></Link></div><div className="sx-faq-list">{faqs.map((faq,i) => <details key={faq.q} className="sx-faq-item"><summary><span className="sx-faq-number">0{i+1}</span><strong>{faq.q}</strong><Plus size={21}/></summary><p>{faq.a}</p></details>)}</div></div>
     </section>
 
-    <section className="sx-final-cta" aria-labelledby="sx-final-title"><div className="container sx-final-inner"><span className="sx-final-corner">SAFIRE HONAR / START HERE</span><div><span className="sx-section-kicker">{pick('وقتش رسیده ایده‌ات دیده بشه','MAKE YOUR NEXT PROJECT VISIBLE')}</span><h2 id="sx-final-title">{pick('ایده‌ات رو', 'Let’s make')}<br/><em>{pick('به چاپ برسون.', 'it tangible.')}</em></h2></div><div className="sx-final-actions"><p>{pick('از یک محصول ساده تا یک درخواست اختصاصی، نقطه شروع همین‌جاست.', 'Whether it is a simple print or a custom request, start right here.')}</p><Link href={path('/order')} className="sx-btn sx-btn-dark">{pick('شروع سفارش', 'Start your project')} <ArrowUpLeft size={20}/></Link></div><span className="sx-final-decoration" aria-hidden="true">✳</span></div></section>
+    <section className="sx-final-cta sx-wib-final" aria-labelledby="sx-final-title"><div className="container sx-final-inner"><span className="sx-final-corner">SAFIRE HONAR / START HERE</span><div><span className="sx-section-kicker">{pick('وقتش رسیده ایده‌ات دیده بشه','MAKE YOUR NEXT PROJECT VISIBLE')}</span><h2 id="sx-final-title">{pick('ایده‌ات رو', 'Let’s make')}<br/><em>{pick('به چاپ برسون.', 'it tangible.')}</em></h2></div><div className="sx-final-actions"><p>{pick('از یک محصول ساده تا یک درخواست اختصاصی، نقطه شروع همین‌جاست.', 'Whether it is a simple print or a custom request, start right here.')}</p><Link href={path('/order')} className="sx-btn sx-btn-dark">{pick('شروع سفارش', 'Start your project')} <ArrowUpLeft size={20}/></Link></div><span className="sx-final-decoration" aria-hidden="true">✳</span></div></section>
   </div>;
 }

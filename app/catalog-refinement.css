@@ -327,25 +327,69 @@ html body .sf-catalog-page .sf-catalog-card-content{
  background:var(--sf-white)!important;
  min-height:0!important;
 }
+/* The Nastaliq glyph ascenders and long tails extend outside usual text
+   metrics. Reserve *real* card layout space around every name, including
+   long titles that wrap on smaller screens. No absolute positioning or
+   forced fixed height, so dynamic CMS titles remain fully visible. */
+html body .sf-catalog-page .sf-catalog-card-title-group{
+ display:flex!important;
+ flex-direction:column!important;
+ align-items:stretch!important;
+ width:100%!important;
+ min-width:0!important;
+ margin:0 0 5px!important;
+}
 html body .sf-catalog-page .sf-catalog-card-eyebrow{
+ display:inline-flex!important;
+ align-self:flex-start!important;
+ width:max-content!important;
+ max-width:100%!important;
+ position:relative!important;
+ z-index:1!important;
+ padding:6px 11px!important;
+ margin:0!important;
+ background:var(--sf-soft)!important;
+ border:1px solid var(--sf-border)!important;
+ border-radius:999px!important;
  color:var(--sf-blue)!important;
  font:800 10px/1.8 var(--safir-yekan),Tahoma,sans-serif!important;
- letter-spacing:.01em!important;
+ letter-spacing:0!important;
+ white-space:normal!important;
+}
+html body .sf-catalog-page .sf-catalog-card-title-shell{
+ display:block!important;
+ width:100%!important;
+ min-width:0!important;
+ height:auto!important;
+ min-height:0!important;
+ overflow:visible!important;
+ padding:32px 0 24px!important;
+ margin:0!important;
 }
 html body .sf-catalog-page .sf-catalog-card-content h3{
+ display:block!important;
+ width:100%!important;
+ height:auto!important;
+ overflow:visible!important;
  color:var(--sf-ink)!important;
- font:850 clamp(21px,2.3vw,29px)/1.55 var(--safir-yekan),Tahoma,sans-serif!important;
+ font:850 clamp(21px,2.2vw,28px)/1.6 var(--safir-yekan),Tahoma,sans-serif!important;
  letter-spacing:0!important;
- padding:0!important;margin:7px 0 9px!important;
+ padding:0!important;
+ margin:0!important;
  text-shadow:none!important;
+ text-align:start!important;
+ overflow-wrap:break-word!important;
+ white-space:normal!important;
 }
-html[lang='fa'] body .sf-catalog-page .sf-catalog-card-content h3{
+html[lang='fa'] body .sf-catalog-page .sf-catalog-card-title-shell h3{
  font-family:var(--safir-nastaliq),Tahoma,serif!important;
- font-size:clamp(27px,2.9vw,38px)!important;
+ font-size:clamp(27px,2.55vw,34px)!important;
  font-weight:400!important;
- line-height:1.85!important;
- padding-block:.03em .09em!important;
- margin:0 0 6px!important;
+ font-style:normal!important;
+ font-synthesis:none!important;
+ line-height:2.2!important;
+ padding-block:.17em .3em!important;
+ margin:0!important;
 }
 html body .sf-catalog-page .sf-catalog-card-content p{
  display:block!important;
@@ -503,8 +547,19 @@ html[data-theme='dark'] body .sf-catalog-page .sf-catalog-image-pending{
  html body .sf-catalog-page .sf-catalog-card-grid{grid-template-columns:1fr!important;gap:17px!important;}
  html body .sf-catalog-page .sf-catalog-card-media{aspect-ratio:16/9!important;}
  html body .sf-catalog-page .sf-catalog-card-content{padding:19px 21px 20px!important;}
- html body .sf-catalog-page .sf-catalog-card-content h3{font-size:24px!important;}
- html[lang='fa'] body .sf-catalog-page .sf-catalog-card-content h3{font-size:35px!important;line-height:1.8!important;}
+ html body .sf-catalog-page .sf-catalog-card-title-shell{
+  padding:34px 0 25px!important;
+ }
+ html body .sf-catalog-page .sf-catalog-card-content h3{font-size:23px!important;}
+ html[lang='fa'] body .sf-catalog-page .sf-catalog-card-title-shell h3{
+  font-size:clamp(25px,6.8vw,31px)!important;
+  line-height:2.22!important;
+  padding-block:.22em .36em!important;
+ }
+ html body .sf-catalog-page .sf-catalog-card-content p{
+  margin-top:4px!important;
+  line-height:2.05!important;
+ }
  html body .sf-catalog-page .sf-catalog-card-content p{font-size:12px!important;}
  html body .v2-inner-head.sf-catalog-detail-hero{padding:35px 0 46px!important;}
  html[lang='fa'] body .v2-inner-head.sf-catalog-detail-hero h1{

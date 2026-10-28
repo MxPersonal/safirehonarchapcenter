@@ -1,0 +1,132 @@
+/* Persian display typography for Safir-e Honar. Loaded after all design layers.
+   Font sources and licenses: github.com/font-store/font-IranNastaliq (OFL-1.1)
+   and github.com/DediData/Yekan-Font (OFL-1.1).
+   Font assets are fetched and verified at build time by scripts/prepare-fonts.mjs.
+*/
+@font-face {
+  font-family: 'Safir IranNastaliq';
+  src: url('/fonts/iran-nastaliq.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Safir Yekan';
+  src: url('/fonts/yekan.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+html[lang='fa'] {
+  --font-body: 'Safir Yekan', 'Vazirmatn Variable', Tahoma, sans-serif;
+  --font-display: 'Safir IranNastaliq', 'Safir Yekan', Tahoma, serif;
+}
+/* Reserve calligraphy for primary branding and navigation. Keep forms,
+   admin controls, descriptions, numerals and action buttons legible. */
+html[lang='fa'] body,
+html[lang='fa'] :is(button, input, textarea, select, label, summary, output),
+html[lang='fa'] :is(.v2-admin, .pw-admin-sidebar, .pw-admin-content, .admin-editor,
+  .admin-list, .finance-console, .pw-category-details, .pw-process-step,
+  .shop-meta, .v2-account, .v2-product-page, .footer) {
+  font-family: var(--font-body) !important;
+}
+html[lang='fa'] body {
+  font-weight: 400;
+  line-height: 1.9;
+}
+html[lang='fa'] :is(.pw-hero h1, .v2-hero h1, .hero h1, .atelier-hero-headline) {
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+  font-size: clamp(58px, 6.8vw, 102px) !important;
+  line-height: 1.85 !important;
+  letter-spacing: 0 !important;
+  padding-block: .15em .25em;
+  overflow: visible;
+  text-wrap: balance;
+}
+html[lang='fa'] .pw-hero-copy {
+  min-width: 0;
+}
+html[lang='fa'] .pw-hero h1 em {
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  font-style: normal;
+}
+/* Hero's decorative print mockup needs a smaller, taller setting. */
+html[lang='fa'] .pw-art-paper > strong {
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+  font-size: clamp(41px, 5vw, 72px) !important;
+  line-height: 1.56 !important;
+  letter-spacing: 0 !important;
+}
+html[lang='fa'] .site-header .nav-desktop a,
+html[lang='fa'] .site-header .mobile-menu a {
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+}
+html[lang='fa'] .site-header .nav-desktop a {
+  font-size: clamp(17px, 1.25vw, 20px) !important;
+  line-height: 2.15 !important;
+  white-space: nowrap;
+  padding-block: 4px;
+}
+html[lang='fa'] .site-header .mobile-menu a {
+  font-size: 22px !important;
+  line-height: 2.15 !important;
+  min-height: 55px;
+  padding-block: 5px !important;
+}
+html[lang='fa'] .site-header .brand-copy strong {
+  font-family: var(--font-display) !important;
+  font-weight: 400 !important;
+  font-size: clamp(21px, 1.9vw, 27px) !important;
+  line-height: 1.85 !important;
+  letter-spacing: 0 !important;
+}
+html[lang='fa'] .site-header :is(.header-actions, .v3-auth-nav-link,
+  .v3-auth-nav-register, .header-order-button, .language-switcher) {
+  font-family: var(--font-body) !important;
+}
+html[lang='fa'] :is(.pw-hero-copy p, .pw-section-heading p, .pw-category-details p,
+  .pw-process p, .pw-order-card p, .pw-endcap p, .pw-button,
+  .pw-underlined-link, .v2-catalog-card, .v2-product-page) {
+  font-family: var(--font-body) !important;
+}
+@media (min-width: 901px) and (max-width: 1250px) {
+  html[lang='fa'] .site-header .nav-desktop { gap: 7px !important; }
+  html[lang='fa'] .site-header .nav-desktop a { font-size: 17px !important; }
+  html[lang='fa'] .site-header .brand-copy strong { font-size: 21px !important; }
+}
+@media (max-width: 900px) {
+  html[lang='fa'] .site-header .brand-copy strong {
+    font-size: clamp(19px, 4vw, 24px) !important;
+    line-height: 1.7 !important;
+  }
+  html[lang='fa'] .pw-hero h1,
+  html[lang='fa'] :is(.v2-hero h1, .hero h1, .atelier-hero-headline) {
+    font-size: clamp(48px, 8.5vw, 74px) !important;
+    line-height: 1.9 !important;
+  }
+}
+@media (max-width: 700px) {
+  html[lang='fa'] .pw-hero h1,
+  html[lang='fa'] :is(.v2-hero h1, .hero h1, .atelier-hero-headline) {
+    font-size: clamp(42px, 10vw, 63px) !important;
+    line-height: 1.95 !important;
+    padding-block: .1em .2em;
+  }
+  html[lang='fa'] .pw-art-paper > strong {
+    font-size: clamp(37px, 10vw, 60px) !important;
+    line-height: 1.55 !important;
+  }
+}
+@media (max-width: 390px) {
+  html[lang='fa'] .pw-hero h1 {
+    font-size: clamp(38px, 9.5vw, 46px) !important;
+  }
+  html[lang='fa'] .site-header .brand-copy strong {
+    font-size: 18px !important;
+  }
+}

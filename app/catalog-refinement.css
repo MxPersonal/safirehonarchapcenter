@@ -193,11 +193,37 @@ html body .sf-catalog-page .sf-catalog-list-head h2{
  font:850 clamp(28px,3vw,42px)/1.5 var(--safir-yekan),Tahoma,sans-serif!important;
  text-shadow:none!important;
 }
+/* Short phrases get their own lines so Nastaliq glyphs never collide. */
 html[lang='fa'] body .sf-catalog-page .sf-catalog-list-head h2{
+ display:block!important;
+ max-width:100%!important;
+ overflow:visible!important;
  font-family:var(--safir-nastaliq),Tahoma,serif!important;
- font-size:clamp(35px,3.6vw,51px)!important;
- font-weight:400!important;line-height:1.9!important;
- padding-block:.06em .1em!important;
+ font-size:clamp(30px,3.1vw,43px)!important;
+ font-weight:400!important;
+ font-style:normal!important;
+ font-synthesis:none!important;
+ line-height:2.12!important;
+ letter-spacing:0!important;
+ padding-block:.08em .18em!important;
+}
+html[lang='fa'] body .sf-catalog-page .sf-catalog-list-head h2 .sf-catalog-title-line{
+ display:block!important;
+ box-sizing:border-box!important;
+ width:fit-content!important;
+ max-width:100%!important;
+ min-height:2.12em!important;
+ line-height:2.12!important;
+ padding:0 .18em .15em!important;
+ margin:0!important;
+ white-space:normal!important;
+ overflow:visible!important;
+ color:var(--sf-ink)!important;
+ font:inherit!important;
+}
+html[lang='fa'] body .sf-catalog-page .sf-catalog-list-head h2 .sf-catalog-title-line+.sf-catalog-title-line{
+ color:var(--sf-blue)!important;
+ margin-top:-.2em!important;
 }
 html body .sf-catalog-page .sf-catalog-list-meta{
  display:inline-flex!important;
@@ -464,6 +490,15 @@ html[data-theme='dark'] body .sf-catalog-page .sf-catalog-image-pending{
  html body .sf-catalog-page .sf-catalog-hero-count{font-size:11px!important;}
  html body .sf-catalog-page .sf-catalog-list{padding:43px 0 75px!important;}
  html body .sf-catalog-page .sf-catalog-list-head{gap:5px!important;margin-bottom:21px!important;}
+ html[lang='fa'] body .sf-catalog-page .sf-catalog-list-head h2{
+  font-size:clamp(28px,7.2vw,36px)!important;
+  line-height:2.12!important;
+ }
+ html[lang='fa'] body .sf-catalog-page .sf-catalog-list-head h2 .sf-catalog-title-line{
+  min-height:2.12em!important;
+  line-height:2.12!important;
+  padding-inline:.12em .2em!important;
+ }
  html body .sf-catalog-page .sf-catalog-list-meta{font-size:11px!important;padding:6px 12px!important;}
  html body .sf-catalog-page .sf-catalog-card-grid{grid-template-columns:1fr!important;gap:17px!important;}
  html body .sf-catalog-page .sf-catalog-card-media{aspect-ratio:16/9!important;}

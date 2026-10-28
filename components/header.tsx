@@ -33,12 +33,12 @@ export default function Header(){
  const links=[['/catalog',t.categories],['/designs',t.designs],['/services',t.services],['/guide',t.guide],['/about',t.about],['/contact',t.contact]] as const;
  const click=()=>setOpen(false);
  return <header className="site-header wf-header">
-  <div className="wf-header-bar wf-container">
-    <Link href={path('/')} className="wf-header-brand brand-anchor" aria-label={t.home} onClick={click}><Brand/></Link>
-    <nav className="wf-nav-desktop" aria-label={pick('ناوبری اصلی','Main navigation')}>
+  <div className="wf-header-bar wf-container" dir="ltr">
+    <Link href={path('/')} dir="ltr" className="wf-header-brand brand-anchor" aria-label={t.home} onClick={click}><Brand/></Link>
+    <nav dir="rtl" className="wf-nav-desktop" aria-label={pick('ناوبری اصلی','Main navigation')}>
       {links.map(([href,label])=><Link key={href} href={path(href)}>{label}</Link>)}
     </nav>
-    <div className="wf-header-actions">
+    <div className="wf-header-actions" dir="ltr">
       <LanguageSwitcher compact/>
       <ThemeToggle/>
       {authenticated?<Link href={path('/account')} className="wf-header-account" aria-label={t.myAccount}><UserRound size={18}/></Link>:<Link href={path('/login')} className="wf-header-account" aria-label={t.login}><UserRound size={18}/></Link>}
@@ -47,7 +47,7 @@ export default function Header(){
     </div>
   </div>
   {open&&<div id="wf-mobile-menu" className="wf-menu-overlay">
-    <nav className="wf-menu-body wf-container" aria-label={pick('منوی همبرگری','Mobile menu')}>
+    <nav dir={pick('rtl','ltr')} className="wf-menu-body wf-container" aria-label={pick('منوی همبرگری','Mobile menu')}>
       <div className="wf-menu-list">
         {links.map(([href,label])=><Link key={href} href={path(href)} onClick={click}>{label}<ArrowUpLeft size={19}/></Link>)}
         <Link href={path('/order')} onClick={click}>{t.order}<ArrowUpLeft size={19}/></Link>

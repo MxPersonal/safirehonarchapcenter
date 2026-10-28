@@ -1,0 +1,277 @@
+/* Safire Honar / Wibify reference: layout correction for two marked UI regions.
+   Physical left and right are deliberate: only content typography follows RTL.
+   This stylesheet is loaded last to override prior prototype layers safely. */
+html .site-header.wf-header {
+  position:sticky!important;top:0!important;z-index:95!important;
+  width:100%!important;
+  background:rgba(255,255,255,.98)!important;
+  border-bottom:1px solid #e8ebef!important;
+  box-shadow:0 8px 28px rgba(14,21,36,.04)!important;
+}
+html[data-theme='dark'] .site-header.wf-header {
+  background:rgba(17,23,33,.97)!important;
+  border-bottom-color:#354252!important;
+}
+html .site-header.wf-header .wf-header-bar {
+  direction:ltr!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  width:min(calc(100% - 36px),1320px)!important;
+  min-height:86px!important;
+  gap:12px!important;
+}
+html .site-header.wf-header .wf-header-brand {
+  direction:ltr!important;
+  display:flex!important;
+  flex:0 1 auto!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  min-width:0!important;
+  margin:0!important;
+  max-width:min(50vw,300px)!important;
+}
+html .site-header.wf-header .wf-header-brand .theme-aware-brand {
+  direction:ltr!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:11px!important;
+  width:auto!important;max-width:100%!important;
+}
+html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-emblem {
+  width:84px!important;
+  height:64px!important;
+  flex:0 0 84px!important;
+  overflow:visible!important;
+}
+html .site-header.wf-header .wf-header-brand .brand-copy {
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  min-width:0!important;
+  max-width:180px!important;
+  direction:rtl!important;text-align:right!important;
+}
+html .site-header.wf-header .wf-header-brand .brand-copy strong {
+  color:#15191d!important;
+  white-space:nowrap!important;
+  line-height:1.75!important;
+  font-size:clamp(20px,2.2vw,27px)!important;
+  padding-block:.04em!important;
+}
+html[data-theme='dark'] .site-header.wf-header .wf-header-brand .brand-copy strong {
+  color:#f4f6f7!important;
+}
+html .site-header.wf-header .wf-header-brand .brand-copy small {
+  display:none!important;
+}
+html .site-header.wf-header .wf-nav-desktop {
+  display:none!important;
+}
+html .site-header.wf-header .wf-header-actions {
+  direction:ltr!important;
+  display:flex!important;
+  flex:0 0 auto!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:9px!important;
+  margin:0!important;
+}
+html .site-header.wf-header .wf-header-actions .wf-header-cta {
+  display:none!important;
+}
+html .site-header.wf-header .wf-header-actions .wf-hamburger {
+  display:inline-flex!important;
+  justify-content:center!important;align-items:center!important;
+  flex:0 0 45px!important;
+  width:45px!important;height:45px!important;
+  min-width:45px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  border:1px solid #e1e5e9!important;
+  background:#fff!important;
+  color:#111820!important;
+  box-shadow:0 2px 7px #18212a12!important;
+  position:relative!important;
+  cursor:pointer!important;
+}
+html .site-header.wf-header .wf-header-actions .wf-hamburger:hover {
+  box-shadow:0 5px 14px #18212a25!important;
+  border-color:#bac7d1!important;
+}
+html .site-header.wf-header .wf-header-actions .wf-hamburger.is-active {
+  background:#141820!important;
+  color:white!important;
+}
+html[data-theme='dark'] .site-header.wf-header .wf-header-actions .wf-hamburger {
+  color:#eff5fb!important;background:#1c2937!important;
+  border-color:#4b5b6f!important;
+}
+html .site-header.wf-header .wf-header-actions .wf-hamburger svg {
+  width:24px!important;height:24px!important;stroke-width:2.2!important;
+}
+html .site-header.wf-header .wf-header-actions :is(.language-toggle-single,.wf-theme-toggle,.wf-header-account) {
+  display:inline-flex!important;
+  width:42px!important;height:42px!important;
+  min-width:42px!important;flex:0 0 42px!important;
+  border-radius:50%!important;
+  font-size:12px!important;
+}
+html .site-header.wf-header .wf-header-actions .wf-header-account {
+  display:none!important;
+}
+html .site-header.wf-header .wf-menu-overlay {
+  direction:rtl;
+  left:0!important;right:0!important;
+  inset-inline:0!important;max-height:calc(100dvh - 86px)!important;
+  height:calc(100dvh - 86px)!important;
+  z-index:4!important;
+}
+html .site-header.wf-header .wf-menu-body {
+  direction:rtl;
+}
+html[lang='en'] .site-header.wf-header .wf-menu-overlay,
+html[lang='en'] .site-header.wf-header .wf-menu-body {
+  direction:ltr!important;
+}
+html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-logo-light {
+  display:block!important;
+}
+html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-logo-dark {
+  display:none!important;
+}
+html[data-theme='dark'] .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-logo-light {
+  display:none!important;
+}
+html[data-theme='dark'] .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-logo-dark {
+  display:block!important;
+}
+/* Three true channels; pin on the physical RIGHT at every locale/direction.
+   If a public address is missing, its icon links to the real contact page. */
+html body .wf-contact-dock.wf-contact-dock-wibify {
+  position:fixed!important;
+  right:max(10px,env(safe-area-inset-right))!important;
+  left:auto!important;
+  inset-inline-start:auto!important;
+  inset-inline-end:auto!important;
+  top:auto!important;
+  bottom:max(28px,env(safe-area-inset-bottom))!important;
+  transform:none!important;
+  z-index:80!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  gap:8px!important;
+  width:60px!important;
+  padding:7px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.96)!important;
+  border:1px solid #e1e5e9!important;
+  box-shadow:0 10px 38px rgba(32,49,77,.17)!important;
+  backdrop-filter:blur(14px)!important;
+  direction:ltr!important;
+}
+html body .wf-contact-dock.wf-contact-dock-wibify>a {
+  display:flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  flex:0 0 46px!important;
+  width:46px!important;height:46px!important;
+  padding:0!important;
+  border:1px solid #e5e9ec!important;
+  border-radius:50%!important;
+  background:#fff!important;
+  box-shadow:0 2px 6px rgba(22,33,45,.09)!important;
+  transition:transform .18s ease,background .18s ease,box-shadow .18s ease!important;
+}
+html body .wf-contact-dock.wf-contact-dock-wibify>a:hover {
+  background:#f7fafc!important;
+  box-shadow:0 4px 12px #18253422!important;
+  transform:translateY(-2px)!important;
+}
+html body .wf-contact-dock.wf-contact-dock-wibify>a.wf-dock-call {
+  color:#202b35!important;
+}
+html body .wf-contact-dock.wf-contact-dock-wibify>a.wf-dock-whatsapp {
+  color:#18c66b!important;
+}
+html body .wf-contact-dock.wf-contact-dock-wibify>a.wf-dock-mail {
+  color:#1688ea!important;
+}
+html[data-theme='dark'] body .wf-contact-dock.wf-contact-dock-wibify {
+  background:rgba(27,38,52,.95)!important;
+  border-color:#4d5b6c!important;
+  box-shadow:0 10px 38px #0008!important;
+}
+html[data-theme='dark'] body .wf-contact-dock.wf-contact-dock-wibify>a {
+  background:#1b2634!important;border-color:#43546a!important;
+}
+html[data-theme='dark'] body .wf-contact-dock.wf-contact-dock-wibify>a.wf-dock-call {
+  color:#edf5fb!important;
+}
+/* Mobile Wibify rhythm: left brand, right three buttons, compact contact pill */
+@media(max-width:700px){
+  html .site-header.wf-header .wf-header-bar {
+    min-height:80px!important;
+    width:calc(100% - 26px)!important;
+    gap:3px!important;
+  }
+  html .site-header.wf-header .wf-header-brand {
+    max-width:calc(100% - 141px)!important;
+  }
+  html .site-header.wf-header .wf-header-brand .theme-aware-brand {
+    gap:3px!important;
+  }
+  html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-emblem {
+    width:72px!important;height:62px!important;flex-basis:72px!important;
+  }
+  html .site-header.wf-header .wf-header-brand .brand-copy {
+    display:flex!important;min-width:0!important;
+  }
+  html .site-header.wf-header .wf-header-brand .brand-copy strong {
+    font-size:19px!important;
+    max-width:130px!important;
+    overflow:hidden!important;
+    text-overflow:clip!important;
+    line-height:1.7!important;
+  }
+  html .site-header.wf-header .wf-header-actions {
+    gap:5px!important;
+  }
+  html .site-header.wf-header .wf-header-actions :is(.language-toggle-single,.wf-theme-toggle) {
+    width:38px!important;height:38px!important;
+    flex-basis:38px!important;min-width:38px!important;
+  }
+  html .site-header.wf-header .wf-header-actions .wf-hamburger {
+    width:43px!important;height:43px!important;
+    flex-basis:43px!important;min-width:43px!important;
+  }
+  html .site-header.wf-header .wf-menu-overlay {
+    height:calc(100dvh - 80px)!important;
+    max-height:calc(100dvh - 80px)!important;
+  }
+  html body .wf-contact-dock.wf-contact-dock-wibify {
+    right:max(7px,env(safe-area-inset-right))!important;
+    bottom:max(72px,env(safe-area-inset-bottom))!important;
+    width:57px!important;padding:6px!important;gap:7px!important;
+  }
+  html body .wf-contact-dock.wf-contact-dock-wibify>a {
+    width:44px!important;height:44px!important;flex-basis:44px!important;
+  }
+}
+@media(max-width:374px){
+  html .site-header.wf-header .wf-header-brand .theme-aware-brand .brand-emblem {
+    width:56px!important;height:52px!important;flex-basis:56px!important;
+  }
+  html .site-header.wf-header .wf-header-brand .brand-copy strong {
+    font-size:17px!important;
+  }
+}
+/* Keyboard navigation and reduced motion. */
+html .wf-contact-dock-wibify>a:focus-visible,
+html .wf-header .wf-hamburger:focus-visible{
+  outline:3px solid #228bea!important;outline-offset:3px!important;
+}
+@media(prefers-reduced-motion:reduce){
+  html .wf-contact-dock-wibify>a{transition:none!important;}
+}

@@ -92,14 +92,14 @@ export default function SiteSearchPanel({open,onClose}:{open:boolean;onClose:()=
        </select>
       </label>
       <label>{pick('نوع قیمت‌گذاری','Price type')}
-       <select value={pricing} onChange={e=>setPricing(e.target.value)}>
+       <select value={pricing} onChange={e=>setPricing(e.target.value as 'all'|'fixed'|'quote')}>
         <option value="all">{pick('همه انواع','All types')}</option>
         <option value="fixed">{pick('قیمت مشخص','Fixed price')}</option>
         <option value="quote">{pick('نیازمند استعلام','Quote required')}</option>
        </select>
       </label>
       <label>{pick('مرتب‌سازی','Sort by')}
-       <select value={sort} onChange={e=>setSort(e.target.value)}>
+       <select value={sort} onChange={e=>setSort(e.target.value as 'relevance'|'title'|'price')}>
         <option value="relevance">{pick('مرتبط‌ترین','Most relevant')}</option>
         <option value="title">{pick('نام محصول یا صفحه','Alphabetical')}</option>
         <option value="price">{pick('قیمت از کمتر به بیشتر','Lowest price first')}</option>

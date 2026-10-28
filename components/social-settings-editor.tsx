@@ -1,6 +1,6 @@
 'use client';
 import {useEffect,useState} from 'react';
-import {ArrowDown,ArrowUp,Plus,Save,Trash2,ExternalLink} from 'lucide-react';
+import {ArrowDown,ArrowUp,Plus,Save,Trash2,RefreshCw,Database,AlertTriangle} from 'lucide-react';
 import {useI18n} from '@/components/locale-provider';
 import {SOCIAL_ICON_OPTIONS,type SocialLink,type SocialIcon} from '@/lib/social-link-types';
 import SocialIconView from '@/components/social-icon-view';
@@ -18,13 +18,25 @@ export default function SocialSettingsEditor(){
  const [busy,setBusy]=useState(false);
  const [message,setMessage]=useState('');
  const [error,setError]=useState('');
+ const [errorCode,setErrorCode]=useState('');
+ async function reload(){
+  setLoading(true);setError('');setErrorCode('');
+  try{
+   const response=await fetch('/admin/api/socials',{credentials:'same-origin',cache:'no-store',headers:{'Accept':'application/json'}});
+   const result=await response.json();
+   if(!response.ok){setErrorCode(result.code||String(response.status));throw new Error(result.error||'Unable to load links')}
+   setItems(Array.isArray(result.items)?result.items:[]);
+  }catch(err){setError(err instanceof Error?err.message:String(err))}
+  finally{setLoading(false)}
+ }
  useEffect(()=>{
   let active=true;
-  void fetch('/admin/api/socials',{credentials:'same-origin',cache:'no-store'})
-   .then(async res=>{const data=await res.json();if(!res.ok)throw Error(data.error||'Fetch failed');if(active)setItems(data.items||[])})
-   .catch(err=>{if(active)setError(err instanceof Error?err.message:String(err))})
+  const controller=new AbortController();
+  void fetch('/admin/api/socials',{credentials:'same-origin',cache:'no-store',signal:controller.signal})
+   .then(async res=>{const data=await res.json();if(!res.ok){if(active)setErrorCode(data.code||String(res.status));throw Error(data.error||'Unable to read social links')}if(active)setItems(Array.isArray(data.items)?data.items:[])})
+   .catch(err=>{if(active&&err?.name!=='AbortError')setError(err instanceof Error?err.message:String(err))})
    .finally(()=>{if(active)setLoading(false)});
-  return()=>{active=false};
+  return()=>{active=false;controller.abort()};
  },[]);
  function update(id:string,patch:Partial<SocialLink>){setItems(rows=>rows.map(row=>row.id===id?{...row,...patch}:row))}
  function move(index:number,by:number){setItems(rows=>{const to=index+by;if(to<0||to>=rows.length)return rows;const next=[...rows];[next[index],next[to]]=[next[to],next[index]];return next})}
@@ -32,12 +44,12 @@ export default function SocialSettingsEditor(){
   setItems(rows=>rows.length>=20?rows:[...rows,{id:'soc'+Date.now().toString(36)+Math.random().toString(36).slice(2,7),label:'',icon:'instagram',url:'https://',imageUrl:'',active:true}]);
  }
  async function save(e:React.FormEvent){
-  e.preventDefault();setError('');setMessage('');setBusy(true);
+  e.preventDefault();setError('');setErrorCode('');setMessage('');setBusy(true);
   try{
    const res=await fetch('/admin/api/socials',{method:'PUT',credentials:'same-origin',
     headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});
    const data=await res.json();
-   if(!res.ok)throw Error(data.error||'Save failed');
+   if(!res.ok){setErrorCode(data.code||String(res.status));throw Error(data.error||'Save failed')}
    setItems(data.items);
    setMessage(pick('شبکه‌های اجتماعی ذخیره شدند و در نوار تماس سایت نمایش داده می‌شوند.','Social links saved. Active channels now appear in the contact dock.'));
   }catch(err){setError(err instanceof Error?err.message:pick('ذخیره ممکن نشد.','Save failed.'))}
@@ -48,6 +60,7 @@ export default function SocialSettingsEditor(){
    <h2>{pick('مدیریت شبکه‌های اجتماعی و آیکون‌های تماس','Manage social networks and contact icons')}</h2>
    <p>{pick('برای هر شبکه، عنوان، آیکون یا تصویر دلخواه، لینک و ترتیب نمایش را مشخص کن. سه آیکون اصلی تلفن، واتساپ و ایمیل از متغیرهای محیطی سایت تنظیم می‌شوند.','Set each channel’s title, icon or custom image, URL and display order. The original phone, WhatsApp and email buttons use site environment settings.')}</p>
   </div>
+  <div className="wf-social-admin-status"><span><Database size={18}/>{pick('اتصال به دیتابیس تنظیمات','Settings database')}</span><button type="button" onClick={()=>void reload()} disabled={loading||busy}><RefreshCw size={16}/>{pick('بازخوانی','Retry loading')}</button></div>
   {loading?<p role="status">{pick('بارگذاری تنظیمات...','Loading social settings...')}</p>:<form onSubmit={save}>
    <div className="wf-social-admin-list">
     {items.map((item,index)=><fieldset className="wf-social-admin-item" key={item.id}>
@@ -63,9 +76,9 @@ export default function SocialSettingsEditor(){
       </div>
      </div>
      <div className="wf-social-admin-fields">
-      <label>{pick('عنوان شبکه','Label')}<input required maxLength={55} value={item.label} onChange={e=>update(item.id,{label:e.target.value})} placeholder="Instagram"/></label>
+      <label>{pick('عنوان شبکه','Label')}<input required maxLength={55} autoComplete="off" value={item.label} onChange={e=>update(item.id,{label:e.target.value})} placeholder="Instagram"/></label>
       <label>{pick('انتخاب آیکون','Choose icon')}<select value={item.icon} onChange={e=>update(item.id,{icon:e.target.value as SocialIcon})}>{SOCIAL_ICON_OPTIONS.map(key=><option value={key} key={key}>{labels[key]}</option>)}</select></label>
-      <label className="wf-social-admin-wide">{pick('آدرس صفحه یا پروفایل (https://)','Profile URL (https://)')}<input type="url" required dir="ltr" value={item.url} onChange={e=>update(item.id,{url:e.target.value})} placeholder="https://example.com/your-profile"/></label>
+      <label className="wf-social-admin-wide">{pick('آدرس صفحه یا پروفایل (https://)','Profile URL (https://)')}<input type="url" required dir="ltr" autoComplete="url" value={item.url} onChange={e=>update(item.id,{url:e.target.value})} placeholder="https://example.com/your-profile"/></label>
       <label className="wf-social-admin-wide">{pick('آدرس تصویر آیکون دلخواه (اختیاری)','Custom icon image URL (optional)')}<input type="url" dir="ltr" value={item.imageUrl} onChange={e=>update(item.id,{imageUrl:e.target.value})} placeholder="https://.../icon.png"/></label>
       <label className="wf-social-admin-check"><input type="checkbox" checked={item.active} onChange={e=>update(item.id,{active:e.target.checked})}/>{pick('نمایش در سایت','Visible on website')}</label>
      </div>
@@ -73,10 +86,10 @@ export default function SocialSettingsEditor(){
    </div>
    <div className="wf-social-admin-actions">
     <button type="button" className="v2-outline" disabled={items.length>=20} onClick={add}><Plus size={17}/>{pick('افزودن شبکه جدید','Add another social network')}</button>
-    <button type="submit" className="v2-primary" disabled={busy}>{busy?pick('در حال ذخیره...','Saving...'):pick('ذخیره و انتشار','Save and publish')} <Save size={17}/></button>
+    <button type="submit" className="v2-primary" disabled={busy||loading}>{busy?pick('در حال ذخیره...','Saving...'):pick('ذخیره و انتشار','Save and publish')} <Save size={17}/></button>
    </div>
    <p className="v2-fine">{pick('حداکثر ۲۰ لینک قابل ثبت است. فقط URL معتبر http/https پذیرفته می‌شود. نیازی به دیپلوی مجدد نیست.','You can save up to 20 links. Only valid http/https URLs are accepted, and no new deployment is needed.')}</p>
-   {error&&<p role="alert" className="form-error">{error}</p>}
+   {error&&<div role="alert" className="wf-social-admin-error"><AlertTriangle size={20}/><div><strong>{pick('ارتباط با تنظیمات شبکه‌ها برقرار نشد','Social settings could not be loaded or saved')}</strong><p>{error}</p>{errorCode&&<small dir="ltr">Error code: {errorCode}</small>}<p>{pick('فرم همچنان قابل ویرایش است؛ قبل از خروج ذخیره‌سازی موفق را بررسی کن. اگر خطا ادامه داشت، وجود جدول site_pages و مجوز کلید خصوصی Supabase را بررسی کن.','You can still edit the form. Confirm a successful save before leaving. If the error persists, verify the site_pages table and private Supabase key permissions.')}</p></div></div>}
    {message&&<p role="status" className="v2-notice">{message}</p>}
   </form>}
  </div>;

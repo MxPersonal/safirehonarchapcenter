@@ -6,12 +6,21 @@ import {SOCIAL_SLUG,parseSocialLinks} from '@/lib/social-links';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 const respond=(value:unknown,status=200)=>NextResponse.json(value,{status,headers:{'Cache-Control':'no-store'}});
+const dbError=(error:{code?:string;message?:string}|null|undefined,operation:'read'|'write')=>{
+ const code=error?.code||'UNKNOWN';
+ const action=operation==='read'?'خواندن':'ذخیره';
+ if(['42P01','PGRST205','PGRST106'].includes(code))return {code,error:'جدول site_pages در دیتابیس متصل وجود ندارد یا در Data API قابل دسترسی نیست. ساختار دیتابیس را بررسی و Migration اصلاحی شبکه‌های اجتماعی را اجرا کنید.'};
+ if(code==='42501')return {code,error:'مجوز دسترسی به جدول site_pages کافی نیست. مجوزهای service_role و RLS را بررسی کنید.'};
+ if(code==='42703')return {code,error:'ستون‌های موردنیاز جدول site_pages کامل نیستند. Migration اولیه فروشگاه را بررسی کنید.'};
+ return {code,error:`خطای ${action} تنظیمات شبکه‌های اجتماعی در دیتابیس (کد: ${code}). اتصال Supabase و مجوزها را بررسی کنید.`};
+};
+
 export async function GET(){
- if(!await validAdminSession())return respond({error:'دسترسی مدیر لازم است.'},401);
+ if(!await validAdminSession())return respond({error:'نشست مدیریت منقضی شده است. دوباره وارد پنل مدیریت شوید.',code:'SESSION_EXPIRED'},401);
  const db=adminDatabase();
- if(!db)return respond({error:'اتصال مدیریتی دیتابیس تنظیم نشده است.'},503);
+ if(!db)return respond({error:'اتصال خصوصی Supabase تنظیم نشده؛ در Vercel به SUPABASE_URL و SUPABASE_SECRET_KEY نیاز است.',code:'DB_NOT_CONFIGURED'},503);
  const {data,error}=await db.from('site_pages').select('body').eq('slug',SOCIAL_SLUG).maybeSingle();
- if(error)return respond({error:'خواندن تنظیمات شبکه‌های اجتماعی ممکن نشد.'},500);
+ if(error){console.error('[socials/read] database error',error.code);return respond(dbError(error,'read'),503)}
  return respond({items:parseSocialLinks(data?.body)});
 }
 export async function PUT(req:NextRequest){
@@ -32,7 +41,7 @@ export async function PUT(req:NextRequest){
  const validated=parseSocialLinks(items);
  if(validated.length!==items.length)return respond({error:'عنوان، URL، شناسه یا تصویر یکی از لینک‌ها نامعتبر یا تکراری است. آدرس را با https:// وارد کنید.'},400);
  const {error}=await db.from('site_pages').upsert({slug:SOCIAL_SLUG,title:'Social links',body:JSON.stringify(validated),updated_at:new Date().toISOString()},{onConflict:'slug'});
- if(error)return respond({error:'ذخیره تنظیمات ممکن نشد. اتصال دیتابیس و دسترسی مدیر را بررسی کنید.'},500);
+ if(error){console.error('[socials/write] database error',error.code);return respond(dbError(error,'write'),503)}
  revalidatePath('/', 'layout');
  return respond({ok:true,items:validated});
 }

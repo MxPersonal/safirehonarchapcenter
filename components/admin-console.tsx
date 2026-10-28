@@ -162,7 +162,7 @@ export default function AdminConsole(){
      <Menu size={20} aria-hidden="true"/><span>{pick('مدیریت سایت','Site management')}</span><ChevronDown className="pw-admin-mobile-chevron" size={16} aria-hidden="true"/>
     </button>
     <div id="pw-admin-site-mobile-menu" className="pw-admin-mobile-menu" hidden={mobileMenuOpen!=='site'}>
-     {siteTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item" aria-current={tab===key?'page':undefined} onClick={()=>{setArea('site');setTab(key);setMsg('');setMobileMenuOpen(null)}}><Icon size={18}/><span>{locale==='en'?({categories:'Categories',products:'Products & portfolio',pages:'Site pages'} as Record<string,string>)[key]:name}</span></button>)}
+     {siteTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item" aria-current={tab===key?'page':undefined} onClick={()=>{setArea('site');setTab(key);setMsg('');setMobileMenuOpen(null)}}><Icon size={18}/><span>{locale==='en'?({categories:'Categories',products:'Products & portfolio',pages:'Site pages',socials:'Social networks'} as Record<string,string>)[key]:name}</span></button>)}
     </div>
    </section>
    <section className="pw-admin-mobile-group" aria-label={pick('مدیریت فروشگاه','Store management')}>

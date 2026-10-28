@@ -1,6 +1,7 @@
 'use client';
 
 import {usePathname} from 'next/navigation';
+import {Languages} from 'lucide-react';
 import type {MouseEvent} from 'react';
 import {localePath} from '@/lib/i18n';
 import {useSiteLocale} from '@/components/locale-provider';
@@ -34,9 +35,10 @@ export default function LanguageSwitcher({compact=false}:{compact?:boolean}){
   hrefLang={target}
   lang="en"
   dir="ltr"
-  className={'language-switcher language-toggle-single'+(compact?' language-switcher-compact':'')}
+  className={'language-switcher language-toggle-single wf-language-toggle'+(compact?' language-switcher-compact':'')}
   title={description}
   aria-label={description}
   onClick={navigate}
- ><span aria-hidden="true">{label}</span></a>;
+ 
+ ><Languages size={17} strokeWidth={2} aria-hidden="true"/><span aria-hidden="true">{label}</span></a>;
 }

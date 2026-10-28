@@ -1,6 +1,6 @@
 'use client';
 
-import {Moon,Sun} from 'lucide-react';
+import {MoonStar,Sun} from 'lucide-react';
 import {useEffect,useState} from 'react';
 import {useI18n} from '@/components/locale-provider';
 
@@ -25,10 +25,10 @@ export default function ThemeToggle(){
   document.documentElement.dataset.theme=next;
   try{window.localStorage.setItem(storageKey,next)}catch{/* storage optional */}
  }
- return <button type="button" className="site-theme-toggle wf-theme-toggle" onClick={change}
+ return <button type="button" className="site-theme-toggle wf-theme-toggle wf-header-mode-control" data-current-theme={theme} onClick={change}
  aria-label={theme==='light'?pick('تغییر به حالت تاریک','Switch to dark mode'):pick('تغییر به حالت روشن','Switch to light mode')}
  title={theme==='light'?pick('حالت تاریک','Dark mode'):pick('حالت روشن','Light mode')}
  aria-pressed={theme==='dark'}>
- {theme==='dark'?<Sun aria-hidden="true" size={17}/>:<Moon aria-hidden="true" size={17}/>}
+ {theme==='dark'?<Sun aria-hidden="true" size={18} strokeWidth={2}/>:<MoonStar aria-hidden="true" size={18} strokeWidth={2}/>}
  </button>;
 }

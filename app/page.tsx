@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import {ArrowUpLeft,ArrowLeft,ArrowRight,ArrowDownLeft,ArrowUpRight, BadgeCheck, Layers3, FileCheck2, ScanLine, ChevronLeft, ChevronRight, Search, Phone, Mail, Printer, Sparkles, PackageCheck, MousePointerClick} from 'lucide-react';
+import {ArrowUpLeft,ArrowLeft,ArrowRight,ArrowDownLeft,ArrowUpRight, BadgeCheck, Layers3, FileCheck2, ScanLine, ChevronLeft, ChevronRight, Search, Phone, Mail, Printer, Sparkles, PackageCheck, MousePointerClick,Plus,Minus} from 'lucide-react';
 import {siteText} from '@/lib/i18n-server';
 import {localePath,intlNumber} from '@/lib/i18n';
 import {storeCategories,mainCategories,cmsPage,storeGalleryProducts} from '@/lib/store';
@@ -88,7 +88,7 @@ export default async function Home(){
     <div className="wf-faq-intro"><span className="wf-tag"><span className="wf-tag-dot"/>{pick('پرسش و پاسخ','FAQ')}</span><h2 id="wf-faq-heading">{pick('سؤال‌های رایج.','Frequently asked')} <span>{pick('پاسخ‌های روشن.','Clear answers.')}</span></h2><p>{pick('درباره انتخاب محصول، هزینه و ثبت سفارش بیشتر بدان.','Useful answers about print products, ordering and quotes.')}</p>
     <div className="wf-faq-contact"><strong>{pick('جوابت را پیدا نکردی؟','Need more information?')}</strong><p>{pick('از طریق صفحه تماس، با مجموعه ارتباط بگیر.','Reach the studio through the contact page.')}</p><Link className="wf-button wf-button-primary" href={path('/contact')}>{pick('ارتباط با ما','Contact the studio')}<ArrowUpLeft size={16}/></Link></div>
     </div>
-    <div className="wf-faq-items">{faqs.map((item,i)=><details className="wf-faq-item" key={i} open={i===0}><summary><span className="wf-faq-number">{String(i+1).padStart(2,'0')}</span><strong>{item.q}</strong><span className="wf-faq-toggle" aria-hidden="true">+</span></summary><p>{item.a}</p></details>)}</div>
+    <div className="wf-faq-items">{faqs.map((item,i)=><details className="wf-faq-item" key={i} open={i===0}><summary><span className="wf-faq-number">{String(i+1).padStart(2,'0')}</span><strong>{item.q}</strong><span className="wf-faq-toggle" aria-hidden="true"><Plus className="wf-faq-plus" size={19} strokeWidth={2.1}/><Minus className="wf-faq-minus" size={19} strokeWidth={2.1}/></span></summary><p>{item.a}</p></details>)}</div>
   </div></section>
 
   <section className="wf-wizard-home" id="inquiry" aria-labelledby="wf-wizard-home-title">

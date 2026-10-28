@@ -49,18 +49,17 @@ export default function Header(){
  const click=()=>{setOpen(false);setSearchOpen(false)};
  const toggleSearch=()=>{setSearchOpen(current=>!current);setOpen(false)};
  return <header className="site-header wf-header">
-  <div className="wf-header-bar wf-container" dir="ltr">
-    <Link href={path('/')} dir="ltr" className="wf-header-brand brand-anchor" aria-label={t.home} onClick={click}><Brand/></Link>
-    <nav dir="rtl" className="wf-nav-desktop" aria-label={pick('ناوبری اصلی','Main navigation')}>
-      {links.map(([href,label])=><Link key={href} href={path(href)}>{label}</Link>)}
-    </nav>
-    <div className="wf-header-actions" dir="ltr">
+  <div className="wf-header-bar wf-container" dir="rtl">
+    <div className="wf-header-right" dir="rtl">
+      <Link href={path('/')} dir="rtl" className="wf-header-brand brand-anchor" aria-label={t.home} onClick={click}><Brand/></Link>
+      <button type="button" className={'wf-hamburger'+(open?' is-active':'')} aria-label={open?pick('بستن منو','Close menu'):pick('باز کردن منو','Open menu')} aria-expanded={open} aria-controls="wf-mobile-menu" onClick={()=>{setSearchOpen(false);setOpen(x=>!x)}}>{open?<X size={22}/>:<Menu size={22}/>}</button>
+    </div>
+    <div className="wf-header-actions" dir="ltr" aria-label={pick("ابزارهای سایت","Website tools")}>
       <button ref={searchToggle} type="button" className={"wf-header-search"+(searchOpen?" is-active":"")} aria-label={searchOpen?pick("بستن جست‌وجو","Close search"):pick("بازکردن جست‌وجو در سایت","Open website search")} title={pick("جست‌وجوی پیشرفته","Advanced site search")} aria-controls="wf-global-search" aria-expanded={searchOpen} onClick={toggleSearch}>{searchOpen?<X size={19}/>:<Search size={19}/>}</button>
       <LanguageSwitcher compact/>
       <ThemeToggle/>
       {authenticated?<Link href={path('/account')} className="wf-header-account" aria-label={t.myAccount}><UserRound size={18}/></Link>:<Link href={path('/login')} className="wf-header-account" aria-label={t.login}><UserRound size={18}/></Link>}
       <Link className="wf-header-cta" href={path('/order')}>{pick('شروع سفارش','Start project')}<ArrowUpLeft size={16}/></Link>
-      <button type="button" className={'wf-hamburger'+(open?' is-active':'')} aria-label={open?pick('بستن منو','Close menu'):pick('باز کردن منو','Open menu')} aria-expanded={open} aria-controls="wf-mobile-menu" onClick={()=>{setSearchOpen(false);setOpen(x=>!x)}}>{open?<X size={22}/>:<Menu size={22}/>}</button>
     </div>
   </div>
   <SiteSearchPanel open={searchOpen} onClose={()=>{setSearchOpen(false);searchToggle.current?.focus()}}/>

@@ -76,7 +76,7 @@ export default function AdaptiveContactDock({locale,phone,email,whatsapp,contact
 
   useEffect(()=>{
     let frame=0;
-    let delay:ReturnType<typeof setTimeout>|undefined;
+    let delay:number|undefined;
     let visible=true;
 
     const evaluate=()=>{

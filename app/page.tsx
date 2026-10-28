@@ -4,6 +4,7 @@ import {siteText} from '@/lib/i18n-server';
 import {localePath,intlNumber} from '@/lib/i18n';
 import {storeCategories,mainCategories,cmsPage,storeGalleryProducts} from '@/lib/store';
 import {CategoryArtwork,ProductTile} from '@/components/showcase';
+import ProjectInquiryWizard from '@/components/project-inquiry-wizard';
 import PrintCollectionExplorer from '@/components/print-collection-explorer';
 
 export const dynamic='force-dynamic';
@@ -89,6 +90,13 @@ export default async function Home(){
     </div>
     <div className="wf-faq-items">{faqs.map((item,i)=><details className="wf-faq-item" key={i} open={i===0}><summary><span className="wf-faq-number">{String(i+1).padStart(2,'0')}</span><strong>{item.q}</strong><span className="wf-faq-toggle" aria-hidden="true">+</span></summary><p>{item.a}</p></details>)}</div>
   </div></section>
+
+  <section className="wf-wizard-home" id="inquiry" aria-labelledby="wf-wizard-home-title">
+  <div className="wf-container">
+    <div className="wf-wizard-section-title"><span>{pick('سفیر هنر / شروع یک سفارش','START A PRINT REQUEST')}</span><h2 id="wf-wizard-home-title">{pick('پروژه‌ات را در سه مرحله ثبت کن','Share your project in three steps')}</h2></div>
+  </div>
+  <ProjectInquiryWizard embedded/>
+ </section>
 
   <section className="wf-contact-section" id="start" aria-labelledby="wf-contact-heading"><div className="wf-container">
    <div className="wf-contact-panel">

@@ -68,7 +68,7 @@ export default function AdaptiveContactDock({locale,phone,email,whatsapp,contact
   const channels=[
     {id:'phone',href:phone?'tel:'+phone:contactPage,title:callLabel,icon:<Phone size={22} strokeWidth={2} aria-hidden="true"/>},
     {id:'whatsapp',href:whatsapp?'https://wa.me/'+whatsapp:contactPage,title:waLabel,icon:whatsappMark,external:!!whatsapp},
-    {id:'email',href:email?'mailto:'+email:contactPage,title:mailLabel,icon:<Mail size={22} strokeWidth={2} aria-hidden="true"/>}
+    {id:'email',href:email?'mailto:'+email:contactPage,title:mailLabel,icon:<Mail size={22} strokeWidth={2} aria-hidden="true"/>},
     ...socials.filter(item=>item.active).map(item=>({id:item.id,href:item.url,title:item.label,icon:item.imageUrl?<img src={item.imageUrl} alt="" loading="lazy" width={24} height={24} className="wf-dock-social-image"/>:<SocialIconView name={item.icon} size={22}/>,external:true}))
   ];
   const extraCount=Math.min(20,socials.filter(item=>item.active).length);

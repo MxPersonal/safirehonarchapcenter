@@ -49,8 +49,10 @@ export default async function Catalog(){
          <span className="sf-catalog-card-number">{String(i+1).padStart(2,'0')}</span>
         </div>
         <div className="sf-catalog-card-content">
-         <span className="sf-catalog-card-eyebrow">{pick('خانواده محصولات چاپی','PRINT CATEGORY')}</span>
-         <h3>{c.name}</h3>
+         <div className="sf-catalog-card-title-group">
+          <span className="sf-catalog-card-eyebrow">{pick('خانواده محصولات چاپی','PRINT CATEGORY')}</span>
+          <div className="sf-catalog-card-title-shell"><h3>{c.name}</h3></div>
+         </div>
          {c.description&&<p>{c.description}</p>}
          {children.length>0&&<div className="sf-catalog-children" aria-label={pick('زیرمجموعه‌های این دسته','Subcategories')}>
           {children.slice(0,3).map(child=><span key={child.id}>{child.name}</span>)}

@@ -17,7 +17,7 @@ export default async function CategoryPage({params}:{params:Promise<{slug:string
  const products=await storeProducts(cat,categories,locale);
  const samples=exampleDesigns(cat.slug);
  return <>
- <section className="v2-inner-head"><div className="container">
+ <section className="v2-inner-head sf-catalog-detail-hero"><div className="container">
   <div className="breadcrumbs"><Link href={path('/')}>{t.home}</Link> / <Link href={path('/catalog')}>{t.categories}</Link> {parent&&<> / <Link href={path('/catalog/'+parent.slug)}>{parent.name}</Link></>} / {cat.name}</div>
   <span className="tiny-label">{parent?pick('زیرگروه چاپ','PRINT SUBCATEGORY'):pick('دسته محصولات چاپی','PRINT PRODUCT CATEGORY')}</span>
   <h1>{cat.name}</h1><p>{cat.description}</p>

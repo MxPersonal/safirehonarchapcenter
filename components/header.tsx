@@ -26,6 +26,13 @@ export default function Header(){
  },[]);
  useEffect(()=>{setOpen(false);setSearchOpen(false)},[pathname]);
  useEffect(()=>{
+  const desktop=window.matchMedia('(min-width: 1440px)');
+  const closeMobileOnDesktop=()=>{if(desktop.matches)setOpen(false)};
+  closeMobileOnDesktop();
+  desktop.addEventListener('change',closeMobileOnDesktop);
+  return()=>desktop.removeEventListener('change',closeMobileOnDesktop);
+ },[]);
+ useEffect(()=>{
   const keydown=(event:KeyboardEvent)=>{
    const target=event.target as HTMLElement|null;
    const typing=!!target&&(target.matches('input,textarea,select')||target.isContentEditable);
@@ -54,6 +61,12 @@ export default function Header(){
       <Link href={path('/')} dir="rtl" className="wf-header-brand brand-anchor" aria-label={t.home} onClick={click}><Brand/></Link>
       <button type="button" className={'wf-hamburger'+(open?' is-active':'')} aria-label={open?pick('بستن منو','Close menu'):pick('باز کردن منو','Open menu')} aria-expanded={open} aria-controls="wf-mobile-menu" onClick={()=>{setSearchOpen(false);setOpen(x=>!x)}}>{open?<X size={22}/>:<Menu size={22}/>}</button>
     </div>
+    <nav className="wf-nav-desktop wf-main-nav" dir={pick('rtl','ltr')}
+      aria-label={pick('ناوبری اصلی سایت','Main website navigation')}>
+      {links.map(([href,label])=><Link key={href} href={path(href)}
+        aria-current={pathname===path(href)||pathname?.startsWith(path(href)+'/')?'page':undefined}
+        onClick={click}>{label}</Link>)}
+    </nav>
     <div className="wf-header-actions" dir="ltr" aria-label={pick("ابزارهای سایت","Website tools")}>
       <button ref={searchToggle} type="button" className={"wf-header-search"+(searchOpen?" is-active":"")} aria-label={searchOpen?pick("بستن جست‌وجو","Close search"):pick("بازکردن جست‌وجو در سایت","Open website search")} title={pick("جست‌وجوی پیشرفته","Advanced site search")} aria-controls="wf-global-search" aria-expanded={searchOpen} onClick={toggleSearch}>{searchOpen?<X size={19}/>:<Search size={19}/>}</button>
       <LanguageSwitcher compact/>

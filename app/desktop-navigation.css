@@ -1,0 +1,98 @@
+/* Ultra-wide navbar. 1440px is the CSS-viewport boundary, not device pixels.
+ * Laptop (including 1366px), tablets and phones continue using the hamburger.
+ * This stylesheet is imported last to override historical !important rules. */
+html .site-header.wf-header nav.wf-main-nav{
+  display:none!important;
+}
+@media(min-width:1440px){
+  html .site-header.wf-header .wf-header-bar{
+    direction:rtl!important;
+    justify-content:space-between!important;
+    gap:clamp(12px,1.6vw,25px)!important;
+  }
+  html .site-header.wf-header .wf-header-right{
+    flex:0 0 auto!important;
+  }
+  html .site-header.wf-header .wf-header-right .wf-hamburger{
+    display:none!important;
+  }
+  html .site-header.wf-header nav.wf-nav-desktop.wf-main-nav{
+    display:flex!important;
+    direction:rtl;
+    flex:1 1 auto!important;
+    justify-content:center!important;
+    align-items:center!important;
+    min-width:0!important;
+    gap:clamp(7px,1.15vw,20px)!important;
+    margin:0 auto!important;
+    padding:0 8px!important;
+    background:transparent!important;
+    border:0!important;
+  }
+  html[lang='en'] .site-header.wf-header nav.wf-main-nav{
+    direction:ltr!important;
+  }
+  html .site-header.wf-header nav.wf-main-nav a{
+    display:inline-flex!important;
+    justify-content:center!important;
+    align-items:center!important;
+    position:relative;
+    flex:0 0 auto!important;
+    min-width:0!important;
+    min-height:57px!important;
+    padding:3px 4px!important;
+    margin:0!important;
+    white-space:nowrap!important;
+    text-decoration:none!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+    font-family:var(--safir-nastaliq),Tahoma,serif!important;
+    font-weight:400!important;
+    font-size:clamp(19px,1.5vw,23px)!important;
+    line-height:2.25!important;
+    letter-spacing:0!important;
+    color:var(--wf-ink,#171c24)!important;
+    transition:color .2s ease!important;
+  }
+  html[lang='en'] .site-header.wf-header nav.wf-main-nav a{
+    font-family:Arial,Inter,system-ui,sans-serif!important;
+    font-weight:700!important;
+    font-size:13px!important;
+    line-height:1.6!important;
+  }
+  html .site-header.wf-header nav.wf-main-nav a:hover,
+  html .site-header.wf-header nav.wf-main-nav a[aria-current='page']{
+    color:var(--wf-blue,#278bdd)!important;
+  }
+  html .site-header.wf-header nav.wf-main-nav a[aria-current='page']::after{
+    content:'';
+    position:absolute;
+    inset-inline:16%;
+    bottom:5px;
+    height:2px;
+    background:var(--wf-blue,#278bdd);
+    border-radius:99px;
+  }
+  html .site-header.wf-header nav.wf-main-nav a:focus-visible{
+    outline:3px solid var(--wf-blue,#258ce6)!important;
+    outline-offset:2px!important;
+  }
+  html .site-header.wf-header .wf-menu-overlay{
+    display:none!important;
+  }
+}
+@media(max-width:1439px){
+  html .site-header.wf-header nav.wf-main-nav{
+    display:none!important;
+  }
+  html .site-header.wf-header .wf-header-right .wf-hamburger{
+    display:inline-grid!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html .site-header.wf-header nav.wf-main-nav a{
+    transition:none!important;
+  }
+}

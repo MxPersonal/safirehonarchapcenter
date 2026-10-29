@@ -3,7 +3,7 @@
 ## Scope and safety
 - Added Auth0 Next.js SDK v4 (minimum 4.30.0: includes the Next.js 16 proxy method binding fix).
 - The existing proxy continues to handle `/fa`, `/en`, Supabase cookie refresh, and all account/admin/shop/API routes.
-- Only `/auth/*` is handed to Auth0 in this stage. Auth0 sessions are non-rolling until the next integration phase, because intercepting every URL would require a careful cookie/response merge with Supabase SSR and i18n.
+- Only `/auth/login`, `/auth/logout`, `/auth/callback`, and `/auth/profile` are handed to Auth0 in this stage. `/auth/confirm` remains under the existing Supabase confirmation flow. Auth0 sessions are non-rolling until the next integration phase, because intercepting every URL would require a careful cookie/response merge with Supabase SSR and i18n.
 - `/login` and `/register` still use the old Supabase flow; OTPY SMS verification and admin access are unchanged.
 - Do not treat an Auth0 identity as a Supabase customer until explicit identity linking, profile mapping, provider-JWT validation and RLS reviews are complete.
 - Clerk is connected on the Supabase side separately; this stage does not add any Clerk browser sign-in UI.

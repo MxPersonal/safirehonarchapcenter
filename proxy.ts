@@ -7,8 +7,10 @@ import {auth0} from '@/lib/auth0';
  * duplicating routes or exposing credentials to client code. */
 export async function proxy(request:NextRequest){
  const pathname=request.nextUrl.pathname;
- // Phase 4.27: isolate Auth0 endpoints; leave Supabase auth, OTPY, admin and locale routes unchanged.
- if(pathname.startsWith('/auth/'))return await auth0.middleware(request);
+ // Route only Auth0's mounted endpoints through its SDK.
+ // In particular, /auth/confirm must remain owned by the existing Supabase email flow.
+ const auth0Routes=['/auth/login','/auth/logout','/auth/callback','/auth/profile'];
+ if(auth0Routes.includes(pathname))return await auth0.middleware(request);
  const match=pathname.match(/^\/(fa|en)(?=\/|$)/);
  const cookie=request.cookies.get('safir_locale')?.value;
  const isSystem=pathname==='/api'||pathname.startsWith('/api/')||pathname==='/auth'||pathname.startsWith('/auth/');

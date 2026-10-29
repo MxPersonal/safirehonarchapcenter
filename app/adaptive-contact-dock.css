@@ -1,240 +1,158 @@
-/* Adaptive contact dock for Safire Honar.
- * Physically fixed to the right edge in both RTL and LTR languages.
- * It slides out of the viewport if rendered text intersects its footprint.
- * A permanent, keyboard-accessible handle lets visitors reopen it manually.
- * This file comes after all previous themes, and does not alter storefront UI.
- */
-html body .wf-smart-dock {
+/* Safire Honar contact panel: a true vertical stack with a separate toggle.
+   Only this stylesheet controls size and positioning. No absolute overlay
+   intersects the first contact icon, even when additional socials are added. */
+html body aside.wf-smart-dock{
   position:fixed!important;
   z-index:80!important;
-  right:0!important;
+  top:auto!important;
+  bottom:max(38px,env(safe-area-inset-bottom))!important;
+  right:max(10px,env(safe-area-inset-right))!important;
   left:auto!important;
   inset-inline-start:auto!important;
   inset-inline-end:auto!important;
-  top:auto!important;
-  bottom:max(38px, env(safe-area-inset-bottom))!important;
-  width:71px!important;
-  height:220px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  justify-content:flex-start!important;
+  gap:9px!important;
+  width:64px!important;
   min-width:0!important;
-  margin:0!important;
+  height:auto!important;
+  max-height:75dvh!important;
   padding:0!important;
-  border:0!important;
+  margin:0!important;
   background:transparent!important;
+  border:0!important;
   box-shadow:none!important;
   transform:none!important;
   pointer-events:none!important;
   isolation:isolate;
   direction:ltr!important;
 }
-html body .wf-smart-dock-panel {
-  position:absolute!important;
-  right:8px!important;
-  left:auto!important;
-  bottom:0!important;
-  top:auto!important;
-  width:62px!important;
-  height:220px!important;
-  padding:8px 7px!important;
-  margin:0!important;
-  border:1px solid #e1e6eb!important;
-  border-radius:999px!important;
-  display:flex!important;
-  flex-direction:column!important;
-  align-items:center!important;
-  justify-content:space-between!important;
-  gap:8px!important;
-  background:rgba(255,255,255,.96)!important;
-  box-shadow:0 11px 35px rgba(27,44,69,.16)!important;
-  backdrop-filter:blur(14px);
-  transform:translate3d(0,0,0)!important;
-  opacity:1!important;
-  visibility:visible!important;
-  pointer-events:auto!important;
-  will-change:transform,opacity;
-  transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .24s ease,visibility 0s 0s!important;
-}
-html body .wf-smart-dock.is-collapsed .wf-smart-dock-panel {
-  transform:translate3d(calc(100% + 18px),0,0)!important;
-  opacity:0!important;
-  visibility:hidden!important;
-  pointer-events:none!important;
-  transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .22s ease,visibility 0s .32s!important;
-}
-html body .wf-smart-dock-link {
-  display:flex!important;
-  align-items:center!important;
-  justify-content:center!important;
-  flex:0 0 48px!important;
-  width:48px!important;
-  height:48px!important;
-  min-width:48px!important;
-  border:1px solid #e5e9ed!important;
-  border-radius:50%!important;
-  background:#fff!important;
-  padding:0!important;
-  margin:0!important;
-  box-shadow:0 2px 7px rgba(17,32,48,.07)!important;
-  text-decoration:none!important;
-  transform:none!important;
-  transition:transform .2s ease,background .2s ease,box-shadow .2s ease!important;
-}
-html body .wf-smart-dock-link:hover {
-  transform:scale(1.07)!important;
-  background:#f4f8fc!important;
-  box-shadow:0 5px 13px rgba(17,32,48,.13)!important;
-}
-html body .wf-smart-dock-link.wf-smart-dock-phone {color:#26313a!important;}
-html body .wf-smart-dock-link.wf-smart-dock-whatsapp {color:#1ac96c!important;}
-html body .wf-smart-dock-link.wf-smart-dock-email {color:#1986ea!important;}
-html body .wf-smart-dock-toggle {
-  position:absolute!important;
-  right:calc(100% - 7px)!important;
-  left:auto!important;
-  top:calc(50% - 24px)!important;
-  bottom:auto!important;
-  display:grid!important;
-  place-items:center!important;
-  width:33px!important;height:48px!important;
-  min-width:33px!important;
+html body .wf-smart-dock .wf-smart-dock-toggle,
+html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle{
+  position:relative!important;
+  order:0!important;
+  display:grid!important;place-items:center!important;
+  flex:0 0 36px!important;
+  top:auto!important;bottom:auto!important;
+  left:auto!important;right:auto!important;
+  width:36px!important;
+  min-width:36px!important;
+  height:36px!important;
   padding:0!important;margin:0!important;
+  border-radius:50%!important;
   border:1px solid #dfe7ee!important;
-  border-radius:14px 0 0 14px!important;
-  background:rgba(255,255,255,.97)!important;
-  color:#1975cc!important;
-  box-shadow:-3px 4px 15px rgba(23,42,64,.13)!important;
+  background:rgba(255,255,255,.98)!important;
+  color:#1878ce!important;
+  box-shadow:0 5px 18px #172a4022!important;
   cursor:pointer!important;
   pointer-events:auto!important;
   transform:none!important;
-  transition:right .28s cubic-bezier(.22,1,.36,1),background .2s,color .2s!important;
 }
-html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle {
-  right:0!important;
-  width:37px!important;
-  min-width:37px!important;
-  border-radius:16px 0 0 16px!important;
+html body .wf-smart-dock .wf-smart-dock-toggle svg{
+  display:block!important;
+  width:20px!important;height:20px!important;
+  flex:none!important;
+}
+html body .wf-smart-dock .wf-smart-dock-panel{
+  position:relative!important;
+  order:1!important;
+  top:auto!important;right:auto!important;bottom:auto!important;left:auto!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-start!important;
+  align-items:center!important;
+  flex:0 1 auto!important;
+  width:62px!important;
+  min-width:62px!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:calc(75dvh - 48px)!important;
+  padding:8px 6px!important;
+  margin:0!important;
+  gap:8px!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  border:1px solid #e1e6eb!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.97)!important;
+  box-shadow:0 11px 35px #1b2c4529!important;
+  backdrop-filter:blur(14px);
+  scrollbar-width:thin;
+  overscroll-behavior:contain;
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+  pointer-events:auto!important;
+  transition:opacity .22s ease!important;
+}
+html body .wf-smart-dock.is-collapsed .wf-smart-dock-panel{
+  display:none!important;
+  opacity:0!important;
+  visibility:hidden!important;
+  pointer-events:none!important;
+}
+html body .wf-smart-dock .wf-smart-dock-link{
+  display:grid!important;place-items:center!important;
+  flex:0 0 46px!important;
+  width:46px!important;height:46px!important;min-width:46px!important;
+  padding:0!important;margin:0!important;
+  border:1px solid #e5e9ed!important;
+  border-radius:50%!important;
   background:#fff!important;
+  box-shadow:0 2px 7px #11203012!important;
+  text-decoration:none!important;
+  transform:none!important;
+  transition:transform .2s ease,background .2s ease!important;
 }
-html body .wf-smart-dock-toggle:hover {
-  background:#eaf5ff!important;
-  color:#126cbe!important;
+html body .wf-smart-dock .wf-smart-dock-link:hover{
+  transform:scale(1.05)!important;
+  background:#f4f8fc!important;
 }
-html body .wf-smart-dock :is(a,button):focus-visible {
-  outline:3px solid #228bea!important;
-  outline-offset:3px!important;
+html body .wf-smart-dock-link.wf-smart-dock-phone{color:#26313a!important;}
+html body .wf-smart-dock-link.wf-smart-dock-whatsapp{color:#1ac96c!important;}
+html body .wf-smart-dock-link.wf-smart-dock-email{color:#1986ea!important;}
+html body .wf-smart-dock .wf-smart-dock-link :is(svg,img){
+  max-width:24px!important;max-height:24px!important;
+  object-fit:contain;
 }
-html[data-theme='dark'] body .wf-smart-dock-panel {
-  background:rgba(26,38,53,.97)!important;
-  border-color:#46586e!important;
-  box-shadow:0 11px 35px rgba(0,0,0,.38)!important;
+html body .wf-smart-dock :is(a,button):focus-visible{
+  outline:3px solid #228bea!important;outline-offset:3px!important;
 }
-html[data-theme='dark'] body .wf-smart-dock-link {
-  background:#1b2839!important;
-  border-color:#42556c!important;
+html[data-theme='dark'] body .wf-smart-dock .wf-smart-dock-panel{
+  background:rgba(26,38,53,.97)!important;border-color:#46586e!important;
+  box-shadow:0 11px 35px #0006!important;
 }
-html[data-theme='dark'] body .wf-smart-dock-link:hover {background:#2d4055!important;}
-html[data-theme='dark'] body .wf-smart-dock-link.wf-smart-dock-phone {color:#f3f7fc!important;}
-html[data-theme='dark'] body .wf-smart-dock-toggle,
-html[data-theme='dark'] body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle {
+html[data-theme='dark'] body .wf-smart-dock .wf-smart-dock-link{
+  background:#1b2839!important;border-color:#42556c!important;
+}
+html[data-theme='dark'] body .wf-smart-dock .wf-smart-dock-link:hover{background:#2d4055!important;}
+html[data-theme='dark'] body .wf-smart-dock-link.wf-smart-dock-phone{color:#f3f7fc!important;}
+html[data-theme='dark'] body .wf-smart-dock .wf-smart-dock-toggle{
   background:#223348!important;color:#8bccff!important;border-color:#445972!important;
 }
-html[data-theme='dark'] body .wf-smart-dock-toggle:hover {background:#304661!important;}
 @media(max-width:700px){
-  html body .wf-smart-dock {
-    bottom:max(78px, env(safe-area-inset-bottom))!important;
-    height:210px!important;
-    width:66px!important;
+  html body aside.wf-smart-dock{
+    bottom:max(78px,env(safe-area-inset-bottom))!important;
+    width:58px!important;gap:7px!important;
+    max-height:65dvh!important;
   }
-  html body .wf-smart-dock-panel {
-    height:210px!important;
-    width:59px!important;
-    right:7px!important;
-    padding:7px 6px!important;
-  }
-  html body .wf-smart-dock-link {
-    width:45px!important;height:45px!important;
-    min-width:45px!important;flex-basis:45px!important;
-  }
-  html body .wf-smart-dock-toggle {
-    width:29px!important;
-    min-width:29px!important;
-    height:45px!important;
-    top:calc(50% - 22.5px)!important;
-  }
-  html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle {
+  html body .wf-smart-dock .wf-smart-dock-toggle,
+  html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle{
     width:34px!important;min-width:34px!important;
+    height:34px!important;flex-basis:34px!important;
   }
-}
-@media(max-width:375px){
-  html body .wf-smart-dock {
-    width:60px!important;
-    height:195px!important;
+  html body .wf-smart-dock .wf-smart-dock-panel{
+    width:56px!important;min-width:56px!important;
+    max-height:calc(65dvh - 41px)!important;
+    gap:7px!important;padding:6px 5px!important;
   }
-  html body .wf-smart-dock-panel {
-    height:195px!important;
-    width:55px!important;
-    padding:6px 5px!important;
-    gap:5px!important;
-  }
-  html body .wf-smart-dock-link {
-    width:43px!important;height:43px!important;
-    min-width:43px!important;flex-basis:43px!important;
+  html body .wf-smart-dock .wf-smart-dock-link{
+    width:44px!important;height:44px!important;
+    min-width:44px!important;flex-basis:44px!important;
   }
 }
 @media(prefers-reduced-motion:reduce){
-  html body .wf-smart-dock *,
-  html body .wf-smart-dock-panel,
-  html body .wf-smart-dock-toggle {
-    transition:none!important;
-    animation:none!important;
-    scroll-behavior:auto!important;
-    will-change:auto!important;
-  }
-}
-
-
-/* Contact dock cleanup: the collapse control is a small circular button
-   ABOVE the pill instead of a protruding side tab by the final icon.
-   Reserve its own space so it doesn't cover the email or nearby content. */
-html body .wf-smart-dock {
-  height:min(calc(262px + var(--dock-count, 0) * 56px),70dvh)!important;
-}
-html body .wf-smart-dock-panel {
-  height:calc(100% - 42px)!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  scrollbar-width:thin;
-}
-html body .wf-smart-dock-toggle,
-html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle {
-  top:2px!important;
-  right:19px!important;
-  left:auto!important;
-  bottom:auto!important;
-  width:34px!important;
-  min-width:34px!important;
-  height:34px!important;
-  border-radius:50%!important;
-  box-shadow:0 4px 14px rgba(23,42,64,.13)!important;
-}
-@media(max-width:700px){
-  html body .wf-smart-dock {
-    height:min(calc(252px + var(--dock-count, 0) * 53px),61dvh)!important;
-  }
-  html body .wf-smart-dock-toggle,
-  html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle {
-    top:2px!important;
-    right:17px!important;
-    width:32px!important;
-    min-width:32px!important;
-    height:32px!important;
-  }
-}
-@media(max-width:375px){
-  html body .wf-smart-dock {
-    height:min(calc(237px + var(--dock-count, 0) * 51px),58dvh)!important;
-  }
-  html body .wf-smart-dock-toggle,
-  html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle {
-    right:14px!important;
-  }
+  html body .wf-smart-dock *{animation:none!important;transition:none!important;}
 }

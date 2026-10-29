@@ -33,7 +33,7 @@ export default function DesktopHeroShowcase({slides,locale,baseTitle,badge,child
   const count=slides.length;
 
   useEffect(()=>{
-    const query=window.matchMedia('(max-width: 900px)');
+    const query=window.matchMedia('(max-width: 767px)');
     const update=()=>setMobile(query.matches);
     update();
     query.addEventListener('change',update);
@@ -82,15 +82,14 @@ export default function DesktopHeroShowcase({slides,locale,baseTitle,badge,child
               {selected.categoryName}
             </span>
           </h1>
-          {children}
         </div>
         <div className="wf-showcase-visual">
-          <div className="wf-showcase-stage" role="region" aria-roledescription="carousel"
+          <div className="wf-showcase-stage" role="region" aria-hidden={mobile} aria-roledescription="carousel"
             aria-label={fa?'اسلایدر نمونه محصولات چاپ':'Print product showcase'}
             onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
             {slides.map((slide,index)=>{
               const place=position(index);
-              const available=place==='is-center'||(!mobile&&(place==='is-left'||place==='is-right'));
+              const available=!mobile&&(place==='is-center'||place==='is-left'||place==='is-right');
               return <Link key={slide.id} href={slide.href}
                 className={'wf-showcase-card '+place}
                 aria-hidden={!available} tabIndex={available?0:-1}
@@ -111,14 +110,39 @@ export default function DesktopHeroShowcase({slides,locale,baseTitle,badge,child
               </Link>;
             })}
             {count>1&&<>
-              <button type="button" className="wf-showcase-nav wf-showcase-nav-left"
+              <button type="button" tabIndex={mobile?-1:0} className="wf-showcase-nav wf-showcase-nav-left"
                 onClick={()=>selectRelative(-1)} aria-label={fa?'نمایش مورد قبلی':'Previous slide'}>
                 <ChevronLeft size={20} aria-hidden="true"/>
               </button>
-              <button type="button" className="wf-showcase-nav wf-showcase-nav-right"
+              <button type="button" tabIndex={mobile?-1:0} className="wf-showcase-nav wf-showcase-nav-right"
                 onClick={()=>selectRelative(1)} aria-label={fa?'نمایش مورد بعدی':'Next slide'}>
                 <ChevronRight size={20} aria-hidden="true"/>
               </button>
+            </>}
+          </div>
+          <div className="wf-showcase-mobile-stage" role="region" aria-roledescription="carousel"
+            aria-label={fa?'نمونه محصولات چاپ':'Print product samples'}
+            aria-hidden={!mobile}
+            onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+            <Link key={selected.id} className="wf-showcase-mobile-card" href={selected.href}
+              tabIndex={mobile?0:-1}
+              aria-label={fa?'مشاهده '+(selected.isProduct?'محصول ':'دسته‌بندی ')+selected.photoName:'Explore '+selected.photoName}>
+              {selected.imageUrl
+                ?<img className="wf-showcase-mobile-photo" src={selected.imageUrl} alt={selected.photoName} decoding="async"/>
+                :<div className="wf-showcase-empty"><img src="/safir-logo-light.png" alt="" loading="lazy"/>
+                   <small>{fa?'تصویر این دسته‌بندی هنوز ثبت نشده':'No category photo uploaded'}</small></div>}
+              <div className="wf-showcase-card-caption">
+                <span>{fa?'چاپ سفیر هنر':'SAFIRE HONAR PRINT'}</span>
+                <strong>{selected.photoName}</strong>
+              </div>
+            </Link>
+            {count>1&&<>
+              <button type="button" className="wf-showcase-mobile-prev"
+                tabIndex={mobile?0:-1} onClick={()=>selectRelative(-1)}
+                aria-label={fa?'نمونه قبلی':'Previous sample'}><ChevronLeft size={20}/></button>
+              <button type="button" className="wf-showcase-mobile-next"
+                tabIndex={mobile?0:-1} onClick={()=>selectRelative(1)}
+                aria-label={fa?'نمونه بعدی':'Next sample'}><ChevronRight size={20}/></button>
             </>}
           </div>
           <div className="wf-showcase-bottom">
@@ -132,6 +156,7 @@ export default function DesktopHeroShowcase({slides,locale,baseTitle,badge,child
             </Link>
           </div>
         </div>
+        <div className="wf-showcase-extras">{children}</div>
       </div>
     </div>
   );

@@ -1,39 +1,9 @@
-/* Variable-length social panel: preserve the three Wibify contact icons,
-   then show any admin-approved social icons in the same scrollable stack. */
-html body .wf-smart-dock {
-  --dock-count:0;
-  height:min(calc(220px + var(--dock-count) * 56px),70dvh)!important;
-  max-height:70dvh!important;
-}
-html body .wf-smart-dock-panel {
-  height:100%!important;
-  max-height:100%!important;
-  overflow-y:auto!important;
-  overflow-x:hidden!important;
-  justify-content:flex-start!important;
-  scrollbar-width:thin;
-  overscroll-behavior:contain;
-  gap:8px!important;
-}
-html body .wf-smart-dock-panel .wf-dock-social-image {
+/* The contact dock's geometry lives in adaptive-contact-dock.css.
+   This stylesheet only sizes admin-supplied brand icons and never overrides
+   panel height, avoiding collapse-toggle overlap with the first icon. */
+html body .wf-smart-dock-panel .wf-dock-social-image{
+  display:block;
   width:24px!important;height:24px!important;
-  max-width:24px!important;
-  max-height:24px!important;
+  max-width:24px!important;max-height:24px!important;
   object-fit:contain!important;
-}
-html body .wf-smart-dock-panel .wf-smart-dock-link {
-  flex-shrink:0!important;
-}
-html body .wf-smart-dock.is-collapsed .wf-smart-dock-panel {
-  overflow:hidden!important;
-}
-@media(max-width:700px){
- html body .wf-smart-dock {
-  height:min(calc(210px + var(--dock-count) * 53px),61dvh)!important;
-  max-height:61dvh!important;
- }
- html body .wf-smart-dock-panel {height:100%!important;}
-}
-@media(max-width:375px){
- html body .wf-smart-dock {height:min(calc(195px + var(--dock-count) * 51px),58dvh)!important;}
 }

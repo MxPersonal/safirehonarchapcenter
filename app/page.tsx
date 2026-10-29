@@ -39,13 +39,8 @@ export default async function Home(){
   {q:pick('چطور محصول دلخواهم را پیدا کنم؟','How can I find the right print product?'),a:pick('از دسته‌بندی‌های اصلی، نوع محصول را انتخاب کن و سپس زیرمجموعه‌ها و محصولات مربوط به آن را ببین.','Browse a main product category, then explore its subcategories and published products.')},
   {q:pick('چطور سفارش یا درخواست خود را پیگیری کنم؟','How do I follow up on my request?'),a:pick('با ورود به حساب کاربری، اطلاعات درخواست‌ها و سفارش‌هایی که برای حسابت ثبت شده‌اند را بررسی کن.','Sign in to your account to review your requests and any order details available there.')},
  ];
- return <div className="wf-site wf-home">
-  <section className={"wf-hero"+(heroSlides.length?" wf-hero-has-showcase":"")} aria-label={pick("چاپ سفیر هنر","Safire Honar printing")}>
-    <div className="wf-container wf-hero-inner">
-      <div className="wf-hero-badge"><i className="wf-signal" aria-hidden="true"/>{pick('مرکز تخصصی چاپ و طراحی سفیر هنر','SAFIRE HONAR / PRINT & DESIGN STUDIO')}<ArrowUpLeft size={13}/></div>
-      <h1 id="wf-hero-heading" className="wf-mobile-hero-heading">{hero?.title || <>{pick('از ایده تا چاپ،','From idea to print,')}<br className="wf-hero-break"/><span className="wf-hero-blue">{pick('هنر در ابعاد تازه','Art in new dimensions')}</span></>}</h1>
-      {heroSlides.length>0&&<DesktopHeroShowcase slides={heroSlides} locale={locale}/>}
-      <p className="wf-hero-description">{hero?.body||pick('از انتخاب محصول تا ثبت سفارش چاپ، همه‌چیز در یک‌جا. بنر، کارت ویزیت، بروشور، تابلو و دیگر محصولات چاپی را بررسی کن و مناسب‌ترین گزینه را برای کسب‌وکارت پیدا کن.','Explore printed products, compare formats and start your next order, all in one place. From business cards and banners to brochures and signage.')}</p>
+ const heroBadge=(<div className="wf-hero-badge"><i className="wf-signal" aria-hidden="true"/>{pick('مرکز تخصصی چاپ و طراحی سفیر هنر','SAFIRE HONAR / PRINT & DESIGN STUDIO')}<ArrowUpLeft size={13}/></div>);
+ const heroExtras=(<><p className="wf-hero-description">{hero?.body||pick('از انتخاب محصول تا ثبت سفارش چاپ، همه‌چیز در یک‌جا. بنر، کارت ویزیت، بروشور، تابلو و دیگر محصولات چاپی را بررسی کن و مناسب‌ترین گزینه را برای کسب‌وکارت پیدا کن.','Explore printed products, compare formats and start your next order, all in one place. From business cards and banners to brochures and signage.')}</p>
       <div className="wf-hero-actions">
         <Link href={path('/order')} className="wf-button wf-button-primary">{pick('شروع سفارش چاپ','Start your print request')}<ArrowUpLeft size={18}/></Link>
         <Link href="#references" className="wf-button wf-button-secondary">{pick('مشاهده محصولات','Explore products')}<ArrowDownLeft size={18}/></Link>
@@ -54,7 +49,17 @@ export default async function Home(){
         <div><span className="wf-feature-icon"><Layers3 size={19}/></span><strong>{pick('دسته‌بندی‌های متنوع','Product collections')}</strong><small>{pick('انتخاب نوع چاپ','Explore print types')}</small></div>
         <div><span className="wf-feature-icon"><Printer size={19}/></span><strong>{pick('سفارش اختصاصی','Custom printing')}</strong><small>{pick('بررسی مشخصات چاپ','Project review')}</small></div>
         <div><span className="wf-feature-icon"><FileCheck2 size={19}/></span><strong>{pick('استعلام قیمت','Quote requests')}</strong><small>{pick('پس از بررسی پروژه','After reviewing details')}</small></div>
-      </div>
+      </div></>);
+ return <div className="wf-site wf-home">
+  <section className={"wf-hero"+(heroSlides.length?" wf-hero-has-showcase":"")} aria-label={pick('چاپ سفیر هنر','Safire Honar printing')}>
+    <div className="wf-container wf-hero-inner">
+      {heroSlides.length>0
+        ?<DesktopHeroShowcase slides={heroSlides} locale={locale}
+          baseTitle={hero?.title?.trim()||pick('از ایده تا چاپ،','From idea to print,')}
+          badge={heroBadge}>
+          {heroExtras}
+        </DesktopHeroShowcase>
+        :<>{heroBadge}<h1 id="wf-hero-heading">{hero?.title || <>{pick('از ایده تا چاپ،','From idea to print,')}<br className="wf-hero-break"/><span className="wf-hero-blue">{pick('هنر در ابعاد تازه','Art in new dimensions')}</span></>}</h1>{heroExtras}</>}
     </div>
     <div className="wf-hero-bottom-glow" aria-hidden="true"/>
   </section>

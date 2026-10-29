@@ -7,6 +7,7 @@ import {useEffect,useState} from 'react';
 import Link from 'next/link';
 import {ArrowUpLeft,Plus,RefreshCw,Save,Settings2,ShoppingBag,UserRound,Layers,FilePen,MessagesSquare,Landmark,PanelsTopLeft,Store,Menu,ChevronDown,Share2} from 'lucide-react';
 import AccountingConsole from '@/components/accounting-console';
+import AdminOverviewDashboard from '@/components/admin-overview-dashboard';
 import SocialSettingsEditor from '@/components/social-settings-editor';
 import AdminArtworkPreview from '@/components/admin-artwork-preview';
 import {CustomerVisualPicker,ProductVisualPicker,CustomerAvatar} from '@/components/admin-visual-picker';
@@ -34,7 +35,8 @@ export default function AdminConsole(){
  const [importReport,setImportReport]=useState<Result|null>(null);
  const [area,setArea]=useState<'site'|'commerce'>('site');
  const [mobileMenuOpen,setMobileMenuOpen]=useState<'site'|'commerce'|null>(null);
- const [tab,setTab]=useState<string>('categories'),[msg,setMsg]=useState(''),[warning,setWarning]=useState(''),[busy,setBusy]=useState(false),[cats,setCats]=useState<C[]>([]),[products,setProducts]=useState<P[]>([]),[manualProducts,setManualProducts]=useState<ManualProduct[]>([]),[pages,setPages]=useState<Page[]>(pageDefaults),[customers,setCustomers]=useState<User[]>([]),[carts,setCarts]=useState<Cart[]>([]),[orders,setOrders]=useState<Order[]>([]),[quotes,setQuotes]=useState<Quote[]>([]);
+ const [desktopGroup,setDesktopGroup]=useState<'site'|'commerce'|null>(null);
+ const [tab,setTab]=useState<string>('dashboard'),[msg,setMsg]=useState(''),[warning,setWarning]=useState(''),[busy,setBusy]=useState(false),[cats,setCats]=useState<C[]>([]),[products,setProducts]=useState<P[]>([]),[manualProducts,setManualProducts]=useState<ManualProduct[]>([]),[pages,setPages]=useState<Page[]>(pageDefaults),[customers,setCustomers]=useState<User[]>([]),[carts,setCarts]=useState<Cart[]>([]),[orders,setOrders]=useState<Order[]>([]),[quotes,setQuotes]=useState<Quote[]>([]);
  const [catForm,setCatForm]=useState({id:'',name:'',name_en:'',slug:'',description:'',description_en:'',theme:'coral',image_url:'',parent_id:'',sort_order:'0',active:true});
  const [pForm,setPForm]=useState({id:'',name:'',name_en:'',slug:'',description:'',description_en:'',category_id:'',mode:'quote',price_toman:'',image_url:'',active:true});
  const [productCategoryFilter,setProductCategoryFilter]=useState('all');
@@ -111,10 +113,10 @@ export default function AdminConsole(){
  function editCategoryById(id:string){
   if(id.startsWith('starter:')){const preview=starter?.categories.find(c=>c.slug===id.slice(8));if(preview)editStarterCategory(preview);return;}
   const c=cats.find(c=>c.id===id);if(!c)return;
-  setArea('site');setTab('categories');setMsg('');
+  setArea('site');setTab('categories');setDesktopGroup('site');setMsg('');
   setCatForm({...c,name_en:c.name_en||'',description_en:c.description_en||'',image_url:c.image_url||'',parent_id:c.parent_id||'',sort_order:String(c.sort_order)});
  }
- function browseCategoryProducts(id:string){setProductCategoryFilter(id);setArea('site');setTab('products');setProductSearch('');setMsg('');}
+ function browseCategoryProducts(id:string){setProductCategoryFilter(id);setArea('site');setTab('products');setDesktopGroup('site');setProductSearch('');setMsg('');}
  async function repairMissingProductCategories(){
   if(!window.confirm(pick('فقط دسته محصولات نمونه‌ای را که بدون دسته معتبر مانده‌اند به دسته اصلی‌شان متصل کنیم؟ قیمت، عکس و محصولات سفارشی تغییر نمی‌کنند.','Repair only starter products with missing category links? Prices, photos, and custom products will not change.')))return;
   setBusy(true);setMsg('');
@@ -143,21 +145,48 @@ export default function AdminConsole(){
  async function changeOrderStatus(id:string,status:string){await run('orderStatus',{status},id)}
  async function changeOrderNote(id:string,note:string){await run('orderNote',{note},id)}
  async function changeQuote(q:Quote,field:'status'|'response',value:string){await run('quote',{field,text:value},q.id)}
+ const names:Record<string,string>={dashboard:pick('داشبورد مدیریت','Management dashboard'),categories:pick('دسته‌بندی‌ها','Categories'),products:pick('محصولات و نمونه‌کارها','Products & portfolio'),pages:pick('مدیریت صفحات','Pages'),socials:pick('شبکه‌های اجتماعی','Social networks'),accounting:pick('حسابداری','Accounting'),orders:pick('سفارش‌ها','Orders'),quotes:pick('استعلام‌ها','Quotes'),carts:pick('سبدهای خرید','Carts'),customers:pick('مشتریان','Customers')};
+ function selectSection(key:string,group:'site'|'commerce'|null){setTab(key);setArea(group||'site');setMsg('');setDesktopGroup(group);setMobileMenuOpen(null);}
+ const fromDashboard=(key:string)=>selectSection(key,siteTabs.some(x=>x[0]===key)?'site':'commerce');
  const pickedProduct=manualProducts.find(p=>p.id===manual.product_id);
  const hasFixedProducts=manualProducts.some(p=>p.mode==='fixed'&&p.source==='database');
  const customerName=(id:string)=>{const u=customers.find(x=>x.id===id);return u?`${u.display_name||pick('مشتری','Customer')} (${u.email})`:id.slice(0,8)};
  return <div className="pw-admin-workspace">
  <aside className="pw-admin-sidebar" aria-label={pick('ناوبری مدیریت','Administration navigation')}>
   <div className="pw-admin-brand"><span>{pick('سفیر هنر / مدیریت','SH / CONTROL')}</span><strong>{pick('مرکز مدیریت','Management hub')}</strong><small>{pick('چاپ سفیر هنر','Safire Honar Print Studio')}</small></div>
-  {/* Desktop navigation stays exactly as before. Mobile and tablet use separate collapsible groups. */}
-  <nav className="pw-admin-navigation pw-admin-navigation-desktop" aria-label={pick('بخش‌های پنل مدیریت','Administration sections')}>
-   <span className="pw-admin-nav-title">{pick('مدیریت سایت','SITE MANAGEMENT')}</span>
-   {siteTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item" aria-current={tab===key?'page':undefined} onClick={()=>{setArea('site');setTab(key);setMsg('')}}><Icon size={18}/>{locale==='en'?({categories:'Categories',products:'Products & portfolio',pages:'Site pages',socials:'Social networks'} as Record<string,string>)[key]:name}</button>)}
-   <span className="pw-admin-nav-title">{pick('مدیریت فروشگاه','STORE OPERATIONS')}</span>
-   {commerceTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item" aria-current={tab===key?'page':undefined} onClick={()=>{setArea('commerce');setTab(key);setMsg('')}}><Icon size={18}/>{locale==='en'?({accounting:'Accounting',orders:'Orders',quotes:'Quotes',carts:'Customer carts',customers:'Customers'} as Record<string,string>)[key]:name}</button>)}
-  </nav>
-  <nav className="pw-admin-mobile-navigation" aria-label={pick('منوهای مدیریت در موبایل و تبلت','Administration menus on mobile and tablet')} onKeyDown={event=>{if(event.key==='Escape')setMobileMenuOpen(null)}}>
-   <section className="pw-admin-mobile-group" aria-label={pick('مدیریت سایت','Site management')}>
+  <nav className="pw-admin-navigation pw-admin-navigation-desktop" aria-label={pick('بخش‌های پنل','Admin sections')}>
+  <button type="button" className="pw-admin-nav-item pw-admin-dashboard-link"
+    aria-current={tab==='dashboard'?'page':undefined} onClick={()=>selectSection('dashboard',null)}>
+    <PanelsTopLeft size={19}/>{pick('داشبورد','Dashboard')}
+  </button>
+  <div className="pw-admin-desktop-group">
+    <button className="pw-admin-group-trigger" type="button" aria-controls="admin-site-submenu"
+      aria-expanded={desktopGroup==='site'} onClick={()=>setDesktopGroup(v=>v==='site'?null:'site')}>
+      <Layers size={19}/><span>{pick('مدیریت سایت','Site management')}</span><ChevronDown size={17}/>
+    </button>
+    <div id="admin-site-submenu" className="pw-admin-group-items" hidden={desktopGroup!=='site'}>
+      {siteTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item"
+        aria-current={tab===key?'page':undefined} onClick={()=>selectSection(key,'site')}>
+        <Icon size={18}/>{locale==='en'?({categories:'Categories',products:'Products & portfolio',pages:'Site pages',socials:'Social networks'} as Record<string,string>)[key]:name}
+      </button>)}
+    </div>
+  </div>
+  <div className="pw-admin-desktop-group">
+    <button className="pw-admin-group-trigger" type="button" aria-controls="admin-commerce-submenu"
+      aria-expanded={desktopGroup==='commerce'} onClick={()=>setDesktopGroup(v=>v==='commerce'?null:'commerce')}>
+      <Store size={19}/><span>{pick('مدیریت فروشگاه','Store management')}</span><ChevronDown size={17}/>
+    </button>
+    <div id="admin-commerce-submenu" className="pw-admin-group-items" hidden={desktopGroup!=='commerce'}>
+      {commerceTabs.map(([key,name,Icon])=><button type="button" key={key} className="pw-admin-nav-item"
+        aria-current={tab===key?'page':undefined} onClick={()=>selectSection(key,'commerce')}>
+        <Icon size={18}/>{locale==='en'?({accounting:'Accounting',orders:'Orders',quotes:'Quotes',carts:'Customer carts',customers:'Customers'} as Record<string,string>)[key]:name}
+      </button>)}
+    </div>
+  </div>
+</nav>
+<nav className="pw-admin-mobile-navigation" aria-label={pick('منوهای مدیریت در موبایل و تبلت','Administration menus on mobile and tablet')} onKeyDown={event=>{if(event.key==='Escape')setMobileMenuOpen(null)}}>
+   <button type="button" className="pw-admin-nav-item pw-admin-dashboard-link" aria-current={tab==='dashboard'?'page':undefined} onClick={()=>selectSection('dashboard',null)}><PanelsTopLeft size={18}/>{pick('داشبورد','Dashboard')}</button>
+<section className="pw-admin-mobile-group" aria-label={pick('مدیریت سایت','Site management')}>
     <button type="button" className="pw-admin-mobile-trigger" aria-expanded={mobileMenuOpen==='site'} aria-controls="pw-admin-site-mobile-menu" aria-label={pick('باز و بسته کردن منوی مدیریت سایت','Toggle site management menu')} onClick={()=>setMobileMenuOpen(current=>current==='site'?null:'site')}>
      <Menu size={20} aria-hidden="true"/><span>{pick('مدیریت سایت','Site management')}</span><ChevronDown className="pw-admin-mobile-chevron" size={16} aria-hidden="true"/>
     </button>
@@ -177,26 +206,24 @@ export default function AdminConsole(){
   <div className="pw-admin-sidebar-foot">{pick('محتوای سایت و عملیات فروشگاه از یک فضای امن مدیریت می‌شوند.','Website content and store operations are managed in one secure workspace.')}</div>
  </aside>
  <div className="pw-admin-content">
- <div className="admin-heading"><div><span className="tiny-label">{pick('سفیر هنر / مدیریت سایت و فروشگاه','SAFIRE HONAR / CONTENT & COMMERCE')}</span><h1>{pick('پنل مدیریت چاپ سفیر هنر','Safire Honar Administration')}</h1><p>{pick('مدیریت سایت و فروشگاه از دو فضای مستقل با کنترل کامل محتوا و گزارش‌های مالی انجام می‌شود.','Manage website content, store operations and financial reports from one dashboard.')}</p></div><button disabled={busy} className="v2-outline" onClick={load}>{pick('بازخوانی داده‌ها','Refresh data')} <RefreshCw size={17}/></button></div>
- <div className="pw-admin-overview" aria-label={pick('نمای کلی داده‌های ثبت‌شده','Recorded data overview')} aria-busy={!hasLoaded}>
-  {([
-   {id:'categories',area:'site' as const,label:pick('دسته‌های سایت','Site categories'),count:siteCats.length,icon:Layers},
-   {id:'products',area:'site' as const,label:pick('محصولات و نمونه‌ها','Products and samples'),count:siteProducts.filter(p=>p.active).length,icon:ShoppingBag},
-   {id:'customers',area:'commerce' as const,label:pick('حساب‌های مشتری','Customer accounts'),count:customers.length,icon:UserRound},
-   {id:'orders',area:'commerce' as const,label:pick('سفارش‌های ثبت‌شده','Recorded orders'),count:orders.length,icon:Settings2}
-  ]).map(item=><button type="button" key={item.id} className="pw-admin-kpi" onClick={()=>{setArea(item.area);setTab(item.id);setMsg('')}}>
-   <span className="pw-admin-kpi-label">{item.label}<item.icon size={18}/></span>
-   <strong>{hasLoaded?item.count.toLocaleString(locale==='fa'?'fa-IR':'en-US'):'…'}</strong>
-   <small>{pick('مشاهده و مدیریت','Open and manage')} <ArrowUpLeft size={13}/></small>
-  </button>)}
+ <div className="admin-heading"><div>
+  <span className="tiny-label">{pick('سفیر هنر / مرکز مدیریت','SAFIRE HONAR / ADMIN')}</span>
+  <h1>{names[tab]||pick('مدیریت','Administration')}</h1>
+  <p>{tab==='dashboard'
+    ?pick('نمای شاخص‌ها و اسناد مالی واقعی مجموعه.','Recorded business metrics and financial activity.')
+    :pick('ابزارها و اطلاعات مربوط به همین زیرعنوان.','Tools and records for the selected section only.')}</p>
+  </div><button disabled={busy} className="v2-outline" onClick={load}>{pick('بازخوانی داده‌ها','Refresh data')} <RefreshCw size={17}/></button>
  </div>
- {(missingCategories.length>0||missingProducts.length>0)&&<div className="v2-notice" style={{marginBottom:22,borderColor:'#b67b49',padding:22}}>
+ {tab==='dashboard'&&<AdminOverviewDashboard categories={cats} products={products}
+  orders={orders} quotes={quotes} carts={carts} customers={customers}
+  hasLoaded={hasLoaded} onNavigate={fromDashboard}/>}
+ {(tab==='dashboard'||tab==='categories'||tab==='products')&&(missingCategories.length>0||missingProducts.length>0)&&<div className="v2-notice" style={{marginBottom:22,borderColor:'#b67b49',padding:22}}>
  <strong>{pick('محتوای فعلی سایت در کد وجود دارد، اما هنوز همه آن به Supabase منتقل نشده است.','Some starter content has not yet been imported into Supabase.')}</strong>
  <p>{pick('دسته‌های آماده:','Starter categories:')} {starter?.categories.length.toLocaleString(locale==='fa'?'fa-IR':'en-US')} | {pick('دسته‌های منتقل‌نشده:','Missing categories:')} {missingCategories.length.toLocaleString(locale==='fa'?'fa-IR':'en-US')} | {pick('نمونه‌های منتقل‌نشده:','Missing samples:')} {missingProducts.length.toLocaleString(locale==='fa'?'fa-IR':'en-US')}</p>
  <p>{pick('تا قبل از انتقال، این موارد پایین فهرست‌ها با برچسب «نمونه سایت» نمایش داده می‌شوند. برای ویرایش، یک‌بار آن‌ها را وارد دیتابیس کن. اطلاعات موجود، قیمت‌ها و ویرایش‌های قبلی دست‌نخورده می‌مانند.','Starter examples appear below the database items. Import them before editing; existing prices, images and records will not be overwritten.')}</p>
  <button type="button" className="v2-primary" onClick={importExisting} disabled={busy||importing}>{importing?pick('در حال همگام‌سازی...','Syncing...'):pick('همگام‌سازی محتوای فعلی سایت با دیتابیس','Import current site content')} <RefreshCw size={17}/></button>
  </div>}
- {importReport&&<div className="v2-notice" role="status" style={{marginBottom:18}}><strong>{pick('گزارش مرحله‌ای همگام‌سازی','Step-by-step import report')}</strong><div className="admin-import-report">{(['categories','products','pages'] as const).map(key=><span key={key}>{key==='categories'?pick('دسته‌ها','Categories'):key==='products'?pick('محصولات','Products'):pick('صفحات','Pages')}: {pick('افزوده','Added')} {importReport.progress?.[key].added??0} | {pick('قبلاً موجود','Existing')} {importReport.progress?.[key].existing??0} | {pick('خطا','Failed')} {importReport.progress?.[key].failed??0}</span>)}</div>{(importReport.failed||[]).length>0&&<details open><summary>{pick('مشاهده علت خطای هر مورد','View reasons for failed items')} ({importReport.failed!.length})</summary><ul>{importReport.failed!.map((f,i)=><li key={i}><strong>{f.kind} {f.slug}:</strong> {f.reason}</li>)}</ul></details>}</div>}
+ {(tab==='dashboard'||tab==='categories'||tab==='products')&&importReport&&<div className="v2-notice" role="status" style={{marginBottom:18}}><strong>{pick('گزارش مرحله‌ای همگام‌سازی','Step-by-step import report')}</strong><div className="admin-import-report">{(['categories','products','pages'] as const).map(key=><span key={key}>{key==='categories'?pick('دسته‌ها','Categories'):key==='products'?pick('محصولات','Products'):pick('صفحات','Pages')}: {pick('افزوده','Added')} {importReport.progress?.[key].added??0} | {pick('قبلاً موجود','Existing')} {importReport.progress?.[key].existing??0} | {pick('خطا','Failed')} {importReport.progress?.[key].failed??0}</span>)}</div>{(importReport.failed||[]).length>0&&<details open><summary>{pick('مشاهده علت خطای هر مورد','View reasons for failed items')} ({importReport.failed!.length})</summary><ul>{importReport.failed!.map((f,i)=><li key={i}><strong>{f.kind} {f.slug}:</strong> {f.reason}</li>)}</ul></details>}</div>}
  {warning&&<div role="alert" className="v2-notice" style={{borderColor:'#d25b42',marginBottom:16}}><strong>{pick('نیازمند بررسی دیتابیس:','Database check required:')}</strong> {warning}</div>}{msg&&<div role="status" className="v2-notice">{msg}</div>}
  {tab==='categories'&&<div className="admin-columns"><form className="admin-editor" onSubmit={upsertCategory}><h2>{catForm.id?pick('ویرایش دسته‌بندی','Edit category'):pick('دسته‌بندی تازه','New category')}</h2><label>{pick('عنوان فارسی','Persian name')}<input required value={catForm.name} onChange={e=>setCatForm(s=>({...s,name:e.target.value}))}/></label><label>{pick('نام انگلیسی','English name')}<input lang="en" dir="ltr" value={catForm.name_en} placeholder="e.g. Business Cards" onChange={e=>setCatForm(s=>({...s,name_en:e.target.value}))}/></label><label>{pick('شناسه انگلیسی برای آدرس','URL slug (English)')}<input required dir="ltr" value={catForm.slug} onChange={e=>setCatForm(s=>({...s,slug:e.target.value}))}/></label><label>{pick('توضیح فارسی','Persian description')}<textarea value={catForm.description} onChange={e=>setCatForm(s=>({...s,description:e.target.value}))}/></label><label>{pick('توضیح انگلیسی','English description')}<textarea lang="en" dir="ltr" value={catForm.description_en} onChange={e=>setCatForm(s=>({...s,description_en:e.target.value}))}/></label><label>{pick('جایگاه دسته‌بندی','Category hierarchy')}<select value={catForm.parent_id} onChange={e=>setCatForm(s=>({...s,parent_id:e.target.value}))}><option value="">{pick('دسته اصلی (مثل بنر، بروشور یا تابلو)','Main category (e.g. banners, brochures, signage)')}</option>{mainCategoryRows.filter(c=>c.id!==catForm.id).map(c=><option key={c.id} value={c.id}>{pick('زیرمجموعه','Child of')} {c.name}</option>)}</select></label><p className="v2-fine">{pick('دسته‌های اصلی در صفحه خانه دیده می‌شوند. زیرمجموعه‌ها داخل صفحه دسته والد نمایش داده می‌شوند.','Main categories appear on the homepage; subcategories appear within their parent collection.')}</p><div className="admin-editor-preview"><strong>{pick('پیش‌نمایش این دسته','Category preview')}</strong><AdminArtworkPreview key={catForm.slug+catForm.image_url} kind="category" slug={catForm.slug||"banner"} name={catForm.name||"دسته جدید"} url={catForm.image_url} large/><small>{pick('پس از آپلود یا تغییر آدرس عکس، پیش‌نمایش به‌روز می‌شود.','Preview updates after upload or URL changes.')}</small></div><label>{pick('آدرس تصویر نمونه','Image URL')}<input dir="ltr" value={catForm.image_url} onChange={e=>setCatForm(s=>({...s,image_url:e.target.value}))}/></label><label>{pick('یا آپلود تصویر','Or upload an image')}<input type="file" accept="image/png,image/jpeg,image/webp" onChange={e=>uploadImage(e,'cat')}/></label><label>{pick('ترتیب نمایش','Display order')}<input type="number" value={catForm.sort_order} onChange={e=>setCatForm(s=>({...s,sort_order:e.target.value}))}/></label><label className="admin-check"><input type="checkbox" checked={catForm.active} onChange={e=>setCatForm(s=>({...s,active:e.target.checked}))}/> {pick('فعال و قابل نمایش','Active and visible')}</label><button className="v2-primary" disabled={busy}><Save size={18}/> {pick('ذخیره دسته‌بندی','Save category')}</button>{catForm.id&&<button type="button" className="v2-outline" onClick={()=>setCatForm({id:'',name:'',name_en:'',slug:'',description:'',description_en:'',theme:'coral',image_url:'',parent_id:'',sort_order:'0',active:true})}>{pick('فرم جدید','New form')}</button>}</form><div className="admin-list"><h2>{pick('دسته‌های سایت و دیتابیس','Site and database categories')} ({siteCats.length.toLocaleString(locale==='fa'?'fa-IR':'en-US')})</h2><p className="admin-catalog-meta">{pick('دیتابیس','Database')}: {cats.length} | {pick('نمونه سایت','Site previews')}: {missingCategories.length}</p>{siteCats.map(c=><div className="admin-linked-row" key={c.id}><button type="button" className="admin-entry admin-entry-media" onClick={()=>editCategoryById(c.id)}><AdminArtworkPreview kind="category" slug={c.slug} name={c.name} url={c.image_url}/><div><strong>{c.parent_id?'↳ ':'★ '}{c.name} {c.id.startsWith('starter:')&&<small className="admin-source-tag">{pick('نمونه سایت','Site preview')}</small>}</strong><span>{c.parent_id?`زیرمجموعه ${cats.find(p=>p.id===c.parent_id)?.name||pick('نامشخص','Unknown')} | `:pick('دسته اصلی | ','Main category | ')}{c.slug} | {c.active?pick('فعال','Active'):pick('غیرفعال','Inactive')}</span><span>{pick('انتخاب برای ویرایش تصویر و اطلاعات','Select to edit information and image')}</span></div></button><button type="button" className="v2-outline admin-linked-row-action" onClick={()=>browseCategoryProducts(c.id)}>{pick('مشاهده محصولات این دسته','Browse category products')} ({siteProducts.filter(p=>categoryIdsFor(c.id).has(p.category_id||'')).length.toLocaleString(locale==='fa'?'fa-IR':'en-US')}) <ArrowUpLeft size={15}/></button></div>)}<div className="admin-category-summary"><strong>{pick('نمایش محصولات هر دسته','Browse products in a category')}</strong><div className="admin-category-quicklinks">{mainCategoryRows.map(c=><button type="button" key={c.id} className="v2-outline" onClick={()=>browseCategoryProducts(c.id)}>{c.name} · {siteProducts.filter(p=>categoryIdsFor(c.id).has(p.category_id||'')).length.toLocaleString(locale==='fa'?'fa-IR':'en-US')} <ArrowUpLeft size={14}/></button>)}</div></div></div></div>}
  {tab==='products'&&<div className="admin-columns"><form id="admin-product-editor" className="admin-editor" onSubmit={upsertProduct}><h2>{pForm.id?pick('ویرایش محصول','Edit product'):pick('افزودن نمونه جدید','Add new product')}</h2><label>{pick('نام محصول به فارسی','Persian product name')}<input required value={pForm.name} onChange={e=>setPForm(s=>({...s,name:e.target.value}))}/></label><label>{pick('نام انگلیسی محصول','Product name (English)')}<input lang="en" dir="ltr" value={pForm.name_en} onChange={e=>setPForm(s=>({...s,name_en:e.target.value}))}/></label><label>{pick('شناسه آدرس انگلیسی','English URL slug')}<input required dir="ltr" value={pForm.slug} onChange={e=>setPForm(s=>({...s,slug:e.target.value}))}/></label><label>{pick('توضیحات فارسی','Persian details')}<textarea value={pForm.description} onChange={e=>setPForm(s=>({...s,description:e.target.value}))}/></label><label>{pick('توضیحات انگلیسی محصول','Product description (English)')}<textarea lang="en" dir="ltr" value={pForm.description_en} onChange={e=>setPForm(s=>({...s,description_en:e.target.value}))}/></label><div className="admin-category-picker">

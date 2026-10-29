@@ -1,0 +1,14 @@
+/* Sidebar accordion on desktop; existing mobile and tablet menus preserved. */
+@media(max-width:940px){
+ html body .v2-admin .pw-admin-navigation-desktop{display:none!important;}
+ html body .v2-admin .pw-admin-mobile-navigation{
+  display:grid!important;grid-template-columns:1fr!important;gap:10px!important;
+  width:100%!important;overflow:visible!important;
+ }
+ html body .v2-admin .pw-admin-mobile-group{min-width:0;}
+ html body .v2-admin .pw-admin-mobile-trigger{width:100%!important;}
+}
+@media(min-width:941px){
+ html body .v2-admin .pw-admin-mobile-navigation{display:none!important;}
+ html body .v2-admin .pw-admin-navigation-desktop{display:grid!important;}
+}

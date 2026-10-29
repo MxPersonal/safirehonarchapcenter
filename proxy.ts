@@ -1,11 +1,14 @@
 import {NextRequest,NextResponse} from 'next/server';
 import {createServerClient} from '@supabase/ssr';
 import type {Locale} from '@/lib/i18n';
+import {auth0} from '@/lib/auth0';
 
 /** Real locale URLs (/fa and /en) wrap the existing page tree without
  * duplicating routes or exposing credentials to client code. */
 export async function proxy(request:NextRequest){
  const pathname=request.nextUrl.pathname;
+ // Phase 4.27: isolate Auth0 endpoints; leave Supabase auth, OTPY, admin and locale routes unchanged.
+ if(pathname.startsWith('/auth/'))return await auth0.middleware(request);
  const match=pathname.match(/^\/(fa|en)(?=\/|$)/);
  const cookie=request.cookies.get('safir_locale')?.value;
  const isSystem=pathname==='/api'||pathname.startsWith('/api/')||pathname==='/auth'||pathname.startsWith('/auth/');

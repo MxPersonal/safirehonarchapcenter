@@ -78,15 +78,15 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
  async function verify(event:React.FormEvent){
   event.preventDefault();if(!db)return;
   setError('');setNotice('');
-  const token=code.replace(/\s/g,'');
-  if(!/^\d{6}$/.test(token)){setError(pick('کد شش‌رقمی ایمیل را وارد کن.','Enter the six-digit email code.'));return}
+  const token=code.replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-1776)).replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632)).replace(/\s/g,'');
+  if(!/^\d{6,10}$/.test(token)){setError(pick('کد ۶ تا ۱۰ رقمی ایمیل را وارد کن.','Enter the 6–10 digit email code.'));return}
   setLoading(true);
   try{
    const {error:e}=await db.auth.verifyOtp({email:verificationEmail,token,type:'email'});
    if(e)throw e;
    await db.auth.signOut({scope:'local'});
    setStage('complete');
-  }catch(e){setError(e instanceof Error?e.message:pick('کد تأیید ایمیل معتبر نیست.','Invalid email verification code.'))}
+  }catch(e){const expired=typeof e==='object'&&e!==null&&'code' in e&&e.code==='otp_expired';setError(expired?pick('این کد منقضی شده یا دیگر معتبر نیست. آخرین کد ایمیل‌شده را وارد کن یا یک بار درخواست ارسال مجدد بده.','This code is expired or no longer valid. Use the latest email code or request a fresh one.'):e instanceof Error?e.message:pick('کد تأیید ایمیل معتبر نیست.','Invalid email verification code.'))}
   finally{setLoading(false)}
  }
  async function resend(){
@@ -95,7 +95,7 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
   try{
    const {error:e}=await db.auth.resend({type:'signup',email:verificationEmail});
    if(e)throw e;
-   setNotice(pick('درخواست ارسال مجدد ایمیل ثبت شد.','Verification email requested again.'));
+   setCode('');setNotice(pick('کد جدید درخواست شد. پس از دریافت ایمیل جدید، فقط کد همان پیام را وارد کن.','A fresh code was requested. Enter the code from the newest email only.'));
   }catch(e){setError(e instanceof Error?e.message:pick('ارسال مجدد ممکن نشد.','Could not resend code.'))}
   finally{setLoading(false)}
  }
@@ -114,12 +114,12 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
     </div>:stage==='verify'?<div className="sh-auth-verify">
       <div className="sh-auth-heading"><span className="sh-auth-label">{pick('تأیید واقعی ایمیل','EMAIL VERIFICATION')}</span>
        <h1>{pick('کد تأیید ایمیل','Email verification code')}</h1>
-       <p>{pick('کد شش‌رقمی ارسال‌شده به ایمیلت را وارد کن:','Enter the six-digit code sent to:')} <strong dir="ltr">{verificationEmail}</strong></p></div>
+       <p>{pick('کد ۶ تا ۱۰ رقمی ارسال‌شده به ایمیلت را وارد کن:','Enter the 6–10 digit code sent to:')} <strong dir="ltr">{verificationEmail}</strong></p></div>
       <form onSubmit={verify} className="sh-auth-fields">
-       <label>{pick('کد تأیید ایمیل','Email code')}<input dir="ltr" inputMode="numeric" maxLength={6} pattern="[0-9]{6}" required value={code} onChange={e=>setCode(e.target.value.replace(/\D/g,'').slice(0,6))} placeholder="000000"/></label>
+       <label>{pick('کد تأیید ایمیل','Email code')}<input dir="ltr" inputMode="numeric" autoComplete="one-time-code" maxLength={10} pattern="[0-9]{6,10}" required value={code} onChange={e=>setCode(e.target.value.replace(/[۰-۹]/g,c=>String(c.charCodeAt(0)-1776)).replace(/[٠-٩]/g,c=>String(c.charCodeAt(0)-1632)).replace(/\D/g,'').slice(0,10))} placeholder="000000"/></label>
        {error&&<p className="sh-auth-error" role="alert">{error}</p>}
        {notice&&<p className="sh-auth-notice" role="status">{notice}</p>}
-       <button type="submit" disabled={loading||code.length!==6} className="sh-auth-submit">{loading?pick('در حال بررسی…','Verifying…'):pick('تأیید ایمیل','Verify email')}{backIcon}</button>
+       <button type="submit" disabled={loading||!/^[0-9]{6,10}$/.test(code)} className="sh-auth-submit">{loading?pick('در حال بررسی…','Verifying…'):pick('تأیید ایمیل','Verify email')}{backIcon}</button>
        <button type="button" className="sh-auth-text-action" onClick={resend} disabled={loading}>{pick('ارسال مجدد کد','Resend email code')}</button>
       </form>
     </div>:stage==='identifier'?<div>

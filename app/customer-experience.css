@@ -201,3 +201,6 @@ html body .sh-auth-number-row input{min-width:0;width:100%;height:47px;backgroun
 html body .sh-auth-number-row input:focus{border-color:var(--cx-accent)!important;box-shadow:0 0 0 3px #299aee24!important}
 html body .sh-auth-number-check small{font-size:10px;line-height:1.75;color:var(--cx-muted)}
 @media(max-width:480px){html body .sh-auth-number-row{grid-template-columns:1fr 1fr;gap:8px}html body .sh-auth-number-check{padding:12px}}
+
+/* Email verification OTP length follows the provider (6–10 digits), not the 6-digit human-check. */
+html body .sh-auth-verify .sh-auth-fields>label>input[autocomplete='one-time-code']{font-size:clamp(16px,4vw,23px)!important;letter-spacing:.12em!important;max-width:100%;direction:ltr!important;text-align:center!important;}

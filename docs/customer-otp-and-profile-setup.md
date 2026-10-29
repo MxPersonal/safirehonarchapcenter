@@ -1,6 +1,6 @@
 # Customer account upgrade: deployment checklist
 
-This release adds the customer profile, password change, email-code verification UI, an auth indicator in the main header, and responsive sign-in / register layouts.
+This release adds the customer profile, password change, email-code verification UI, and SMS phone verification via OTPY for new customer registrations. Existing customer sign-in remains email/password until a secure phone-identity-to-Supabase-session migration is designed.
 
 ## 1. Apply the database migration in the CORRECT project
 
@@ -40,3 +40,13 @@ National IDs are never shown in the public header or analytics. Check your priva
 ## 5. Known limits
 
 The detailed profile requires the SQL migration. The email-code flow requires a configured Confirm signup OTP email template and working SMTP. Until those external prerequisites are set, code alone cannot guarantee usable code delivery. Users can change passwords after authenticating with their current password. Changing the email address is not enabled here, because secure change may require confirmation of both old and new addresses.
+
+## 6. OTPY SMS verification before registration (2026-10-29)
+
+- Store `OTPY_API_KEY` as a **Secret** in the Vercel Production environment. Never put it in client code or GitHub. A new main-branch deployment must be created after environment-variable changes for them to apply.
+- Registration first requests an OTPY code by Iranian phone number. The server verifies it against OTPY and creates a short-lived, signed, HttpOnly phone-proof cookie. The backend registration route requires that proof, then performs the usual Supabase email/password registration and email verification. No SMS code is logged or stored locally.
+- The existing email/password **sign-in** is unchanged. OTPY verification is not a replacement for Supabase Auth sessions, and this release does not add passwordless SMS sign-in or Google/GitHub OAuth.
+- Remove the hCaptcha widget, its public key and frontend CAPTCHA tokens. **In the Supabase dashboard**, disable hCaptcha under Authentication > Bot and Abuse Protection if still enabled. Removing a Vercel environment variable alone does not disable Supabase server-side CAPTCHA enforcement.
+- OTPY's own per-phone quotas and a per-instance 60-second throttle are applied. The in-memory throttle does **not** protect across all Vercel instances. Before promoting heavy public traffic, add a durable distributed per-IP/phone limiter and monitoring to prevent paid SMS abuse. Set OTPY spending/daily limits as appropriate.
+- The server-side phone proof gates **this site's registration UI and API**, not direct access to the public Supabase Auth endpoint. A verified-phone claim in user metadata must not be used as an immutable authorization factor. For strict verified-phone uniqueness/2FA or passwordless phone login, build a protected mapping with RLS, migration and documented recovery rules.
+- Test: invalid phone -> rejected, valid phone -> SMS sent, invalid code -> rejected, correct code -> proceed, signup -> Supabase email verification -> sign-in, repeated send -> rate limited, missing key -> 503. Test live SMS only on a number you control.

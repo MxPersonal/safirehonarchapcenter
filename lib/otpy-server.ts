@@ -22,10 +22,14 @@ export function throttle(request:NextRequest,phone:string){
  const now=Date.now();
  if(requests.size>1500){for(const [key,time] of requests){if(now-time>windowMs)requests.delete(key)}}
  const ip=request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()||'unknown';
- const fingerprint=createHmac('sha256',process.env.OTPY_API_KEY||'rate-limit').update(ip+'|'+phone).digest('hex');
- const prior=requests.get(fingerprint)||0;
- if(now-prior<windowMs)return false;
- requests.set(fingerprint,now);return true;
+ const secret=process.env.OTPY_API_KEY||'rate-limit';
+ const keys=[
+  createHmac('sha256',secret).update('ip:'+ip).digest('hex'),
+  createHmac('sha256',secret).update('phone:'+phone).digest('hex'),
+ ];
+ if(keys.some(k=>now-(requests.get(k)||0)<windowMs))return false;
+ keys.forEach(k=>requests.set(k,now));
+ return true;
 }
 function key(){const value=process.env.OTPY_API_KEY?.trim();if(!value)throw new Error('OTPY_UNCONFIGURED');return value}
 export async function callOtpy(endpoint:'send'|'verify',payload:{phone:string;code?:string}){

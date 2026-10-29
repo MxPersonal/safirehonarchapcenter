@@ -422,3 +422,44 @@ html[lang='fa'] body .wf-contact-panel h2 {font-size:clamp(46px,5vw,76px)!import
 @media(prefers-reduced-motion:reduce) {
  .wf-site *, .wf-header *, .wf-contact-dock * {transition:none!important;animation:none!important;scroll-behavior:auto!important;}
 }
+
+
+/* Mobile readability: use a proper Persian UI typeface for long editorial
+   headlines. Keep the original blue highlights and decorative hero untouched. */
+html[lang='fa'] body .wf-site :is(.wf-section-intro,.wf-faq-intro,.wf-wizard-section-title) h2,
+html[lang='fa'] body .wf-site :is(.wf-section-intro,.wf-faq-intro,.wf-wizard-section-title) h2 span,
+html[lang='fa'] body .wf-site .wf-contact-panel h2,
+html[lang='fa'] body .wf-site .wf-contact-panel h2 span {
+  font-family:'Vazirmatn Variable',var(--safir-yekan),Tahoma,sans-serif!important;
+  font-weight:750!important;
+  font-style:normal!important;
+  letter-spacing:0!important;
+  line-height:1.5!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:break-word;
+  text-wrap:pretty;
+  padding-block:0!important;
+}
+html[lang='fa'] body .wf-site :is(.wf-section-intro,.wf-faq-intro,.wf-wizard-section-title) h2 {
+  font-size:clamp(30px,4.8vw,55px)!important;
+  margin-block:18px 18px!important;
+}
+html[lang='fa'] body .wf-site .wf-contact-panel h2 {
+  font-size:clamp(34px,5vw,59px)!important;
+  max-width:850px;
+  margin:0 auto 22px!important;
+}
+@media(max-width:640px){
+  html[lang='fa'] body .wf-site :is(.wf-section-intro,.wf-faq-intro,.wf-wizard-section-title) h2 {
+    font-size:clamp(28px,7.7vw,38px)!important;
+    line-height:1.55!important;
+  }
+  html[lang='fa'] body .wf-site :is(.wf-section-intro,.wf-faq-intro) h2 span {
+    display:block!important;
+  }
+  html[lang='fa'] body .wf-site .wf-contact-panel h2 {
+    font-size:clamp(31px,7.7vw,40px)!important;
+    line-height:1.6!important;
+  }
+}

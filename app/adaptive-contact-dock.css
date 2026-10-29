@@ -190,3 +190,51 @@ html[data-theme='dark'] body .wf-smart-dock-toggle:hover {background:#304661!imp
     will-change:auto!important;
   }
 }
+
+
+/* Contact dock cleanup: the collapse control is a small circular button
+   ABOVE the pill instead of a protruding side tab by the final icon.
+   Reserve its own space so it doesn't cover the email or nearby content. */
+html body .wf-smart-dock {
+  height:min(calc(262px + var(--dock-count, 0) * 56px),70dvh)!important;
+}
+html body .wf-smart-dock-panel {
+  height:calc(100% - 42px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin;
+}
+html body .wf-smart-dock-toggle,
+html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle {
+  top:2px!important;
+  right:19px!important;
+  left:auto!important;
+  bottom:auto!important;
+  width:34px!important;
+  min-width:34px!important;
+  height:34px!important;
+  border-radius:50%!important;
+  box-shadow:0 4px 14px rgba(23,42,64,.13)!important;
+}
+@media(max-width:700px){
+  html body .wf-smart-dock {
+    height:min(calc(252px + var(--dock-count, 0) * 53px),61dvh)!important;
+  }
+  html body .wf-smart-dock-toggle,
+  html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle {
+    top:2px!important;
+    right:17px!important;
+    width:32px!important;
+    min-width:32px!important;
+    height:32px!important;
+  }
+}
+@media(max-width:375px){
+  html body .wf-smart-dock {
+    height:min(calc(237px + var(--dock-count, 0) * 51px),58dvh)!important;
+  }
+  html body .wf-smart-dock-toggle,
+  html body .wf-smart-dock.is-collapsed .wf-smart-dock-toggle {
+    right:14px!important;
+  }
+}

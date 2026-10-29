@@ -1,3 +1,4 @@
+import {emailSignupProblem} from '@/lib/supabase/email-confirmation-readiness';
 import {NextRequest,NextResponse} from 'next/server';
 import {createClient} from '@supabase/supabase-js';
 import {normalizedPhone,OTP_PROOF_COOKIE,proofMatches,validOrigin} from '@/lib/otpy-server';
@@ -16,13 +17,21 @@ export async function POST(request:NextRequest){
  if(!phone||!/^\S+@\S+\.\S+$/.test(email)||email.length>254||
    password.length<8||password.length>128||name.length<2||name.length>100)return reply({error:'INVALID_REQUEST'},400);
  if(!proofMatches(request.cookies.get(OTP_PROOF_COOKIE)?.value,phone))return reply({error:'PHONE_VERIFICATION_REQUIRED'},403);
+ const authProblem=await emailSignupProblem();
+ if(authProblem)return reply({error:authProblem},503);
  const url=process.env.NEXT_PUBLIC_SUPABASE_URL;
  const key=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
  if(!url||!key)return reply({error:'AUTH_NOT_CONFIGURED'},503);
  const db=createClient(url,key,{auth:{autoRefreshToken:false,persistSession:false,detectSessionInUrl:false}});
  const {data,error}=await db.auth.signUp({email,password,options:{data:{display_name:name,registration_phone:phone}}});
  if(error)return reply({error:error.message},error.status===429?429:400);
- if(data.session)return reply({error:'EMAIL_CONFIRMATION_REQUIRED_IN_SUPABASE'},409);
+ if(data.session){
+  // Supabase created the user and auto-confirmed their email. Do not pretend
+  // a manual email-code stage is available or expose this session.
+  const response=reply({error:'ACCOUNT_CREATED_WITHOUT_EMAIL_CHALLENGE',accountCreated:true},409);
+  response.cookies.set(OTP_PROOF_COOKIE,'',{httpOnly:true,path:'/',maxAge:0});
+  return response;
+ }
  const response=reply({ok:true});
  response.cookies.set(OTP_PROOF_COOKIE,'',{httpOnly:true,path:'/',maxAge:0});
  return response;

@@ -16,13 +16,28 @@ export default function Header(){
  const [searchOpen,setSearchOpen]=useState(false);
  const searchToggle=useRef<HTMLButtonElement>(null);
  const [authenticated,setAuthenticated]=useState(false);
+ const [authChecked,setAuthChecked]=useState(false),[profileAvatar,setProfileAvatar]=useState<string|null>(null),[accountName,setAccountName]=useState('');
  const pathname=usePathname();
  useEffect(()=>{
-  const db=browserDb();if(!db)return;
+  const db=browserDb();if(!db){setAuthChecked(true);return;}
   let active=true;
-  void db.auth.getUser().then(({data})=>{if(active)setAuthenticated(!!data.user)});
-  const {data:listener}=db.auth.onAuthStateChange((_event,session)=>{if(active)setAuthenticated(!!session?.user)});
-  return()=>{active=false;listener.subscription.unsubscribe()};
+  async function refreshAccount(){
+    const {data}=await db!.auth.getUser();
+    if(!active)return;
+    setAuthenticated(Boolean(data.user));setAuthChecked(true);
+    if(!data.user){setProfileAvatar(null);setAccountName('');return;}
+    try{
+      const res=await fetch('/api/profile/header',{credentials:'same-origin',cache:'no-store'});
+      if(!res.ok)return;
+      const info=await res.json();
+      if(active){setProfileAvatar(info.avatarUrl||null);setAccountName(info.name||'');}
+    }catch{/* fallback icon */}
+  }
+  void refreshAccount();
+  const {data:listener}=db.auth.onAuthStateChange(()=>{void refreshAccount()});
+  const update=()=>{void refreshAccount()};
+  window.addEventListener('safir-profile-changed',update);
+  return()=>{active=false;listener.subscription.unsubscribe();window.removeEventListener('safir-profile-changed',update)};
  },[]);
  useEffect(()=>{setOpen(false);setSearchOpen(false)},[pathname]);
  useEffect(()=>{
@@ -71,7 +86,12 @@ export default function Header(){
       <button ref={searchToggle} type="button" className={"wf-header-search"+(searchOpen?" is-active":"")} aria-label={searchOpen?pick("بستن جست‌وجو","Close search"):pick("بازکردن جست‌وجو در سایت","Open website search")} title={pick("جست‌وجوی پیشرفته","Advanced site search")} aria-controls="wf-global-search" aria-expanded={searchOpen} onClick={toggleSearch}>{searchOpen?<X size={19}/>:<Search size={19}/>}</button>
       <LanguageSwitcher compact/>
       <ThemeToggle/>
-      {authenticated?<Link href={path('/account')} className="wf-header-account" aria-label={t.myAccount}><UserRound size={18}/></Link>:<Link href={path('/login')} className="wf-header-account" aria-label={t.login}><UserRound size={18}/></Link>}
+      <Link href={path(authenticated?'/account':'/login')} className="wf-auth-link"
+        aria-label={authenticated?pick('ورود به حساب کاربری','Open customer account'):pick('ورود / ثبت‌نام','Sign in / Sign up')}
+        title={authenticated?(accountName||t.myAccount):pick('ورود / ثبت‌نام','Sign in / Sign up')}>
+        {authenticated&&profileAvatar?<img src={profileAvatar} alt="" className="wf-auth-avatar"/>:<UserRound size={19}/>}
+        <span>{!authChecked?pick('حساب','Account'):authenticated?pick('حساب من','My account'):pick('ورود','Sign in')}</span>
+      </Link>
       <Link className="wf-header-cta" href={path('/order')}>{pick('شروع سفارش','Start project')}<ArrowUpLeft size={16}/></Link>
     </div>
   </div>
@@ -81,7 +101,7 @@ export default function Header(){
       <div className="wf-menu-list">
         {links.map(([href,label])=><Link key={href} href={path(href)} onClick={click}>{label}<ArrowUpLeft size={19}/></Link>)}
         <Link href={path('/order')} onClick={click}>{t.order}<ArrowUpLeft size={19}/></Link>
-        <Link href={path(authenticated?'/account':'/register')} onClick={click}>{authenticated?t.myAccount:t.register}<ArrowUpLeft size={19}/></Link>
+        <Link href={path(authenticated?'/account':'/login')} onClick={click}>{authenticated?t.myAccount:pick('ورود / ثبت‌نام','Sign in / Sign up')}<ArrowUpLeft size={19}/></Link>
       </div>
       <div className="wf-menu-bottom">
         <Link className="wf-menu-start" href={path('/order')} onClick={click}>{pick('سفارش اختصاصی','Start your print request')}<ArrowUpLeft size={20}/></Link>

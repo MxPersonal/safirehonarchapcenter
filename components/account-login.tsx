@@ -1,5 +1,5 @@
 'use client';
-import {useState} from 'react';
+import {useRef,useState} from 'react';
 import HCaptchaChallenge from '@/components/hcaptcha-challenge';
 import Link from 'next/link';
 import {useRouter,useSearchParams} from 'next/navigation';
@@ -22,17 +22,55 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
  const [verificationEmail,setVerificationEmail]=useState('');
  const [captchaToken,setCaptchaToken]=useState('');
  const [captchaReset,setCaptchaReset]=useState(0);
+ // hCaptcha responses can be verified exactly once. Lock before starting network I/O
+ // so rapid double-clicks and multiple submit events cannot replay the same token.
+ const currentCaptcha=useRef('');
+ const usedCaptcha=useRef('');
+ const solvedAt=useRef(0);
+ const requestInFlight=useRef(false);
+ const acceptCaptcha=(token:string)=>{
+  if(!token||requestInFlight.current||token===usedCaptcha.current)return;
+  currentCaptcha.current=token;
+  solvedAt.current=Date.now();
+  setCaptchaToken(token);
+ };
+ const clearCaptcha=()=>{
+  currentCaptcha.current='';
+  solvedAt.current=0;
+  setCaptchaToken('');
+ };
+ const resetCaptcha=()=>{
+  clearCaptcha();
+  setCaptchaReset(n=>n+1);
+ };
+ const consumeCaptcha=()=>{
+  const token=currentCaptcha.current;
+  if(!token||token===usedCaptcha.current||Date.now()-solvedAt.current>90_000){
+   resetCaptcha();
+   return '';
+  }
+  requestInFlight.current=true;
+  usedCaptcha.current=token;
+  clearCaptcha();
+  return token;
+ };
  const captchaSiteKey=process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY?.trim()||'';
  const captchaRequiredMessage=pick('برای ادامه، ابتدا تأیید «من ربات نیستم» را انجام بده.','Complete the CAPTCHA challenge before continuing.');
  const captchaUnavailable=pick('کلید عمومی hCaptcha هنوز برای سایت در Vercel تنظیم نشده است. با پشتیبانی تماس بگیر.','The hCaptcha site key is not configured in Vercel yet. Please contact support.');
- const resetCaptcha=()=>{setCaptchaToken('');setCaptchaReset(n=>n+1)};
  async function submit(event:React.FormEvent){
-  event.preventDefault();setError('');setNotice('');
+  event.preventDefault();
+  if(requestInFlight.current)return;
+  setError('');setNotice('');
   if(!db){setError(pick('سرویس کاربران هنوز وصل نشده است.','Account service is unavailable.'));return}
   if(!captchaSiteKey){setError(captchaUnavailable);return}
-  if(!captchaToken){setError(captchaRequiredMessage);return}
+  if(!currentCaptcha.current){setError(captchaRequiredMessage);return}
   if(signup&&(!terms||name.trim().length<2||password!==confirm)){
    setError(pick('نام، تکرار رمز و پذیرش قوانین را بررسی کن.','Check name, password confirmation and terms.'));return;
+  }
+  const captchaToken=consumeCaptcha();
+  if(!captchaToken){
+   setError(pick('کد امنیتی منقضی شده یا قبلاً استفاده شده است. لطفاً کپچا را دوباره کامل کن.','The security token expired or was already used. Complete a fresh CAPTCHA.'));
+   return;
   }
   setLoading(true);
   try{
@@ -51,8 +89,16 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
     if(e)throw e;
     router.replace(nextUrl);router.refresh();
    }
-  }catch(e){setError(e instanceof Error?e.message:pick('عملیات ناموفق بود.','Request failed.'))}
-  finally{resetCaptcha();setLoading(false)}
+  }catch(e){
+   const message=e instanceof Error?e.message:pick('عملیات ناموفق بود.','Request failed.');
+   setError(/already[-_]seen[-_]response|expired[-_]input[-_]response/i.test(message)
+    ?pick('این کپچا قبلاً مصرف شده یا منقضی شده است؛ تیک کپچای جدید را بزن و دوباره تلاش کن.','The CAPTCHA was previously used or expired. Complete a new challenge before retrying.')
+    :message);
+  }finally{
+   resetCaptcha();
+   requestInFlight.current=false;
+   setLoading(false);
+  }
  }
  async function verify(event:React.FormEvent){
   event.preventDefault();if(!db)return;
@@ -70,8 +116,10 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
   finally{setLoading(false)}
  }
  async function resend(){
-  if(!db||!verificationEmail)return;
+  if(requestInFlight.current||!db||!verificationEmail)return;
   if(!captchaSiteKey){setError(captchaUnavailable);return}
+  if(!currentCaptcha.current){setError(captchaRequiredMessage);return}
+  const captchaToken=consumeCaptcha();
   if(!captchaToken){setError(captchaRequiredMessage);return}
   setLoading(true);setError('');setNotice('');
   try{
@@ -79,7 +127,7 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
    if(e)throw e;
    setNotice(pick('درخواست ارسال مجدد ثبت شد. پوشه هرزنامه را هم بررسی کن.','Resend requested. Check your spam folder as well.'));
   }catch(e){setError(e instanceof Error?e.message:pick('ارسال مجدد ممکن نشد.','Could not resend.'))}
-  finally{resetCaptcha();setLoading(false)}
+  finally{resetCaptcha();requestInFlight.current=false;setLoading(false)}
  }
  const backIcon=locale==='fa'?<ArrowLeft size={18}/>:<ArrowRight size={18}/>;
  return <div className="sh-auth-page" dir={locale==='fa'?'rtl':'ltr'}>
@@ -106,11 +154,11 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
       <form onSubmit={verify} className="sh-auth-fields">
        <label>{pick('کد شش‌رقمی','Six-digit code')}<input dir="ltr" inputMode="numeric" autoComplete="one-time-code" maxLength={6} pattern="[0-9]{6}" required value={code} onChange={e=>setCode(e.target.value.replace(/\D/g,'').slice(0,6))} placeholder="000000"/></label>
        <HCaptchaChallenge siteKey={captchaSiteKey} locale={locale} resetSignal={captchaReset}
-        onToken={setCaptchaToken} onExpire={()=>setCaptchaToken('')}/>
+        onToken={acceptCaptcha} onExpire={clearCaptcha}/>
        {error&&<p className="sh-auth-error" role="alert">{error}</p>}
        {notice&&<p className="sh-auth-notice" role="status">{notice}</p>}
        <button type="submit" disabled={loading||code.length!==6} className="sh-auth-submit">{loading?pick('در حال بررسی…','Verifying…'):pick('تأیید کد','Verify code')}{backIcon}</button>
-       <button type="button" onClick={resend} disabled={loading} className="sh-auth-text-action">{pick('ارسال مجدد کد','Resend code')}</button>
+       <button type="button" onClick={resend} disabled={loading||!captchaToken} className="sh-auth-text-action">{pick('ارسال مجدد کد','Resend code')}</button>
        <button type="button" className="sh-auth-text-action" onClick={()=>{setStage('form');setError('');setCode('')}}>{pick('ویرایش ایمیل','Change email')}</button>
       </form>
      </div>:<>
@@ -124,9 +172,9 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
        {signup&&<><label>{pick('تکرار گذرواژه','Confirm password')}<div className="sh-auth-input"><ShieldCheck size={20}/><input type={visible?'text':'password'} autoComplete="new-password" required minLength={8} value={confirm} onChange={e=>setConfirm(e.target.value)} placeholder={pick('تکرار رمز','Repeat password')}/></div></label>
         <label className="sh-auth-consent"><input required checked={terms} onChange={e=>setTerms(e.target.checked)} type="checkbox"/><span>{pick('شرایط استفاده','I agree to the')} <Link href={path('/terms')} target="_blank">{t.terms}</Link> {pick('و','and')} <Link href={path('/privacy')} target="_blank">{t.privacy}</Link> {pick('را مطالعه کرده و می‌پذیرم.','policies.')}</span></label></>}
        <HCaptchaChallenge siteKey={captchaSiteKey} locale={locale} resetSignal={captchaReset}
-        onToken={setCaptchaToken} onExpire={()=>setCaptchaToken('')}/>
+        onToken={acceptCaptcha} onExpire={clearCaptcha}/>
        {error&&<p className="sh-auth-error" role="alert">{error}</p>}
-       <button className="sh-auth-submit" disabled={loading||!db}>{loading?pick('در حال پردازش…','Processing…'):signup?pick('ساخت حساب و دریافت کد','Create account & get code'):pick('ورود به حساب','Sign in')}{backIcon}</button>
+       <button className="sh-auth-submit" disabled={loading||!db||!captchaToken}>{loading?pick('در حال پردازش…','Processing…'):signup?pick('ساخت حساب و دریافت کد','Create account & get code'):pick('ورود به حساب','Sign in')}{backIcon}</button>
       </form>
       {!db&&<p className="sh-auth-notice">{pick('اتصال کاربران هنوز در سایت فعال نشده است.','Customer auth connection is unavailable.')}</p>}
       <div className="sh-auth-switch">{signup?pick('قبلاً حساب ساخته‌ای؟','Already registered?'):pick('هنوز حساب نداری؟','New here?')} <Link href={path(signup?'/login':'/register')+nextQuery}>{signup?t.login:t.register}</Link></div>

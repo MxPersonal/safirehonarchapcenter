@@ -189,3 +189,26 @@ html body .sh-profile-email .is-unverified{color:#a35b21;background:#fff1d9;}
 html body .sh-map-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;}
 html body .sh-map-actions .v2-outline{padding:9px 12px!important;display:inline-flex;gap:7px;align-items:center;background:var(--cx-soft)!important;color:var(--cx-ink)!important;border:1px solid var(--cx-line)!important;border-radius:10px;}
 html body .sh-map-preview iframe{display:block;width:100%;height:260px;border:1px solid var(--cx-line);border-radius:14px;}
+
+
+/* hCaptcha belongs inside the form, without extending its buttons or typography. */
+html body .sh-auth-page .sh-hcaptcha-shell{
+ min-width:0;max-width:100%;width:100%;padding:14px;
+ display:grid;justify-items:center;gap:9px;
+ border:1px solid var(--cx-line);border-radius:14px;
+ background:var(--cx-soft);overflow:visible;
+}
+html body .sh-auth-page .sh-hcaptcha-widget{
+ width:100%;max-width:100%;min-height:78px;
+ display:flex;justify-content:center;align-items:center;
+}
+html body .sh-auth-page .sh-hcaptcha-shell small{
+ text-align:center;font-size:11px;color:var(--cx-muted);
+}
+html body .sh-auth-page .sh-hcaptcha-error{
+ font-size:12px!important;color:#b93236!important;
+ text-align:center;margin:0!important;
+}
+@media(max-width:370px){
+ html body .sh-auth-page .sh-hcaptcha-shell{padding:7px;}
+}

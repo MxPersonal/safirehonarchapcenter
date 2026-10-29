@@ -1,5 +1,6 @@
 'use client';
 import {useState} from 'react';
+import HCaptchaChallenge from '@/components/hcaptcha-challenge';
 import Link from 'next/link';
 import {useRouter,useSearchParams} from 'next/navigation';
 import {useI18n} from '@/components/locale-provider';
@@ -19,9 +20,17 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
  const [stage,setStage]=useState<'form'|'verify'|'complete'>('form');
  const [code,setCode]=useState(''),[loading,setLoading]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const [verificationEmail,setVerificationEmail]=useState('');
+ const [captchaToken,setCaptchaToken]=useState('');
+ const [captchaReset,setCaptchaReset]=useState(0);
+ const captchaSiteKey=process.env.NEXT_PUBLIC_HCAPTCHA_SITE_KEY?.trim()||'';
+ const captchaRequiredMessage=pick('برای ادامه، ابتدا تأیید «من ربات نیستم» را انجام بده.','Complete the CAPTCHA challenge before continuing.');
+ const captchaUnavailable=pick('کلید عمومی hCaptcha هنوز برای سایت در Vercel تنظیم نشده است. با پشتیبانی تماس بگیر.','The hCaptcha site key is not configured in Vercel yet. Please contact support.');
+ const resetCaptcha=()=>{setCaptchaToken('');setCaptchaReset(n=>n+1)};
  async function submit(event:React.FormEvent){
   event.preventDefault();setError('');setNotice('');
   if(!db){setError(pick('سرویس کاربران هنوز وصل نشده است.','Account service is unavailable.'));return}
+  if(!captchaSiteKey){setError(captchaUnavailable);return}
+  if(!captchaToken){setError(captchaRequiredMessage);return}
   if(signup&&(!terms||name.trim().length<2||password!==confirm)){
    setError(pick('نام، تکرار رمز و پذیرش قوانین را بررسی کن.','Check name, password confirmation and terms.'));return;
   }
@@ -29,7 +38,7 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
   try{
    if(signup){
     const address=email.trim().toLowerCase();
-    const {data,error:e}=await db.auth.signUp({email:address,password,options:{data:{display_name:name.trim()}}});
+    const {data,error:e}=await db.auth.signUp({email:address,password,options:{data:{display_name:name.trim()},captchaToken}});
     if(e)throw e;
     if(data.session){
      await db.auth.signOut({scope:'local'});
@@ -38,12 +47,12 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
     setVerificationEmail(address);setStage('verify');setPassword('');setConfirm('');
     setNotice(pick('اگر سرویس ایمیل تنظیم شده باشد، کد تأیید برایت ارسال شده است.','A verification code has been requested. Delivery requires SMTP and the OTP email template.'));
    }else{
-    const {error:e}=await db.auth.signInWithPassword({email:email.trim(),password});
+    const {error:e}=await db.auth.signInWithPassword({email:email.trim(),password,options:{captchaToken}});
     if(e)throw e;
     router.replace(nextUrl);router.refresh();
    }
   }catch(e){setError(e instanceof Error?e.message:pick('عملیات ناموفق بود.','Request failed.'))}
-  finally{setLoading(false)}
+  finally{resetCaptcha();setLoading(false)}
  }
  async function verify(event:React.FormEvent){
   event.preventDefault();if(!db)return;
@@ -62,13 +71,15 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
  }
  async function resend(){
   if(!db||!verificationEmail)return;
+  if(!captchaSiteKey){setError(captchaUnavailable);return}
+  if(!captchaToken){setError(captchaRequiredMessage);return}
   setLoading(true);setError('');setNotice('');
   try{
-   const {error:e}=await db.auth.resend({type:'signup',email:verificationEmail});
+   const {error:e}=await db.auth.resend({type:'signup',email:verificationEmail,options:{captchaToken}});
    if(e)throw e;
    setNotice(pick('درخواست ارسال مجدد ثبت شد. پوشه هرزنامه را هم بررسی کن.','Resend requested. Check your spam folder as well.'));
   }catch(e){setError(e instanceof Error?e.message:pick('ارسال مجدد ممکن نشد.','Could not resend.'))}
-  finally{setLoading(false)}
+  finally{resetCaptcha();setLoading(false)}
  }
  const backIcon=locale==='fa'?<ArrowLeft size={18}/>:<ArrowRight size={18}/>;
  return <div className="sh-auth-page" dir={locale==='fa'?'rtl':'ltr'}>
@@ -94,6 +105,7 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
        <p>{pick('کد شش‌رقمی ارسال‌شده به ایمیل را وارد کن.','Enter the six-digit code sent to your inbox.')} <strong dir="ltr">{verificationEmail}</strong></p></div>
       <form onSubmit={verify} className="sh-auth-fields">
        <label>{pick('کد شش‌رقمی','Six-digit code')}<input dir="ltr" inputMode="numeric" autoComplete="one-time-code" maxLength={6} pattern="[0-9]{6}" required value={code} onChange={e=>setCode(e.target.value.replace(/\D/g,'').slice(0,6))} placeholder="000000"/></label>
+       {captchaMarkup}
        {error&&<p className="sh-auth-error" role="alert">{error}</p>}
        {notice&&<p className="sh-auth-notice" role="status">{notice}</p>}
        <button type="submit" disabled={loading||code.length!==6} className="sh-auth-submit">{loading?pick('در حال بررسی…','Verifying…'):pick('تأیید کد','Verify code')}{backIcon}</button>
@@ -110,6 +122,7 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
        <label>{pick('گذرواژه','Password')}<div className="sh-auth-input"><LockKeyhole size={20}/><input type={visible?'text':'password'} required autoComplete={signup?'new-password':'current-password'} minLength={signup?8:1} value={password} onChange={e=>setPassword(e.target.value)} placeholder={pick('گذرواژه امن','Secure password')}/><button type="button" onClick={()=>setVisible(v=>!v)} aria-label={visible?pick('پنهان کردن رمز','Hide password'):pick('نمایش رمز','Show password')}>{visible?<EyeOff size={19}/>:<Eye size={19}/>}</button></div></label>
        {signup&&<><label>{pick('تکرار گذرواژه','Confirm password')}<div className="sh-auth-input"><ShieldCheck size={20}/><input type={visible?'text':'password'} autoComplete="new-password" required minLength={8} value={confirm} onChange={e=>setConfirm(e.target.value)} placeholder={pick('تکرار رمز','Repeat password')}/></div></label>
         <label className="sh-auth-consent"><input required checked={terms} onChange={e=>setTerms(e.target.checked)} type="checkbox"/><span>{pick('شرایط استفاده','I agree to the')} <Link href={path('/terms')} target="_blank">{t.terms}</Link> {pick('و','and')} <Link href={path('/privacy')} target="_blank">{t.privacy}</Link> {pick('را مطالعه کرده و می‌پذیرم.','policies.')}</span></label></>}
+       {captchaMarkup}
        {error&&<p className="sh-auth-error" role="alert">{error}</p>}
        <button className="sh-auth-submit" disabled={loading||!db}>{loading?pick('در حال پردازش…','Processing…'):signup?pick('ساخت حساب و دریافت کد','Create account & get code'):pick('ورود به حساب','Sign in')}{backIcon}</button>
       </form>

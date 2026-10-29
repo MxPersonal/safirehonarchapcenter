@@ -28,7 +28,7 @@ export function authClient(request:NextRequest,response:NextResponse){
  if(!url||!key)return null;
  return createServerClient(url,key,{cookies:{
   getAll(){return request.cookies.getAll()},
-  setAll(items){for(const {name,value,options} of items)response.cookies.set(name,value,options)}
+  setAll(items:Array<{name:string;value:string;options?:any}>){for(const {name,value,options} of items)response.cookies.set(name,value,options)}
  }});
 }
 function normalizePhone(input:string){

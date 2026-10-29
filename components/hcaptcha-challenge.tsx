@@ -37,6 +37,15 @@ export default function HCaptchaChallenge({siteKey,locale,resetSignal,onToken,on
  callbacks.current={onToken,onExpire};
  const [state,setState]=useState<'loading'|'ready'|'error'>('loading');
  const [errorText,setErrorText]=useState('');
+ const [theme,setTheme]=useState<'light'|'dark'>('light');
+ useEffect(()=>{
+  const current=()=>document.documentElement.dataset.theme==='dark'?'dark':'light';
+  const refresh=()=>setTheme(current());
+  refresh();
+  const observer=new MutationObserver(refresh);
+  observer.observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  return()=>observer.disconnect();
+ },[]);
  useEffect(()=>{
   if(!siteKey){setState('error');setErrorText(locale==='fa'?'Site Key کپچا در Vercel تنظیم نشده است.':'The CAPTCHA site key is missing.');return}
   let mounted=true;
@@ -45,10 +54,8 @@ export default function HCaptchaChallenge({siteKey,locale,resetSignal,onToken,on
   const render=()=>{
    if(!mounted||!window.hcaptcha||!element.current||widget.current!==null)return;
    try{
-    const rootTheme=document.documentElement.getAttribute('data-theme');
-    const dark=rootTheme==='dark'||document.documentElement.classList.contains('dark');
     widget.current=window.hcaptcha.render(element.current,{
-     sitekey:siteKey,hl:locale,theme:dark?'dark':'light',
+     sitekey:siteKey,hl:locale,theme,
      callback:(token)=>{if(mounted)callbacks.current.onToken(token)},
      'expired-callback':()=>{if(mounted)callbacks.current.onExpire()},
      'error-callback':()=>{if(mounted){callbacks.current.onExpire();setState('error');setErrorText(locale==='fa'?'خطا در بارگذاری کپچا؛ صفحه را تازه‌سازی کن.':'CAPTCHA error. Reload the page and try again.');}}
@@ -75,11 +82,13 @@ export default function HCaptchaChallenge({siteKey,locale,resetSignal,onToken,on
    mounted=false;
    if(widget.current!==null){
     try{window.hcaptcha?.remove?.(widget.current)}catch{/* next mount gets a new container */}
+    if(element.current)element.current.replaceChildren();
     widget.current=null;
+    callbacks.current.onExpire();
    }
    if(window.safirHCaptchaReady===ownReady)window.safirHCaptchaReady=previousReady;
   };
- },[siteKey,locale]);
+ },[siteKey,locale,theme]);
  useEffect(()=>{
   if(resetSignal>0&&widget.current!==null){
    try{window.hcaptcha?.reset(widget.current)}catch{/* challenge may already be unmounted */}

@@ -2,10 +2,11 @@ import Link from 'next/link';
 import {ArrowUpLeft,ArrowLeft,ArrowRight,ArrowDownLeft,ArrowUpRight, BadgeCheck, Layers3, FileCheck2, ScanLine, ChevronLeft, ChevronRight, Search, Phone, Mail, Printer, Sparkles, PackageCheck, MousePointerClick,Plus,Minus} from 'lucide-react';
 import {siteText} from '@/lib/i18n-server';
 import {localePath,intlNumber} from '@/lib/i18n';
-import {storeCategories,mainCategories,cmsPage,storeGalleryProducts} from '@/lib/store';
+import {storeCategories,mainCategories,categoryDescendants,cmsPage,storeGalleryProducts} from '@/lib/store';
 import {CategoryArtwork,ProductTile} from '@/components/showcase';
 import ProjectInquiryWizard from '@/components/project-inquiry-wizard';
 import PrintCollectionExplorer from '@/components/print-collection-explorer';
+import DesktopHeroShowcase from '@/components/desktop-hero-showcase';
 
 export const dynamic='force-dynamic';
 
@@ -14,6 +15,19 @@ export default async function Home(){
  const path=(s:string)=>localePath(s,locale);
  const [all,hero,products]=await Promise.all([storeCategories(locale),cmsPage('home',locale),storeGalleryProducts(locale)]);
  const categories=mainCategories(all);
+ const heroSlides=categories.map(category=>{
+   const categoryIds=new Set([category.id,...categoryDescendants(all,category).map(item=>item.id)]);
+   const sample=(products??[]).find(product=>product.image_url&&product.category_id&&categoryIds.has(product.category_id));
+   const useProduct=Boolean(sample?.image_url);
+   return {
+     id:category.id,
+     categoryName:category.name,
+     photoName:useProduct?sample!.name:category.name,
+     imageUrl:useProduct?sample!.image_url:category.image_url,
+     href:useProduct?path('/shop/'+sample!.slug):path('/catalog/'+category.slug),
+     isProduct:useProduct,
+   };
+ });
  const highlighted=(products??[]).slice(0,6);
  const featured=categories.slice(0,8);
  const services=categories.slice(0,9);
@@ -26,10 +40,11 @@ export default async function Home(){
   {q:pick('چطور سفارش یا درخواست خود را پیگیری کنم؟','How do I follow up on my request?'),a:pick('با ورود به حساب کاربری، اطلاعات درخواست‌ها و سفارش‌هایی که برای حسابت ثبت شده‌اند را بررسی کن.','Sign in to your account to review your requests and any order details available there.')},
  ];
  return <div className="wf-site wf-home">
-  <section className="wf-hero" aria-labelledby="wf-hero-heading">
+  <section className={"wf-hero"+(heroSlides.length?" wf-hero-has-showcase":"")} aria-label={pick("چاپ سفیر هنر","Safire Honar printing")}>
     <div className="wf-container wf-hero-inner">
       <div className="wf-hero-badge"><i className="wf-signal" aria-hidden="true"/>{pick('مرکز تخصصی چاپ و طراحی سفیر هنر','SAFIRE HONAR / PRINT & DESIGN STUDIO')}<ArrowUpLeft size={13}/></div>
-      <h1 id="wf-hero-heading">{hero?.title || <>{pick('از ایده تا چاپ،','From idea to print,')}<br className="wf-hero-break"/><span className="wf-hero-blue">{pick('هنر در ابعاد تازه','Art in new dimensions')}</span></>}</h1>
+      <h1 id="wf-hero-heading" className="wf-mobile-hero-heading">{hero?.title || <>{pick('از ایده تا چاپ،','From idea to print,')}<br className="wf-hero-break"/><span className="wf-hero-blue">{pick('هنر در ابعاد تازه','Art in new dimensions')}</span></>}</h1>
+      {heroSlides.length>0&&<DesktopHeroShowcase slides={heroSlides} locale={locale}/>}
       <p className="wf-hero-description">{hero?.body||pick('از انتخاب محصول تا ثبت سفارش چاپ، همه‌چیز در یک‌جا. بنر، کارت ویزیت، بروشور، تابلو و دیگر محصولات چاپی را بررسی کن و مناسب‌ترین گزینه را برای کسب‌وکارت پیدا کن.','Explore printed products, compare formats and start your next order, all in one place. From business cards and banners to brochures and signage.')}</p>
       <div className="wf-hero-actions">
         <Link href={path('/order')} className="wf-button wf-button-primary">{pick('شروع سفارش چاپ','Start your print request')}<ArrowUpLeft size={18}/></Link>

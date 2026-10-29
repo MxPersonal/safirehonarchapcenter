@@ -19,6 +19,7 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
  const [stage,setStage]=useState<'sms'|'form'|'verify'|'complete'>(mode==='signup'?'sms':'form');
  const [code,setCode]=useState(''),[loading,setLoading]=useState(false),[error,setError]=useState(''),[notice,setNotice]=useState('');
  const [verificationEmail,setVerificationEmail]=useState('');
+ const [autoConfirmedDuringSignup,setAutoConfirmedDuringSignup]=useState(false);
 
  const [phone,setPhone]=useState(''),[smsCode,setSmsCode]=useState(''),[smsSent,setSmsSent]=useState(false);
  const requestInFlight=useRef(false);
@@ -50,9 +51,22 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
     const address=email.trim().toLowerCase();
     const response=await fetch('/api/customer-otp/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone,name:name.trim(),email:address,password})});
     const result=await response.json();
-    if(!response.ok)throw Error(result.error==='PHONE_VERIFICATION_REQUIRED'?
-     pick('تأیید موبایل منقضی شد؛ ثبت‌نام را دوباره از مرحله پیامک آغاز کن.','Phone verification expired. Restart signup with SMS.'):
-     result.error||pick('ثبت‌نام ممکن نشد.','Could not register.'));
+    if(!response.ok){
+     if(result.error==='ACCOUNT_CREATED_WITHOUT_EMAIL_CHALLENGE'){
+      setAutoConfirmedDuringSignup(true);
+      setStage('complete');
+      setPassword('');setConfirm('');
+      return;
+     }
+     const messages:Record<string,string>={
+      PHONE_VERIFICATION_REQUIRED:pick('تأیید موبایل منقضی شد؛ ثبت‌نام را دوباره از مرحله پیامک آغاز کن.','Phone verification expired. Restart signup with SMS.'),
+      EMAIL_CONFIRMATION_DISABLED:pick('تأیید ایمیل در Supabase خاموش است. مدیر سایت باید از Authentication → Sign In / Providers → Email گزینه Confirm email را روشن کند.','Email verification is disabled in Supabase. The site administrator must enable Confirm email in Authentication → Sign In / Providers → Email.'),
+      AUTH_CONFIG_UNAVAILABLE:pick('بررسی تنظیمات تأیید ایمیل در Supabase ممکن نشد. دوباره تلاش کن.','Unable to check Supabase email verification settings. Try again.'),
+      AUTH_NOT_CONFIGURED:pick('اتصال Supabase در سرور تنظیم نشده است.','Supabase is not configured on the server.'),
+      EMAIL_SIGNUP_DISABLED:pick('ثبت‌نام ایمیلی در Supabase غیرفعال است.','Email signup is disabled in Supabase.'),
+     };
+     throw Error(messages[result.error]||pick('ثبت‌نام ممکن نشد؛ اطلاعات را بررسی کن.','Could not register. Check your information.'));
+    }
     setVerificationEmail(address);setStage('verify');setPassword('');setConfirm('');
     setNotice(pick('کد تأیید ایمیل درخواست شد. پوشه هرزنامه را هم بررسی کن.','Email confirmation requested. Check your inbox and spam.'));
    }else{
@@ -117,11 +131,13 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
         <button type="button" className="sh-auth-text-action" disabled={loading} onClick={()=>{setSmsSent(false);setSmsCode('');setError('');setNotice('')}}>{pick('تغییر شماره / ارسال دوباره','Change phone / resend')}</button></>}
       </div>
      </div>:stage==='complete'?<div className="sh-auth-done"><CheckCircle2 size={43}/>
-      <h1>{pick('ایمیل تأیید شد','Email verified')}</h1>
-      <p>{pick('حساب شما فعال شد. حالا می‌توانی وارد شوی و اطلاعات پروفایل را تکمیل کنی.','Your account is confirmed. Sign in to complete your profile.')}</p>
+      <h1>{autoConfirmedDuringSignup?pick('حساب ساخته شد، اما بدون تأیید دستی ایمیل','Account created without manual email confirmation'):pick('ایمیل تأیید شد','Email verified')}</h1>
+      <p>{autoConfirmedDuringSignup?
+       pick('Supabase ایمیل را به‌صورت خودکار تأیید کرده است. برای ثبت‌نام‌های بعدی، مدیر باید Confirm email را روشن کند. این حساب را دوباره ثبت‌نام نکن؛ می‌توانی با اطلاعات همین حساب وارد شوی.','Supabase auto-confirmed the email. The administrator must enable Confirm email for future registrations. Do not sign up again; use this account to sign in.'):
+       pick('حساب شما فعال شد. حالا می‌توانی وارد شوی و اطلاعات پروفایل را تکمیل کنی.','Your account is confirmed. Sign in to complete your profile.')}</p>
       <Link href={path('/login')+nextQuery} className="sh-auth-submit">{pick('ورود به حساب','Sign in')}{backIcon}</Link>
      </div>:stage==='verify'?<div className="sh-auth-verify">
-      <div className="sh-auth-heading"><span className="sh-auth-label">{pick('مرحله ۲ / تأیید نشانی ایمیل','STEP 2 / EMAIL VERIFICATION')}</span>
+      <div className="sh-auth-heading"><span className="sh-auth-label">{pick('مرحله ۳ / تأیید نشانی ایمیل','STEP 3 / EMAIL VERIFICATION')}</span>
        <h1>{pick('کد تأیید ایمیل','Email verification code')}</h1>
        <p>{pick('کد شش‌رقمی ارسال‌شده به ایمیل را وارد کن.','Enter the six-digit code sent to your inbox.')} <strong dir="ltr">{verificationEmail}</strong></p></div>
       <form onSubmit={verify} className="sh-auth-fields">

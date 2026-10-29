@@ -105,7 +105,8 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
        <p>{pick('کد شش‌رقمی ارسال‌شده به ایمیل را وارد کن.','Enter the six-digit code sent to your inbox.')} <strong dir="ltr">{verificationEmail}</strong></p></div>
       <form onSubmit={verify} className="sh-auth-fields">
        <label>{pick('کد شش‌رقمی','Six-digit code')}<input dir="ltr" inputMode="numeric" autoComplete="one-time-code" maxLength={6} pattern="[0-9]{6}" required value={code} onChange={e=>setCode(e.target.value.replace(/\D/g,'').slice(0,6))} placeholder="000000"/></label>
-       {captchaMarkup}
+       <HCaptchaChallenge siteKey={captchaSiteKey} locale={locale} resetSignal={captchaReset}
+        onToken={setCaptchaToken} onExpire={()=>setCaptchaToken('')}/>
        {error&&<p className="sh-auth-error" role="alert">{error}</p>}
        {notice&&<p className="sh-auth-notice" role="status">{notice}</p>}
        <button type="submit" disabled={loading||code.length!==6} className="sh-auth-submit">{loading?pick('در حال بررسی…','Verifying…'):pick('تأیید کد','Verify code')}{backIcon}</button>
@@ -122,7 +123,8 @@ export default function AccountLogin({mode}:{mode:'signin'|'signup'}){
        <label>{pick('گذرواژه','Password')}<div className="sh-auth-input"><LockKeyhole size={20}/><input type={visible?'text':'password'} required autoComplete={signup?'new-password':'current-password'} minLength={signup?8:1} value={password} onChange={e=>setPassword(e.target.value)} placeholder={pick('گذرواژه امن','Secure password')}/><button type="button" onClick={()=>setVisible(v=>!v)} aria-label={visible?pick('پنهان کردن رمز','Hide password'):pick('نمایش رمز','Show password')}>{visible?<EyeOff size={19}/>:<Eye size={19}/>}</button></div></label>
        {signup&&<><label>{pick('تکرار گذرواژه','Confirm password')}<div className="sh-auth-input"><ShieldCheck size={20}/><input type={visible?'text':'password'} autoComplete="new-password" required minLength={8} value={confirm} onChange={e=>setConfirm(e.target.value)} placeholder={pick('تکرار رمز','Repeat password')}/></div></label>
         <label className="sh-auth-consent"><input required checked={terms} onChange={e=>setTerms(e.target.checked)} type="checkbox"/><span>{pick('شرایط استفاده','I agree to the')} <Link href={path('/terms')} target="_blank">{t.terms}</Link> {pick('و','and')} <Link href={path('/privacy')} target="_blank">{t.privacy}</Link> {pick('را مطالعه کرده و می‌پذیرم.','policies.')}</span></label></>}
-       {captchaMarkup}
+       <HCaptchaChallenge siteKey={captchaSiteKey} locale={locale} resetSignal={captchaReset}
+        onToken={setCaptchaToken} onExpire={()=>setCaptchaToken('')}/>
        {error&&<p className="sh-auth-error" role="alert">{error}</p>}
        <button className="sh-auth-submit" disabled={loading||!db}>{loading?pick('در حال پردازش…','Processing…'):signup?pick('ساخت حساب و دریافت کد','Create account & get code'):pick('ورود به حساب','Sign in')}{backIcon}</button>
       </form>

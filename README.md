@@ -53,7 +53,7 @@ Read the design principles in [DESIGN-SYSTEM.md](DESIGN-SYSTEM.md) and [GLASS-CA
 | 🧰 **Administration** | مدیریت دسته‌بندی‌ها، زیرمجموعه‌ها، کالاها، مشتریان، سبدها، درخواست‌ها و سفارش‌ها |
 | 📊 **Accounting** | ثبت دریافت/هزینه، اصلاحات معکوس، فیلتر دوره‌ای و گزارش جریان نقدی |
 | 🌗 **Experience** | Dark/Light, responsive layouts, FA/EN navigation and reduced-motion considerations |
-| 🔐 **Access** | ورود مدیر با متغیرهای سروری و نشست Cookie امضاشده |
+| 🔐 **Access** | ورود مدیر با متغیرهای سروری و نشست Cookie امضاشده؛ تأیید پیامکی OTPY برای ثبت‌نام جدید مشتریان |
 
 ### Browse the application
 
@@ -124,10 +124,13 @@ Copy [`.env.example`](.env.example). The core settings are:
 | `NEXT_PUBLIC_SUPABASE_URL` | Public | Supabase project URL |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public | Client-side key, **only with correct RLS** |
 | `ADMIN_EMAIL` / `ADMIN_PASSWORD` | Server secret | Dedicated admin sign-in |
+| `OTPY_API_KEY` | Server secret | OTPY SMS verification before customer registration |
 | `SUPABASE_URL` | Server | Backend database endpoint |
 | `SUPABASE_SECRET_KEY` (or legacy `SUPABASE_SERVICE_ROLE_KEY`) | Server secret | Authorized admin data operations |
 
 Phone, email, address and WhatsApp values in the template are optional public business details. **Never** put privileged keys under `NEXT_PUBLIC_*`, paste them into issues or commit a populated environment file.
+
+**Customer registration:** OTPY verifies the mobile number, then Supabase handles account creation and email confirmation. Email/password sign-in remains; Google/GitHub OAuth and passwordless phone sign-in are not enabled by this change. Disable legacy hCaptcha enforcement in the Supabase Authentication dashboard after removing its frontend widget. See [customer OTP setup](docs/customer-otp-and-profile-setup.md).
 
 ### Database and administration
 

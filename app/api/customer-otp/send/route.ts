@@ -1,3 +1,4 @@
+import {emailSignupProblem} from '@/lib/supabase/email-confirmation-readiness';
 import {NextRequest,NextResponse} from 'next/server';
 import {callOtpy,normalizedPhone,throttle,validOrigin} from '@/lib/otpy-server';
 export const runtime='nodejs';
@@ -10,6 +11,8 @@ export async function POST(request:NextRequest){
  const phone=normalizedPhone((body as {phone?:unknown})?.phone);
  if(!phone)return reply({error:'INVALID_PHONE'},400);
  if(!process.env.OTPY_API_KEY)return reply({error:'OTPY_NOT_CONFIGURED'},503);
+ const authProblem=await emailSignupProblem();
+ if(authProblem)return reply({error:authProblem},503);
  if(!throttle(request,phone))return reply({error:'RATE_LIMITED'},429);
  try{
   const result=await callOtpy('send',{phone});
